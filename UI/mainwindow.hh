@@ -1,7 +1,10 @@
 #ifndef MAINWINDOW_HH
 #define MAINWINDOW_HH
 
+#include <renderarea.hh>
+
 #include <QMainWindow>
+#include <QGraphicsView>
 
 class MainWindow : public QMainWindow
 {
@@ -12,6 +15,9 @@ public:
 signals:
 
 public slots:
+
+private:
+    RenderArea* _renderArea;
 };
 
 #endif // MAINWINDOW_HH
