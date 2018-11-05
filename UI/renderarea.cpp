@@ -25,17 +25,40 @@ void RenderArea::paintEvent(QPaintEvent* event)
 
     painter.setPen(_hexpen);
     painter.setBrush(Qt::yellow);
-    drawHex(&painter);
+
+    int rows = 9;
+    int middleRow = rows-(rows-1)/2;
+    int middleRowWidth = 9;
+
+    for(int row=0; row < rows; row++){
+        int numberOfHexes = middleRowWidth-abs((middleRow-1-row));
+        x = (this->width() / 2) -((numberOfHexes+0.5)/2*52);
+        y = this->height() / 2 - (rows/2*46) + (row*46);
+
+        Center center(x, y);
+
+        drawRowOfHexes(&painter,center,numberOfHexes);
+    }
+
 }
 
-void RenderArea::drawHex(QPainter* painter)
+void RenderArea::drawRowOfHexes(QPainter *painter, Center rightMostCenter, int numberOfHexes)
 {
-    int x = this->width() / 2;
-    int y = this->height() / 2;
+    for(int hex=0; hex < numberOfHexes; hex++){
+        drawHex(painter,rightMostCenter);
+        rightMostCenter.x += 52;
+    }
+}
+
+void RenderArea::drawHex(QPainter* painter, Center center)
+{
+
+    //int x = this->width() / 2;
+    //int y = this->height() / 2;
 
     QPointF points[6];
 
-    Center center(x, y);
+    //Center center(x, y);
     int size = 30;
     int side = 0;
 
@@ -44,7 +67,19 @@ void RenderArea::drawHex(QPainter* painter)
         side++;
     }
     painter->drawPolygon(points, 6);
+
+
+    /*int z = x+26;
+    int l = y+46;
+    Center center2(z,l);
+    int side2 = 0;
+    while (side2 <= 5) {
+        points[side2] = pointyHexCorner(center2, size, side2);
+        side2++;
+    }
+    painter->drawPolygon(points, 6);*/
 }
+
 
 QPointF RenderArea::pointyHexCorner(Center center, int size, int side)
 {

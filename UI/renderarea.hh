@@ -29,7 +29,9 @@ private:
     QWidget* _parent;
     QPen _hexpen;
 
-    void drawHex(QPainter* painter);
+    void drawHex(QPainter* painter, Center center);
+
+    void drawRowOfHexes(QPainter* painter, Center rightMostCenter, int numberOfHexes);
 
     QPointF pointyHexCorner(Center center, int size, int side);
 };
