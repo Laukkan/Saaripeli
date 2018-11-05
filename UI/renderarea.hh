@@ -19,6 +19,9 @@ protected:
     void paintEvent(QPaintEvent* event) override;
 
 private:
+    QWidget* _parent;
+    QPen _hexpen;
+
     void drawHex(QPainter* painter);
 };
 
