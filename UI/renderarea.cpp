@@ -33,16 +33,24 @@ void RenderArea::drawHex(QPainter* painter)
     int x = this->width() / 2;
     int y = this->height() / 2;
 
-    int hexW = static_cast<int>(20 * sqrt(3));
-    int hexH = 20 * 2;
+    QPointF points[6];
 
-    static const QPoint points[6] = {
-        QPoint(x, y),
-        QPoint(x + hexW / 2, y + hexH / 4),
-        QPoint(x + hexW / 2, y + hexH * 3/4),
-        QPoint(x, y + hexH),
-        QPoint(x - hexW / 2, y + hexH * 3/4),
-        QPoint(x - hexW / 2, y + hexH / 4),
-    };
+    Center center(x, y);
+    int size = 30;
+    int side = 0;
+
+    while (side <= 5) {
+        points[side] = pointyHexCorner(center, size, side);
+        side++;
+    }
     painter->drawPolygon(points, 6);
+}
+
+QPointF RenderArea::pointyHexCorner(Center center, int size, int side)
+{
+    double angle_deg = 60 * side - 30;
+    double angle_rad = M_PI / 180 * angle_deg;
+
+    return QPointF(center.x + size * cos(angle_rad),
+                  center.y + size * sin(angle_rad));
 }

@@ -5,6 +5,13 @@
 #include <QPen>
 #include <QBrush>
 
+struct Center
+{
+    int x = 0;
+    int y = 0;
+    Center(int x, int y) : x(x), y(y) {}
+};
+
 class RenderArea : public QWidget
 {
     Q_OBJECT
@@ -23,6 +30,8 @@ private:
     QPen _hexpen;
 
     void drawHex(QPainter* painter);
+
+    QPointF pointyHexCorner(Center center, int size, int side);
 };
 
 #endif // RENDERAREA_HH
