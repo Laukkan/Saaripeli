@@ -17,7 +17,8 @@ SOURCES += main.cc \
     mainwindow.cpp \
     renderarea.cpp \
     player.cc \
-    gamestate.cc
+    gamestate.cc \
+    gameboard.cc
 
 HEADERS  += \
     gameboard.hh \
