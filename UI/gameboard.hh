@@ -1,8 +1,9 @@
-#ifndef GAMEBOARD_HH
+ #ifndef GAMEBOARD_HH
 #define GAMEBOARD_HH
 
 #include <map>
 #include <unordered_map>
+#include "pawn.hh"
 
 #include "igameboard.hh"
 
@@ -88,6 +89,11 @@ public:
      */
     void addHex(std::shared_ptr<Common::Hex> newHex);
 
+private:
+
+    std::unordered_map<int,std::shared_ptr<Common::Pawn>> _pawns;
+    std::map<Common::CubeCoordinate, std::shared_ptr<Common::Hex>> _hexes;
+    std::map<int, Common::CubeCoordinate> _actors;
 
 };
 #endif // GAMEBOARD_HH
