@@ -15,14 +15,16 @@ CONFIG += c++14
 
 SOURCES += main.cc \
     mainwindow.cpp \
-    renderarea.cpp
+    renderarea.cpp \
+    hexitem.cpp
 
 HEADERS  += \
     gameboard.hh \
     player.hh \
     gamestate.hh \
     mainwindow.hh \
-    renderarea.hh
+    renderarea.hh \
+    hexitem.hh
 
 INCLUDEPATH += $$PWD/../GameLogic/Engine
 DEPENDPATH += $$PWD/../GameLogic/Engine

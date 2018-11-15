@@ -31,9 +31,11 @@ private:
 
     void drawHex(QPainter* painter, Center center);
 
-    void drawRowOfHexes(QPainter* painter, Center rightMostCenter, int numberOfHexes);
+    void drawRowOfHexes(QPainter* painter,
+                        Center rightMostCenter,
+                        int numberOfHexes);
 
     QPointF pointyHexCorner(Center center, int size, int side);
 };
 
-#endif // RENDERAREA_HH
+#endif //  RENDERAREA_HH
