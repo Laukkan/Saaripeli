@@ -18,6 +18,7 @@ SOURCES += main.cc \
     renderarea.cpp \
     hexitem.cpp
 
+
 HEADERS  += \
     gameboard.hh \
     player.hh \
