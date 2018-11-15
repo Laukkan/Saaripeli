@@ -18,14 +18,16 @@ SOURCES += main.cc \
     renderarea.cpp \
     player.cc \
     gamestate.cc \
-    gameboard.cc
+    gameboard.cc \
+    hexitem.cpp
 
 HEADERS  += \
     gameboard.hh \
     player.hh \
     gamestate.hh \
     mainwindow.hh \
-    renderarea.hh
+    renderarea.hh \
+    hexitem.hh
 
 INCLUDEPATH += $$PWD/../GameLogic/Engine
 DEPENDPATH += $$PWD/../GameLogic/Engine

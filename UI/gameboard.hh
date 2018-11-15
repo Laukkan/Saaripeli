@@ -4,6 +4,8 @@
 #include <map>
 #include <unordered_map>
 #include "pawn.hh"
+#include <QGraphicsScene>
+#include "renderarea.hh"
 
 #include "igameboard.hh"
 
@@ -88,6 +90,14 @@ public:
      * coordinates is replaced. Exception quarantee: basic
      */
     void addHex(std::shared_ptr<Common::Hex> newHex);
+
+    void drawGameBoard(QGraphicsScene* scene);
+
+    void drawRowOfHexes(QGraphicsScene* scene,
+                        Center rightMostCenter,
+                        int numberOfHexes);
+
+
 
 private:
 
