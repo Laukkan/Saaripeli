@@ -49,6 +49,15 @@ public:
     void addPawn(int playerId, int pawnId);
 
     /**
+     * @brief addPawn adds a new pawn to the game
+     * @param playerId. Id of player, whose pawn is added
+     * @param pawnId. Id of the pawn
+     * @param coord. CubeCoordinate, where pawn is added
+     * @post Pawn is added to the game. Exception quarantee: basic
+     */
+    void addPawn(int playerId, int pawnId, Common::CubeCoordinate coord);
+
+    /**
      * @brief movePawn sets a new location for the pawn.
      * @param pawnId The identifier of the pawn.
      * @param pawnCoord The target location of the pawn in coordinates.
@@ -64,6 +73,15 @@ public:
      * @post pawn matching the id is removed. Exception quarantee: basic
      */
     void removePawn(int pawnId);
+
+    /**
+     * @brief addActor adds a new actor to the game board
+     * @param actor
+     * @param actorCoord
+     * @pre coordinates must contain a hex
+     * @post actor has been added to the hex in target coordinates
+     */
+    void addActor(std::shared_ptr<Common::Actor> actor, Common::CubeCoordinate actorCoord);
 
     /**
      * @brief moveActor sets a new location for the actor.
@@ -83,6 +101,31 @@ public:
     void removeActor(int actorId);
 
     /**
+     * @brief addTransport adds a new transport to the game board
+     * @param transport transport to be added
+     * @param coord
+     * @pre coordinates must contain a hex
+     * @post Transport has been added to the hex in target coordinates
+     */
+    void addTransport(std::shared_ptr<Common::Transport> transport, Common::CubeCoordinate coord);
+
+    /**
+     * @brief moveTransport sets a new location for the transport.
+     * @param id The identifier of the transport.
+     * @param coord The target location of the transport in coordinates.
+     * @post transport is moved to a new location: Exception quarantee: basic
+     */
+    void moveTransport(int id, Common::CubeCoordinate coord);
+
+    /**
+     * @brief removeTransport removes an transport.
+     * @param id The identifier of the transport.
+     * @post transport removed from the gameboard. Exception quarantee: basic
+     */
+    void removeTransport(int id);
+
+
+    /**
      * @brief addHex adds a new hex tile to the board
      * @param newHex Pointer of a new hex to add
      * @pre newHex is valid
@@ -97,6 +140,8 @@ public:
                         Center rightMostCenter,
                         int numberOfHexes);
 
+    QPointF cube_to_pixel(Common::CubeCoordinate cubeCoord);
+
 
 
 private:
@@ -104,6 +149,7 @@ private:
     std::unordered_map<int,std::shared_ptr<Common::Pawn>> _pawns;
     std::map<Common::CubeCoordinate, std::shared_ptr<Common::Hex>> _hexes;
     std::map<int, Common::CubeCoordinate> _actors;
+    std::map<int, std::shared_ptr<Common::Transport>> _transports;
 
 };
 #endif // GAMEBOARD_HH

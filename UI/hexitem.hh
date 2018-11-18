@@ -1,22 +1,18 @@
 #ifndef HEXITEM_HH
 #define HEXITEM_HH
 #include <QGraphicsItem>
-#include <renderarea.hh>
 
 
-class HexItem : public QGraphicsItem
+class HexItem : public QGraphicsPolygonItem
 {
 public:
-    HexItem(int size, Center center);
-    void paint(QPainter *painter,
-               const QStyleOptionGraphicsItem *option,
-               QWidget *widget = nullptr);
-    QRectF boundingRect() const;
+    HexItem(int size, QPointF center);
     QPointF pointyHexCorner(int side);
+    QVector<QPointF> getHexCorners();
 
 private:
     int _size;
-    Center _center;
+    QPointF _center;
 
 };
 
