@@ -6,14 +6,21 @@
 class HexItem : public QGraphicsPolygonItem
 {
 public:
-    /**
-     * @brief HexItem
-     * @param size
-     * @param type
-     * @param center
-     */
+
     HexItem(int size, std::string type, QPointF center);
+
+    /**
+     * @brief pointyHexCorner Gives a QPointF to each corner of the hex d
+     * depending on the side parameter.
+     * @param side int, determines which corner is given. Value between 0-5.
+     * @return QPointF, the location of the corner.
+     */
     QPointF pointyHexCorner(int side);
+
+    /**
+     * @brief getHexCorners Returns a vector with all of the hexes corners.
+     * @return QVector<QPointF> , a vector with all of the hexes corners.
+     */
     QVector<QPointF> getHexCorners();
 
 private:

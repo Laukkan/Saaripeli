@@ -4,6 +4,7 @@
 #include <QRectF>
 #include <cmath>
 
+// A constant map for determening the color of the hex depending on its type.
 const std::map<std::string,QColor> HEX_TYPES {
     {"Peak"    , QColor("darkGray")},
     {"Mountain", QColor("gray")},
@@ -17,8 +18,10 @@ const std::map<std::string,QColor> HEX_TYPES {
 HexItem::HexItem(int size, std::string type, QPointF center) :
     _size(size), _center(center), _type(type)
 {
+    // Get the corners around _center and make the hex.
     QVector<QPointF> points = getHexCorners();
     setPolygon(QPolygonF(points));
+    //  Set the color according to _type.
     setBrush(HEX_TYPES.at(_type));
 }
 
