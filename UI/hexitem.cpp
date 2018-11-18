@@ -4,11 +4,22 @@
 #include <QRectF>
 #include <cmath>
 
+const std::map<std::string,QColor> HEX_TYPES {
+    {"Peak"    , QColor("darkGray")},
+    {"Mountain", QColor("gray")},
+    {"Forest"  , QColor("darkGreen")},
+    {"Beach"   , QColor("yellow")},
+    {"Water"   , QColor("cyan")},
+    { "Coral"  , QColor("magenta")},
+};
+
+
 HexItem::HexItem(int size, std::string type, QPointF center) :
     _size(size), _center(center), _type(type)
 {
     QVector<QPointF> points = getHexCorners();
     setPolygon(QPolygonF(points));
+    setBrush(HEX_TYPES.at(_type));
 }
 
 
