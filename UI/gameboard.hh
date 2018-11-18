@@ -5,14 +5,13 @@
 #include <unordered_map>
 #include "pawn.hh"
 #include <QGraphicsScene>
-#include "renderarea.hh"
 
 #include "igameboard.hh"
 
 class GameBoard : public Common::IGameBoard
 {
 public:
-    GameBoard();
+    GameBoard(int hexSize);
     ~GameBoard();
 
     /**
@@ -136,16 +135,13 @@ public:
 
     void drawGameBoard(QGraphicsScene* scene);
 
-    void drawRowOfHexes(QGraphicsScene* scene,
-                        Center rightMostCenter,
-                        int numberOfHexes);
-
     QPointF cube_to_pixel(Common::CubeCoordinate cubeCoord);
 
 
 
 private:
 
+    int _hexSize;
     std::unordered_map<int,std::shared_ptr<Common::Pawn>> _pawns;
     std::map<Common::CubeCoordinate, std::shared_ptr<Common::Hex>> _hexes;
     std::map<int, Common::CubeCoordinate> _actors;
