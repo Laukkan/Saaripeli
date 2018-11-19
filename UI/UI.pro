@@ -13,13 +13,13 @@ TEMPLATE = app
 CONFIG += c++14
 
 
-SOURCES += main.cc \
+SOURCES += main.cpp \
     mainwindow.cpp \
-    player.cc \
-    gamestate.cc \
-    gameboard.cc \
-    hexitem.cpp \
-    startdialog.cpp
+    player.cpp \
+    gamestate.cpp \
+    gameboard.cpp \
+    startdialog.cpp \
+    hexitem.cpp
 
 HEADERS  += \
     gameboard.hh \

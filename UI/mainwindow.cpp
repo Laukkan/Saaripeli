@@ -4,12 +4,11 @@
 #include "initialize.hh"
 #include "gamestate.hh"
 #include "player.hh"
-#include <QDesktopWidget>
-#include <QGridLayout>
 #include <startdialog.hh>
 
+#include <QDesktopWidget>
+#include <QGridLayout>
 
-const static int HEX_SIZE = 30;
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
@@ -22,7 +21,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
    QGraphicsScene* scene = new QGraphicsScene(this);
    QGraphicsView* view = new QGraphicsView(this);
 
-   std::shared_ptr<GameBoard> gameBoard(new GameBoard(HEX_SIZE));
+   std::shared_ptr<Student::GameBoard> gameBoard(new Student::GameBoard(HEX_SIZE));
    std::shared_ptr<GameState> gameState(new GameState);
 
    // Muutetaan _playerVector vektoriksi, jossa playerit ovat IPlayereitä.

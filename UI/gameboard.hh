@@ -1,17 +1,22 @@
  #ifndef GAMEBOARD_HH
 #define GAMEBOARD_HH
 
-#include <map>
-#include <unordered_map>
 #include "pawn.hh"
-#include <QGraphicsScene>
-
+#include "mainwindow.hh"
 #include "igameboard.hh"
 
+#include <map>
+#include <unordered_map>
+#include <QGraphicsScene>
+
+
+const static int HEX_SIZE = 30;
+
+namespace Student{
 class GameBoard : public Common::IGameBoard
 {
 public:
-    GameBoard(int hexSize);
+    GameBoard(int hexSize = HEX_SIZE);
     ~GameBoard();
 
     /**
@@ -162,4 +167,5 @@ private:
     std::map<int, std::shared_ptr<Common::Transport>> _transports;
 
 };
+}
 #endif // GAMEBOARD_HH
