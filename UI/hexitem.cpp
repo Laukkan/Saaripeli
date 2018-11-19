@@ -11,12 +11,12 @@ const std::map<std::string,QColor> HEX_TYPES {
     {"Forest"  , QColor("darkGreen")},
     {"Beach"   , QColor("yellow")},
     {"Water"   , QColor("cyan")},
-    { "Coral"  , QColor("magenta")},
+    {"Coral"   , QColor("magenta")},
 };
 
 
 HexItem::HexItem(int size, std::string type, QPointF center) :
-    _size(size), _center(center), _type(type)
+    _size(size),_type(type), _center(center)
 {
     // Get the corners around _center and make the hex.
     QVector<QPointF> points = getHexCorners();

@@ -2,7 +2,9 @@
 #include "hexitem.hh"
 #include "actor.hh"
 #include "transport.hh"
+
 #include <qmath.h>
+#include <iterator>
 
 
 GameBoard::GameBoard(int hexSize):
@@ -114,7 +116,7 @@ void GameBoard::drawGameBoard(QGraphicsScene* scene)
     for(auto hex = _hexes.begin(); hex != _hexes.end(); ++hex) {
         Common::CubeCoordinate cubeCoord = hex->first;
         {
-            QPointF pointCenter = cube_to_pixel(cubeCoord);
+            QPointF pointCenter = cubeToPixel(cubeCoord);
             HexItem* newHex = new HexItem(_hexSize,
                                           hex->second->getPieceType(),
                                           pointCenter);
@@ -123,7 +125,7 @@ void GameBoard::drawGameBoard(QGraphicsScene* scene)
     }
 }
 
-QPointF GameBoard::cube_to_pixel(Common::CubeCoordinate cubeCoord)
+QPointF GameBoard::cubeToPixel(Common::CubeCoordinate cubeCoord)
 {
     qreal q = cubeCoord.x;
     qreal r = cubeCoord.z;

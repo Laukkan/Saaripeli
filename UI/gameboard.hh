@@ -145,7 +145,7 @@ public:
      * @param cubeCoord The cube cordinates to be changed to pixel coordinates.
      * @return QPointF, cube coordinates changed in to pixel coordinates.
      */
-    QPointF cube_to_pixel(Common::CubeCoordinate cubeCoord);
+    QPointF cubeToPixel(Common::CubeCoordinate cubeCoord);
 
 
 
