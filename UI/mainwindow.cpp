@@ -9,7 +9,7 @@
 #include <startdialog.hh>
 
 
-int HEX_SIZE = 30;
+const static int HEX_SIZE = 30;
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
@@ -20,21 +20,23 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
    startDialog->exec();
 
    QGraphicsScene* scene = new QGraphicsScene(this);
-   QGraphicsView* view_ = new QGraphicsView(this);
+   QGraphicsView* view = new QGraphicsView(this);
 
    std::shared_ptr<GameBoard> gameBoard(new GameBoard(HEX_SIZE));
    std::shared_ptr<GameState> gameState(new GameState);
+
    // Muutetaan _playerVector vektoriksi, jossa playerit ovat IPlayereitä.
    std::vector<std::shared_ptr<Common::IPlayer>> iplayers;
    for (std::shared_ptr<Player> player : _playerVector) {
        iplayers.push_back(std::static_pointer_cast<Common::IPlayer>(player));
    }
 
-   std::shared_ptr<Common::IGameRunner> gameRunner = Common::Initialization::getGameRunner(gameBoard, gameState, iplayers);
+   std::shared_ptr<Common::IGameRunner> gameRunner =
+           Common::Initialization::getGameRunner(gameBoard, gameState, iplayers);
 
-   setCentralWidget(view_);
+   setCentralWidget(view);
    gameBoard->drawGameBoard(scene);
-   view_ -> setScene(scene);
+   view -> setScene(scene);
 }
 
 void MainWindow::getPlayersFromDialog(int players)
