@@ -7,7 +7,7 @@
 class Player : public Common::IPlayer
 {
 public:
-    Player();
+    Player(int id);
     ~Player();
 
 

@@ -133,15 +133,29 @@ public:
      */
     void addHex(std::shared_ptr<Common::Hex> newHex);
 
+    /**
+     * @brief drawGameBoard Draws the game board by adding hexItems to the scene.
+     * @param scene Scene to add the hexItems to.
+     */
     void drawGameBoard(QGraphicsScene* scene);
 
+    /**
+     * @brief cube_to_pixel transforms cubeCoordinates into pixel coordinates.
+     * The pixel coordinates depend on the hexes size.
+     * @param cubeCoord The cube cordinates to be changed to pixel coordinates.
+     * @return QPointF, cube coordinates changed in to pixel coordinates.
+     */
     QPointF cube_to_pixel(Common::CubeCoordinate cubeCoord);
 
 
 
 private:
 
+    /**
+     * @brief _hexSize Distance from each hexes corenr to their middle.
+     */
     int _hexSize;
+
     std::unordered_map<int,std::shared_ptr<Common::Pawn>> _pawns;
     std::map<Common::CubeCoordinate, std::shared_ptr<Common::Hex>> _hexes;
     std::map<int, Common::CubeCoordinate> _actors;

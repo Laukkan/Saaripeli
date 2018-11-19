@@ -1,6 +1,7 @@
 #include "player.hh"
 
-Player::Player()
+Player::Player(int id):
+    _id(id)
 {
 
 }
