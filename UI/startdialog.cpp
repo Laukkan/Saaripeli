@@ -12,9 +12,9 @@ StartDialog::StartDialog()
 {
    _players = 1;
 
-   QGridLayout* dialogLayout = new QGridLayout();
-   QLabel* playersLabel = new QLabel;
-   QComboBox* playersAmount = new QComboBox;
+   QGridLayout* dialogLayout = new QGridLayout(this);
+   QLabel* playersLabel = new QLabel(this);
+   QComboBox* playersAmount = new QComboBox(this);
    QPushButton* okButton = new QPushButton(this);
 
    playersLabel->setText("Number of players");

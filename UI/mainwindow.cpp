@@ -18,9 +18,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
     setMinimumSize(1280,900);
    setWindowIcon(QIcon(":/ak47_icon.png"));
-   StartDialog* startDialog = new StartDialog;
-   connect(startDialog, &StartDialog::confirmed, this, &MainWindow::getPlayersFromDialog);
-   startDialog->exec();
+   StartDialog startDialog;
+   connect(&startDialog, &StartDialog::confirmed, this, &MainWindow::getPlayersFromDialog);
+   startDialog.exec();
 
    QGraphicsScene* scene = new QGraphicsScene(this);
    QGraphicsView* view = new QGraphicsView(this);
@@ -42,7 +42,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
    std::shared_ptr<Common::Pawn> pawn(new Common::Pawn);
    gameBoard->addPawn(_playerVector.at(0)->getPlayerId(), pawn->getId(), Common::CubeCoordinate(0,0,0));
    gameBoard->drawGameBoard(scene);
-   view -> setScene(scene);
+   view->setScene(scene);
 }
 
 void MainWindow::getPlayersFromDialog(int players)
