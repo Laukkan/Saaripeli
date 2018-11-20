@@ -5,6 +5,7 @@
 
 #include <qmath.h>
 #include <iterator>
+#include <iostream>
 
 namespace Student {
 
@@ -67,12 +68,24 @@ void GameBoard::addPawn(int playerId, int pawnId, Common::CubeCoordinate coord)
 
 void GameBoard::movePawn(int pawnId, Common::CubeCoordinate pawnCoord)
 {
+    if (_hexes.find(pawnCoord) == _hexes.end()) {
+        return;
+    }
+    std::shared_ptr<Common::Pawn> pawn = _pawns.at(pawnId);
 
-    _pawns.at(pawnId)->setCoordinates(pawnCoord);
+    // Remove pawn from old coordinates and add to new
+    _hexes.at(pawn->getCoordinates())->removePawn(pawn);
+    _hexes.at(pawnCoord)->addPawn(pawn);
+
+    pawn->setCoordinates(pawnCoord);
 }
 
 void GameBoard::removePawn(int pawnId)
 {
+    std::shared_ptr<Common::Pawn> pawn = _pawns.at(pawnId);
+
+    // Remove from hex and map
+    _hexes.at(pawn->getCoordinates())->removePawn(pawn);
     _pawns.erase(pawnId);
 }
 
@@ -84,11 +97,16 @@ void GameBoard::addActor(std::shared_ptr<Common::Actor> actor, Common::CubeCoord
 
 void GameBoard::moveActor(int actorId, Common::CubeCoordinate actorCoord)
 {
+    if (_hexes.find(actorCoord) == _hexes.end()) {
+        return;
+    }
     _actors[actorId]->move(_hexes[actorCoord]);
 }
 
 void GameBoard::removeActor(int actorId)
 {
+    std::shared_ptr<Common::Actor> actor = _actors.at(actorId);
+    actor->getHex()->removeActor(actor);
     _actors.erase(actorId);
 }
 
@@ -100,11 +118,18 @@ void GameBoard::addTransport(std::shared_ptr<Common::Transport> transport, Commo
 
 void GameBoard::moveTransport(int id, Common::CubeCoordinate coord)
 {
+    if (_hexes.find(coord) == _hexes.end()) {
+        return;
+    }
     _transports[id]->move(_hexes[coord]);
 }
 
 void GameBoard::removeTransport(int id)
 {
+    std::shared_ptr<Common::Transport> transport = _transports.at(id);
+
+    // Remove from hex and map
+    transport->getHex()->removeTransport(transport);
     _transports.erase(id);
 }
 

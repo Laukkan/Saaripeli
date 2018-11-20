@@ -19,8 +19,6 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = nullptr);
 
-signals:
-
 public slots:
     void getPlayersFromDialog(int players);
 

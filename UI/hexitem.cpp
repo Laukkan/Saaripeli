@@ -8,7 +8,7 @@ namespace Student {
 
 
 // A constant map for determening the color of the hex depending on its type.
-const std::map<std::string,QColor> HEX_TYPES {
+const static std::map<std::string,QColor> HEX_TYPES {
     {"Peak"    , QColor("darkGray")},
     {"Mountain", QColor("gray")},
     {"Forest"  , QColor("darkGreen")},
@@ -25,7 +25,7 @@ HexItem::HexItem(int size, std::shared_ptr<Common::Hex> hex, QPointF center) :
     QVector<QPointF> points = getHexCorners();
     setPolygon(QPolygonF(points));
 
-    //  Set the color according to _type.
+    //  Set the color according to type.
     setBrush(HEX_TYPES.at(_hex->getPieceType()));
 }
 
@@ -53,13 +53,13 @@ QVector<QPointF> HexItem::getHexCorners()
 
 void HexItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    // Vesipalalle ei tehdä mitään
+    // Water-type doesn't interract
     if (_hex->isWaterTile()) {
         event->accept();
         return;
     }
 
-    // Saaripala uppoaa
+    // Everything else sinks
     _hex->setPieceType("Water");
     setBrush(HEX_TYPES.at("Water"));
     update();

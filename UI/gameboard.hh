@@ -143,7 +143,7 @@ public:
 
 
 private:
-    std::unordered_map<int,std::shared_ptr<Common::Pawn>> _pawns;
+    std::unordered_map<int, std::shared_ptr<Common::Pawn>> _pawns;
     std::map<Common::CubeCoordinate, std::shared_ptr<Common::Hex>> _hexes;
     std::map<int, std::shared_ptr<Common::Actor>> _actors;
     std::map<int, std::shared_ptr<Common::Transport>> _transports;
