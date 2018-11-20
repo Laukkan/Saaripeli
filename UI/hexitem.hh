@@ -1,9 +1,16 @@
 #ifndef HEXITEM_HH
 #define HEXITEM_HH
+<<<<<<< Updated upstream
 #include "hex.hh"
 
 #include <QGraphicsItem>
 #include <memory>
+=======
+
+#include <QGraphicsItem>
+#include <QGraphicsSceneMouseEvent>
+
+>>>>>>> Stashed changes
 
 namespace Student {
 
@@ -27,10 +34,17 @@ public:
      */
     QVector<QPointF> getHexCorners();
 
+protected:
+    /**
+     * @brief mousePressEvent Determines what is done when the HexItem is
+     * clicked with a mouse.
+     * @param event, Qt's mouse event class
+     */
+    virtual void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
 private:
 
     /**
-     * @brief _size Distance from any corner to the middle of the hex in pixels;
+     * @brief _size Distance from any corne-r to the middle of the hex in pixels;
      */
     int _size;
 
@@ -43,7 +57,6 @@ private:
      * @brief _center The center of the hex (in the boards coordinates).
      */
     QPointF _center;
-
 };
 
 }

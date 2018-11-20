@@ -24,6 +24,7 @@ HexItem::HexItem(int size, std::shared_ptr<Common::Hex> hex, QPointF center) :
     // Get the corners around _center and make the hex.
     QVector<QPointF> points = getHexCorners();
     setPolygon(QPolygonF(points));
+
     //  Set the color according to _type.
     setBrush(HEX_TYPES.at(_hex->getPieceType()));
 }
@@ -50,4 +51,22 @@ QVector<QPointF> HexItem::getHexCorners()
     return points;
 }
 
+<<<<<<< Updated upstream
 }
+=======
+void HexItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+    // Vesipalalle ei tehdä mitään
+    if (_type == "Water") {
+        event->accept();
+        return;
+    }
+
+    // Saaripala uppoaa
+    _type = "Water";
+    setBrush(HEX_TYPES.at(_type));
+    update();
+    event->accept();
+}
+
+>>>>>>> Stashed changes
