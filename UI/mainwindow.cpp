@@ -1,17 +1,21 @@
 #include "mainwindow.hh"
-#include "gameboard.hh"
 #include "igamerunner.hh"
 #include "initialize.hh"
 #include "pawn.hh"
-
+#include "hexitem.hh"
 #include "gamestate.hh"
 #include "player.hh"
-#include <startdialog.hh>
+#include "startdialog.hh"
 
 #include <QDesktopWidget>
 #include <QGridLayout>
 
 namespace Student {
+
+/**
+ * @brief _hexSize Distance from each hexes corner to their middle.
+ */
+const static int hexSize = 30;
 
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
@@ -25,7 +29,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
    QGraphicsScene* scene = new QGraphicsScene(this);
    QGraphicsView* view = new QGraphicsView(this);
 
-   std::shared_ptr<Student::GameBoard> gameBoard(new Student::GameBoard(HEX_SIZE));
+   std::shared_ptr<Student::GameBoard> gameBoard(new Student::GameBoard());
    std::shared_ptr<GameState> gameState(new GameState);
 
    // Muutetaan _playerVector vektoriksi, jossa playerit ovat IPlayereitä.
@@ -36,12 +40,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
    std::shared_ptr<Common::IGameRunner> gameRunner =
            Common::Initialization::getGameRunner(gameBoard, gameState, iplayers);
+   drawGameBoard(scene, gameBoard);
 
    setCentralWidget(view);
-
-   std::shared_ptr<Common::Pawn> pawn(new Common::Pawn);
-   gameBoard->addPawn(_playerVector.at(0)->getPlayerId(), pawn->getId(), Common::CubeCoordinate(0,0,0));
-   gameBoard->drawGameBoard(scene);
    view->setScene(scene);
 }
 
@@ -51,6 +52,35 @@ void MainWindow::getPlayersFromDialog(int players)
         std::shared_ptr<Player> newPlayer(new Player(playerId));
         _playerVector.push_back(newPlayer);
     }
+}
+
+void MainWindow::drawGameBoard(
+        QGraphicsScene* scene, std::shared_ptr<Student::GameBoard> gameBoard)
+{
+    std::map<Common::CubeCoordinate, std::shared_ptr<Common::Hex>> hexes =
+            gameBoard->returnHexes();
+
+    for(auto hex = hexes.begin(); hex != hexes.end(); ++hex) {
+        Common::CubeCoordinate cubeCoord = hex->first;
+        {
+            QPointF pointCenter = cubeToPixel(cubeCoord);
+            HexItem* newHex = new HexItem(hexSize,
+                                          hex->second,
+                                          pointCenter);
+
+            scene->addItem(newHex);
+        }
+    }
+}
+
+QPointF MainWindow::cubeToPixel(Common::CubeCoordinate cubeCoord)
+{
+    qreal q = cubeCoord.x;
+    qreal r = cubeCoord.z;
+    qreal x = hexSize * (sqrt(3) * q  +  sqrt(3)/2 * r);
+    qreal y = hexSize * (3./2 * r);
+    return QPointF(x, y);
+
 }
 
 }

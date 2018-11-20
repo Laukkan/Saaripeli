@@ -3,16 +3,12 @@
 #include "actor.hh"
 #include "transport.hh"
 
-#include "pawnitem.hh"
-#include "hexitem.hh"
-
 #include <qmath.h>
 #include <iterator>
 
 namespace Student {
 
-GameBoard::GameBoard(int hexSize):
-    _hexSize(hexSize)
+GameBoard::GameBoard()
 {
 
 }
@@ -67,8 +63,6 @@ void GameBoard::addPawn(int playerId, int pawnId, Common::CubeCoordinate coord)
     _pawns[pawnId] = pawn;
     _pawns[pawnId]->setCoordinates(coord);
     _hexes[coord]->addPawn(pawn);
-    new PawnItem(pawn);
-
 }
 
 void GameBoard::movePawn(int pawnId, Common::CubeCoordinate pawnCoord)
@@ -120,29 +114,10 @@ void GameBoard::addHex(std::shared_ptr<Common::Hex> newHex)
     _hexes[newHexCoordinates] = newHex;
 }
 
-void GameBoard::drawGameBoard(QGraphicsScene* scene)
+std::map<Common::CubeCoordinate, std::shared_ptr<Common::Hex> > GameBoard::returnHexes()
 {
-    for(auto hex = _hexes.begin(); hex != _hexes.end(); ++hex) {
-        Common::CubeCoordinate cubeCoord = hex->first;
-        {
-            QPointF pointCenter = cubeToPixel(cubeCoord);
-            HexItem* newHex = new HexItem(_hexSize,
-                                          hex->second,
-                                          pointCenter);
-
-            scene->addItem(newHex);
-        }
-    }
+    return _hexes;
 }
 
-QPointF GameBoard::cubeToPixel(Common::CubeCoordinate cubeCoord)
-{
-    qreal q = cubeCoord.x;
-    qreal r = cubeCoord.z;
-    qreal x = _hexSize * (sqrt(3) * q  +  sqrt(3)/2 * r);
-    qreal y = _hexSize * (3./2 * r);
-    return QPointF(x, y);
-
-}
 
 }

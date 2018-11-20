@@ -1,5 +1,6 @@
 #ifndef PAWNITEM_HH
 #define PAWNITEM_HH
+
 #include <QGraphicsPixmapItem>
 #include <QPixmap>
 #include "pawn.hh"

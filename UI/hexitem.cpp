@@ -51,22 +51,19 @@ QVector<QPointF> HexItem::getHexCorners()
     return points;
 }
 
-<<<<<<< Updated upstream
-}
-=======
 void HexItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     // Vesipalalle ei tehdä mitään
-    if (_type == "Water") {
+    if (_hex->isWaterTile()) {
         event->accept();
         return;
     }
 
     // Saaripala uppoaa
-    _type = "Water";
-    setBrush(HEX_TYPES.at(_type));
+    _hex->setPieceType("Water");
+    setBrush(HEX_TYPES.at("Water"));
     update();
     event->accept();
 }
 
->>>>>>> Stashed changes
+}

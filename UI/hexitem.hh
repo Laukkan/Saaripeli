@@ -1,16 +1,13 @@
 #ifndef HEXITEM_HH
 #define HEXITEM_HH
-<<<<<<< Updated upstream
 #include "hex.hh"
 
 #include <QGraphicsItem>
 #include <memory>
-=======
 
 #include <QGraphicsItem>
 #include <QGraphicsSceneMouseEvent>
 
->>>>>>> Stashed changes
 
 namespace Student {
 

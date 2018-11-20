@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += testlib widgets
+QT       += testlib
 
 QT       -= gui
 
@@ -47,8 +47,7 @@ SOURCES += \
     ../../../GameLogic/Engine/kraken.cpp \
     ../../../GameLogic/Engine/seamunster.cpp \
     ../../../GameLogic/Engine/shark.cpp \
-    ../../../GameLogic/Engine/vortex.cpp \
-    ../../../UI/hexitem.cpp
+    ../../../GameLogic/Engine/vortex.cpp
 
 
 
@@ -71,7 +70,6 @@ HEADERS += \
     ../../../GameLogic/Engine/seamunster.hh \
     ../../../GameLogic/Engine/shark.hh \
     ../../../GameLogic/Engine/vortex.hh \
-    ../../../UI/hexitem.hh
 
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 

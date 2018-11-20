@@ -8,8 +8,6 @@ PawnItem::PawnItem(std::shared_ptr<Common::Pawn> pawn):
     _pawnImage = QPixmap("./Assets/pawn.jpg");
     setPixmap(_pawnImage);
     setOffset(cubeToPixel(_pawn->getCoordinates()));
-
-
 }
 
 QPointF PawnItem::cubeToPixel(Common::CubeCoordinate cubeCoord)
