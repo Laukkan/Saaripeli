@@ -14,9 +14,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
     setMinimumSize(1280,900);
    setWindowIcon(QIcon(":/ak47_icon.png"));
-   StartDialog* startDialog = new StartDialog;
-   connect(startDialog, &StartDialog::confirmed, this, &MainWindow::getPlayersFromDialog);
-   startDialog->exec();
+   StartDialog startDialog;
+   connect(&startDialog, &StartDialog::confirmed, this, &MainWindow::getPlayersFromDialog);
+   startDialog.exec();
 
    QGraphicsScene* scene = new QGraphicsScene(this);
    QGraphicsView* view = new QGraphicsView(this);
@@ -35,7 +35,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
    setCentralWidget(view);
    gameBoard->drawGameBoard(scene);
-   view -> setScene(scene);
+   view->setScene(scene);
 }
 
 void MainWindow::getPlayersFromDialog(int players)
