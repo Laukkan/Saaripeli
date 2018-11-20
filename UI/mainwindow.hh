@@ -6,6 +6,9 @@
 #include <memory>
 #include "player.hh"
 
+namespace Student {
+
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -21,5 +24,7 @@ private:
     std::vector<std::shared_ptr<Player>> _playerVector;
 
 };
+
+}
 
 #endif // MAINWINDOW_HH

@@ -3,6 +3,7 @@
 
 #include "igamestate.hh"
 
+namespace Student  {
 
 class GameState : public Common::IGameState
 {
@@ -44,5 +45,7 @@ private:
     Common::GamePhase _currentPhase;
     int _currentPlayer;
 };
+
+}
 
 #endif // GAMESTATE_HH

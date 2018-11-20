@@ -2,12 +2,16 @@
 #include "gameboard.hh"
 #include "igamerunner.hh"
 #include "initialize.hh"
+#include "pawn.hh"
+
 #include "gamestate.hh"
 #include "player.hh"
 #include <startdialog.hh>
 
 #include <QDesktopWidget>
 #include <QGridLayout>
+
+namespace Student {
 
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
@@ -34,6 +38,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
            Common::Initialization::getGameRunner(gameBoard, gameState, iplayers);
 
    setCentralWidget(view);
+
+   std::shared_ptr<Common::Pawn> pawn(new Common::Pawn);
+   gameBoard->addPawn(_playerVector.at(0)->getPlayerId(), pawn->getId(), Common::CubeCoordinate(0,0,0));
    gameBoard->drawGameBoard(scene);
    view -> setScene(scene);
 }
@@ -44,4 +51,6 @@ void MainWindow::getPlayersFromDialog(int players)
         std::shared_ptr<Player> newPlayer(new Player(playerId));
         _playerVector.push_back(newPlayer);
     }
+}
+
 }

@@ -6,6 +6,8 @@
 #include <string>
 #include <QPushButton>
 
+namespace Student {
+
 StartDialog::StartDialog()
 {
    _players = 1;
@@ -49,3 +51,4 @@ void StartDialog::confirm()
     emit confirmed(_players);
 }
 
+}

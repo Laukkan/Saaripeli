@@ -19,7 +19,8 @@ SOURCES += main.cpp \
     gamestate.cpp \
     gameboard.cpp \
     startdialog.cpp \
-    hexitem.cpp
+    hexitem.cpp \
+    pawnitem.cpp
 
 HEADERS  += \
     gameboard.hh \
@@ -27,7 +28,8 @@ HEADERS  += \
     gamestate.hh \
     mainwindow.hh \
     hexitem.hh \
-    startdialog.hh
+    startdialog.hh \
+    pawnitem.hh
 
 INCLUDEPATH += $$PWD/../GameLogic/Engine
 DEPENDPATH += $$PWD/../GameLogic/Engine

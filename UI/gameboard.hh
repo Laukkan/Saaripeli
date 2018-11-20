@@ -2,8 +2,9 @@
 #define GAMEBOARD_HH
 
 #include "pawn.hh"
-#include "mainwindow.hh"
 #include "igameboard.hh"
+
+#include "mainwindow.hh"
 
 #include <map>
 #include <unordered_map>
@@ -167,5 +168,7 @@ private:
     std::map<int, std::shared_ptr<Common::Transport>> _transports;
 
 };
+
 }
+
 #endif // GAMEBOARD_HH

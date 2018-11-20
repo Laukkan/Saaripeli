@@ -2,6 +2,9 @@
 #define STARTDIALOG_HH
 #include <QDialog>
 
+namespace Student {
+
+
 class StartDialog : public QDialog
 {
     Q_OBJECT
@@ -19,5 +22,7 @@ public slots:
 private:
     int _players;
 };
+
+}
 
 #endif // STARTDIALOG_HH

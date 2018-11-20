@@ -1,5 +1,8 @@
 #include "player.hh"
 
+namespace Student {
+
+
 Player::Player(int id):
     _id(id)
 {
@@ -24,4 +27,6 @@ unsigned int Player::getActionsLeft() const
 void Player::setActionsLeft(unsigned int actionsLeft)
 {
     _actionsleft = actionsLeft;
+}
+
 }

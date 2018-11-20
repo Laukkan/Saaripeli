@@ -1,13 +1,17 @@
 #ifndef HEXITEM_HH
 #define HEXITEM_HH
-#include <QGraphicsItem>
+#include "hex.hh"
 
+#include <QGraphicsItem>
+#include <memory>
+
+namespace Student {
 
 class HexItem : public QGraphicsPolygonItem
 {
 public:
 
-    HexItem(int size, std::string type, QPointF center);
+    HexItem(int size, std::shared_ptr<Common::Hex> hex, QPointF center);
 
     /**
      * @brief pointyHexCorner Gives a QPointF to each corner of the hex d
@@ -31,9 +35,9 @@ private:
     int _size;
 
     /**
-     * @brief type  The hexes type (Mountain,Forest,etc), used to determine the color of the hex.
+     * @brief type  The logical hex this hex is an item off.
      */
-    std::string _type;
+    std::shared_ptr<Common::Hex> _hex;
 
     /**
      * @brief _center The center of the hex (in the boards coordinates).
@@ -41,5 +45,7 @@ private:
     QPointF _center;
 
 };
+
+}
 
 #endif // HEXITEM_HH
