@@ -58,8 +58,11 @@ void Student::GameBoard::addPawn(int playerId, int pawnId)
 
 void Student::GameBoard::addPawn(int playerId, int pawnId, Common::CubeCoordinate coord)
 {
-    addPawn(playerId,pawnId);
+    std::shared_ptr<Common::Pawn> pawn(new Common::Pawn);
+    pawn->setId(pawnId,playerId);
+    _pawns[pawnId] = pawn;
     _pawns[pawnId]->setCoordinates(coord);
+    _hexes[coord]->addPawn(pawn);
 
 }
 
@@ -76,12 +79,13 @@ void Student::GameBoard::removePawn(int pawnId)
 
 void Student::GameBoard::addActor(std::shared_ptr<Common::Actor> actor, Common::CubeCoordinate actorCoord)
 {
-    _actors[actor->getId()] = actorCoord;
+    _actors[actor->getId()] = actor;
+    actor->move(_hexes[actorCoord]);
 }
 
 void Student::GameBoard::moveActor(int actorId, Common::CubeCoordinate actorCoord)
 {
-    _actors[actorId] = actorCoord;
+    _actors[actorId]->move(_hexes[actorCoord]);
 }
 
 void Student::GameBoard::removeActor(int actorId)
