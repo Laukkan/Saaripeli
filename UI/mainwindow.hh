@@ -32,14 +32,6 @@ private:
     void drawGameBoard(
             QGraphicsScene* scene, std::shared_ptr<Student::GameBoard> gameBoard);
 
-    /**
-     * @brief cube_to_pixel transforms cubeCoordinates into pixel coordinates.
-     * The pixel coordinates depend on the hexes size.
-     * @param cubeCoord The cube cordinates to be changed to pixel coordinates.
-     * @return QPointF, cube coordinates changed in to pixel coordinates.
-     */
-    QPointF cubeToPixel(Common::CubeCoordinate cubeCoord);
-
 };
 
 }

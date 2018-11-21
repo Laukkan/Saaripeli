@@ -2,15 +2,6 @@
 
 namespace Student {
 
-GameState::GameState()
-{
-
-}
-
-GameState::~GameState()
-{
-
-}
 
 Common::GamePhase GameState::currentGamePhase() const
 {

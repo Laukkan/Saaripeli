@@ -9,8 +9,8 @@ namespace Student {
 class Player : public Common::IPlayer
 {
 public:
-    Player(int id);
-    ~Player();
+    explicit Player(int id);
+    ~Player() = default;
 
 
     /**

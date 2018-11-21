@@ -6,24 +6,27 @@
 #include "gamestate.hh"
 #include "player.hh"
 #include "startdialog.hh"
+#include "helpers.hh"
 
 #include <QDesktopWidget>
 #include <QGridLayout>
 
-namespace Student {
 
-/**
- * @brief _hexSize Distance from each hexes corner to their middle.
- */
-const static int hexSize = 30;
+const static int RESO_W = 1280;
+const static int RESO_H = 720;
+
+
+namespace Student {
 
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
-    setMinimumSize(1280,900);
+   setMinimumSize(RESO_W, RESO_H);
    setWindowIcon(QIcon(":/ak47_icon.png"));
+
    StartDialog startDialog;
-   connect(&startDialog, &StartDialog::confirmed, this, &MainWindow::getPlayersFromDialog);
+   connect(&startDialog, &StartDialog::confirmed,
+           this, &MainWindow::getPlayersFromDialog);
    startDialog.exec();
 
    QGraphicsScene* scene = new QGraphicsScene(this);
@@ -63,24 +66,14 @@ void MainWindow::drawGameBoard(
     for(auto hex = hexes.begin(); hex != hexes.end(); ++hex) {
         Common::CubeCoordinate cubeCoord = hex->first;
         {
-            QPointF pointCenter = cubeToPixel(cubeCoord);
-            HexItem* newHex = new HexItem(hexSize,
+            QPointF pointCenter = Helpers::cubeToPixel(cubeCoord);
+            HexItem* newHex = new HexItem(HEXSIZE,
                                           hex->second,
                                           pointCenter);
 
             scene->addItem(newHex);
         }
     }
-}
-
-QPointF MainWindow::cubeToPixel(Common::CubeCoordinate cubeCoord)
-{
-    qreal q = cubeCoord.x;
-    qreal r = cubeCoord.z;
-    qreal x = hexSize * (sqrt(3) * q  +  sqrt(3)/2 * r);
-    qreal y = hexSize * (3./2 * r);
-    return QPointF(x, y);
-
 }
 
 }

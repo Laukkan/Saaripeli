@@ -3,10 +3,9 @@
 #include "hex.hh"
 
 #include <QGraphicsItem>
-#include <memory>
-
 #include <QGraphicsItem>
 #include <QGraphicsSceneMouseEvent>
+#include <memory>
 
 
 namespace Student {

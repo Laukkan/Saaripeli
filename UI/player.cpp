@@ -9,11 +9,6 @@ Player::Player(int id):
 
 }
 
-Player::~Player()
-{
-
-}
-
 int Player::getPlayerId() const
 {
     return _id;

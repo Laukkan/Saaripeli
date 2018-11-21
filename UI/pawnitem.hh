@@ -11,7 +11,7 @@ class PawnItem : public QGraphicsPixmapItem
 {
 public:
 
-    PawnItem(std::shared_ptr<Common::Pawn> pawn);
+    explicit PawnItem(std::shared_ptr<Common::Pawn> pawn);
 
     /**
      * @brief cube_to_pixel transforms cubeCoordinates into pixel coordinates.

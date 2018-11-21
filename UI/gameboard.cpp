@@ -9,16 +9,6 @@
 
 namespace Student {
 
-GameBoard::GameBoard()
-{
-
-}
-
-GameBoard::~GameBoard()
-{
-
-}
-
 int GameBoard::checkTileOccupation(Common::CubeCoordinate tileCoord) const
 {
     if(_hexes.find(tileCoord) == _hexes.end()){
@@ -40,7 +30,8 @@ bool GameBoard::isWaterTile(Common::CubeCoordinate tileCoord) const
     }
 }
 
-std::shared_ptr<Common::Hex> GameBoard::getHex(Common::CubeCoordinate hexCoord) const
+std::shared_ptr<Common::Hex> GameBoard::getHex(
+        Common::CubeCoordinate hexCoord) const
 {
     if(_hexes.find(hexCoord) == _hexes.end()){
         return nullptr;
@@ -89,7 +80,8 @@ void GameBoard::removePawn(int pawnId)
     _pawns.erase(pawnId);
 }
 
-void GameBoard::addActor(std::shared_ptr<Common::Actor> actor, Common::CubeCoordinate actorCoord)
+void GameBoard::addActor(
+        std::shared_ptr<Common::Actor> actor, Common::CubeCoordinate actorCoord)
 {
     _actors[actor->getId()] = actor;
     actor->move(_hexes[actorCoord]);
@@ -106,11 +98,15 @@ void GameBoard::moveActor(int actorId, Common::CubeCoordinate actorCoord)
 void GameBoard::removeActor(int actorId)
 {
     std::shared_ptr<Common::Actor> actor = _actors.at(actorId);
+
+    // Remove from hex and map
     actor->getHex()->removeActor(actor);
     _actors.erase(actorId);
 }
 
-void GameBoard::addTransport(std::shared_ptr<Common::Transport> transport, Common::CubeCoordinate coord)
+void GameBoard::addTransport(
+        std::shared_ptr<Common::Transport> transport,
+        Common::CubeCoordinate coord)
 {
     _transports[transport->getId()] = transport;
     transport->addHex(_hexes[coord]);
@@ -139,7 +135,8 @@ void GameBoard::addHex(std::shared_ptr<Common::Hex> newHex)
     _hexes[newHexCoordinates] = newHex;
 }
 
-std::map<Common::CubeCoordinate, std::shared_ptr<Common::Hex> > GameBoard::returnHexes()
+std::map<Common::CubeCoordinate, std::shared_ptr<Common::Hex>>
+GameBoard::returnHexes()
 {
     return _hexes;
 }
