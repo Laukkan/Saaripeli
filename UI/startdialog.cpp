@@ -6,6 +6,8 @@
 #include <string>
 #include <QPushButton>
 
+//
+
 namespace Student {
 
 StartDialog::StartDialog()
@@ -20,9 +22,8 @@ StartDialog::StartDialog()
    playersLabel->setText("Number of players");
    dialogLayout->addWidget(playersLabel);
 
-   for(int i = 1; i <= 4; i++){
-       playersAmount->addItem(QString::number(i));
-   }
+   QStringList allowedAmounts = {"1", "2", "3", "4"};
+   playersAmount->addItems(allowedAmounts);
    dialogLayout->addWidget(playersAmount);
 
    okButton->setText("Confirm");
@@ -30,7 +31,8 @@ StartDialog::StartDialog()
 
    setLayout(dialogLayout);
 
-   connect(playersAmount, &QComboBox::currentTextChanged,this, &StartDialog::playersChange);
+   connect(playersAmount, &QComboBox::currentTextChanged,
+           this, &StartDialog::playersChange);
    connect(okButton,&QPushButton::pressed,this,&StartDialog::confirm);
    connect(okButton,&QPushButton::pressed,this,&StartDialog::accept);
 
