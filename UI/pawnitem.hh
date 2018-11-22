@@ -5,13 +5,14 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QPixmap>
 #include "pawn.hh"
+#include "hexitem.hh"
 
 namespace Student {
 
 class PawnItem : public QGraphicsPixmapItem
 {
 public:
-    explicit PawnItem(std::shared_ptr<Common::Pawn> pawn);
+    explicit PawnItem(std::shared_ptr<Common::Pawn> pawn,  HexItem* hexItem);
 
 protected:
     /**
@@ -25,6 +26,7 @@ protected:
 private:
     QPixmap _pawnImage;
     std::shared_ptr<Common::Pawn> _pawn;
+    HexItem* _hexItem;
 };
 
 }

@@ -31,6 +31,8 @@ public:
      */
     QVector<QPointF> getHexCorners();
 
+    QPointF getPawnPosition();
+
 protected:
     /**
      * @brief HexItems interractions with mouse clicks and drops
@@ -54,6 +56,8 @@ private:
      * @brief _center The center of the hex (in the boards coordinates).
      */
     QPointF _center;
+
+    QPointF _pawnPositionArray[3];
 };
 
 }

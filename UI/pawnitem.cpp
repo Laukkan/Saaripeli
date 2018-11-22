@@ -8,12 +8,12 @@
 
 namespace Student {
 
-PawnItem::PawnItem(std::shared_ptr<Common::Pawn> pawn):
-    _pawn(pawn)
+PawnItem::PawnItem(std::shared_ptr<Common::Pawn> pawn, HexItem* hexItem):
+    _pawn(pawn), _hexItem(hexItem)
 {
-    _pawnImage = QPixmap("./Assets/pawn.jpg");
-    setPixmap(_pawnImage);
-    setOffset(Helpers::cubeToPixel(_pawn->getCoordinates()));
+    _pawnImage.load(":/pawn.png");
+    setPixmap(_pawnImage.scaled(30,46));
+    setOffset(_hexItem->getPawnPosition());
     setAcceptDrops(true);
 }
 
