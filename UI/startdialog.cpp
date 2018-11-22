@@ -43,7 +43,7 @@ int StartDialog::getPlayers()
     return _players;
 }
 
-void StartDialog::playersChange(const QString & text)
+void StartDialog::playersChange(const QString &text)
 {
     _players = text.toInt();
 }
