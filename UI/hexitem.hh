@@ -30,6 +30,8 @@ public:
      */
     QVector<QPointF> getHexCorners();
 
+    QPointF getPawnPosition();
+
 protected:
     /**
      * @brief mousePressEvent Determines what is done when the HexItem is
@@ -43,16 +45,17 @@ private:
      * @brief _size Distance from any corne-r to the middle of the hex in pixels;
      */
     int _size;
-
     /**
      * @brief type  The logical hex this hex is an item off.
      */
     std::shared_ptr<Common::Hex> _hex;
-
     /**
      * @brief _center The center of the hex (in the boards coordinates).
      */
     QPointF _center;
+
+    QPointF _pawnPositionArray[3];
+
 };
 
 }

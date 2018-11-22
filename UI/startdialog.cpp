@@ -22,7 +22,7 @@ StartDialog::StartDialog()
    playersLabel->setText("Number of players");
    dialogLayout->addWidget(playersLabel);
 
-   QStringList allowedAmounts = {"1", "2", "3", "4"};
+   QStringList allowedAmounts = {"1", "2", "3"};
    playersAmount->addItems(allowedAmounts);
    dialogLayout->addWidget(playersAmount);
 

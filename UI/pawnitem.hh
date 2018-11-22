@@ -4,6 +4,7 @@
 #include <QGraphicsPixmapItem>
 #include <QPixmap>
 #include "pawn.hh"
+#include "hexitem.hh"
 
 namespace Student {
 
@@ -11,7 +12,7 @@ class PawnItem : public QGraphicsPixmapItem
 {
 public:
 
-    explicit PawnItem(std::shared_ptr<Common::Pawn> pawn);
+    explicit PawnItem(std::shared_ptr<Common::Pawn> pawn, HexItem* hexItem);
 
     /**
      * @brief cube_to_pixel transforms cubeCoordinates into pixel coordinates.
@@ -19,7 +20,6 @@ public:
      * @param cubeCoord The cube cordinates to be changed to pixel coordinates.
      * @return QPointF, cube coordinates changed in to pixel coordinates.
      */
-    QPointF cubeToPixel(Common::CubeCoordinate cubeCoord);
 
 private:
     QPixmap _pawnImage;

@@ -7,6 +7,7 @@
 #include "player.hh"
 #include "startdialog.hh"
 #include "helpers.hh"
+#include "pawnitem.hh"
 
 #include <QDesktopWidget>
 #include <QGridLayout>
@@ -35,6 +36,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
    std::shared_ptr<Student::GameBoard> gameBoard(new Student::GameBoard());
    std::shared_ptr<GameState> gameState(new GameState);
 
+
+
    // Muutetaan _playerVector vektoriksi, jossa playerit ovat IPlayereitä.
    std::vector<std::shared_ptr<Common::IPlayer>> iplayers;
    for (std::shared_ptr<Player> player : _playerVector) {
@@ -44,9 +47,16 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
    std::shared_ptr<Common::IGameRunner> gameRunner =
            Common::Initialization::getGameRunner(gameBoard, gameState, iplayers);
    drawGameBoard(scene, gameBoard);
+   drawPawns(scene, gameBoard);
+
 
    setCentralWidget(view);
    view->setScene(scene);
+}
+
+HexItem *MainWindow::getHexItem(Common::CubeCoordinate coord)
+{
+    return _hexItemVector[coord];
 }
 
 void MainWindow::getPlayersFromDialog(int players)
@@ -70,9 +80,24 @@ void MainWindow::drawGameBoard(
             HexItem* newHex = new HexItem(HEXSIZE,
                                           hex->second,
                                           pointCenter);
-
+            _hexItemVector[cubeCoord] = newHex;
             scene->addItem(newHex);
         }
+    }
+}
+
+/* PAWNS ARE STILL DRAWN TO THE SAME POSITION IN EACH HEX
+ * PAWN AND PLAYER ID'S are the same, change this? maybe not.
+ */
+void MainWindow::drawPawns(QGraphicsScene *scene, std::shared_ptr<Student::GameBoard> gameBoard)
+{
+    Common::CubeCoordinate coord = Common::CubeCoordinate(0,0,0);
+    for(std::shared_ptr<Player> player : _playerVector){
+        std::shared_ptr<Common::Pawn> pawn(new Common::Pawn(player->getPlayerId(), player->getPlayerId(), coord));
+        PawnItem* pawnItem = new PawnItem(pawn, _hexItemVector[coord]);
+        gameBoard->getHex(coord)->addPawn(pawn);
+        scene->addItem(pawnItem);
+
     }
 }
 

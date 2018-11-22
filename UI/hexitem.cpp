@@ -17,7 +17,6 @@ const static std::map<std::string,QColor> HEX_TYPES {
     {"Coral"   , QColor("magenta")},
 };
 
-
 namespace Student {
 
 
@@ -30,6 +29,9 @@ HexItem::HexItem(int size, std::shared_ptr<Common::Hex> hex, QPointF center) :
 
     //  Set the color according to type.
     setBrush(HEX_TYPES.at(_hex->getPieceType()));
+    _pawnPositionArray[0] = QPointF(_center.x()-15, _center.y()-20);
+    _pawnPositionArray[1] = QPointF(_center.x()-30, _center.y()-40);
+    _pawnPositionArray[2] = QPointF(_center.x(), _center.y()-40);
 }
 
 
@@ -38,8 +40,8 @@ QPointF HexItem::pointyHexCorner(int side)
     double angle_deg = (60 * side) - 30;
     double angle_rad = (M_PI / 180) * angle_deg;
 
-    return QPointF(_center.rx() + ( _size * cos(angle_rad) ),
-                   _center.ry() + ( _size * sin(angle_rad) ));
+    return QPointF(_center.x() + ( _size * cos(angle_rad) ),
+                   _center.y() + ( _size * sin(angle_rad) ));
 }
 
 QVector<QPointF> HexItem::getHexCorners()
@@ -52,6 +54,11 @@ QVector<QPointF> HexItem::getHexCorners()
         side++;
     }
     return points;
+}
+
+QPointF HexItem::getPawnPosition()
+{
+    return _pawnPositionArray[_hex->getPawnAmount()];
 }
 
 void HexItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
