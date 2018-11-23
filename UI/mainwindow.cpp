@@ -8,6 +8,7 @@
 #include "startdialog.hh"
 #include "helpers.hh"
 #include "pawnitem.hh"
+#include "actoritem.hh"
 
 #include <QDesktopWidget>
 #include <QGridLayout>
@@ -82,6 +83,10 @@ void MainWindow::drawGameBoard(
                                           pointCenter);
             _hexItemVector[cubeCoord] = newHex;
             scene->addItem(newHex);
+
+            scene->addItem(new ActorItem("shark",hex->second));
+
+
         }
     }
 }

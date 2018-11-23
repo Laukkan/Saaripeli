@@ -1,6 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>ak47_icon.png</file>
-		<file>pawn.png</file>
+        <file>pawn.png</file>
+        <file>shark.jpg</file>
     </qresource>
 </RCC>
