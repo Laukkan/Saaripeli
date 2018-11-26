@@ -1,4 +1,5 @@
 #include "hexitem.hh"
+#include "helpers.hh"
 
 #include <QPainter>
 #include <QRectF>
@@ -39,7 +40,6 @@ HexItem::HexItem(int size, std::shared_ptr<Common::Hex> hex, QPointF center) :
     setAcceptedMouseButtons(Qt::LeftButton);
 }
 
-
 QPointF HexItem::pointyHexCorner(int side)
 {
     double angle_deg = (60 * side) - 30;
@@ -74,6 +74,7 @@ void HexItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
     setBrush(HEX_TYPES.at("Water"));
     update();
     event->accept();
+    emit turned();
 }
 
 QPointF HexItem::getPawnPosition()

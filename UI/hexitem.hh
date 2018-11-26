@@ -2,27 +2,23 @@
 #define HEXITEM_HH
 #include "hex.hh"
 
-#include <QGraphicsItem>
-#include <QGraphicsItem>
+#include <QGraphicsPolygonItem>
 #include <QGraphicsSceneMouseEvent>
 #include <memory>
 #include <array>
 
 
+
 namespace Student {
 
-class HexItem : public QGraphicsPolygonItem
+class HexItem :public QObject, public QGraphicsPolygonItem
 {
+    Q_OBJECT
+    Q_INTERFACES(QGraphicsItem)
 public:
 
     HexItem(int size, std::shared_ptr<Common::Hex> hex, QPointF center);
 
-    /**
-     * @brief pointyHexCorner Gives a QPointF to each corner of the hex d
-     * depending on the side parameter.
-     * @param side int, determines which corner is given. Value between 0-5.
-     * @return QPointF, the location of the corner.
-     */
     QPointF pointyHexCorner(int side);
 
     /**
@@ -32,6 +28,9 @@ public:
     QVector<QPointF> getHexCorners();
 
     QPointF getPawnPosition();
+
+signals:
+    void turned();
 
 protected:
     /**

@@ -6,15 +6,22 @@
 
 #include <QGraphicsPixmapItem>
 #include <QPointF>
+#include <QPainter>
 
-const static std::map<std::string,std::string> ACTOR_TYPES {
-    {"shark"    , ":/shark.jpg"},
+const static std::map<std::string,QString> ACTOR_TYPES {
+    {"shark"    , ":/shark.png"},
 };
 
 ActorItem::ActorItem(std::string actorType, std::shared_ptr<Common::Hex> hex) :
     _actorType(actorType), _hex(hex)
 {
-    _actorImage.load(":/shark.jpg");
+    _actorImage.load(ACTOR_TYPES.at(_actorType));
     setPixmap(_actorImage.scaled(30,46));
-    setOffset(Helpers::cubeToPixel(_hex->getCoordinates()));
+    QPointF coordinates = Helpers::cubeToPixel(_hex->getCoordinates());
+    setPos(QPointF(coordinates.x()-15,coordinates.y()-23));
+}
+
+void ActorItem::showActor()
+{
+    this->show();
 }

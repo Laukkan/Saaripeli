@@ -9,8 +9,10 @@
 
 namespace Student {
 
-class PawnItem : public QGraphicsPixmapItem
+class PawnItem : public QObject, public QGraphicsPixmapItem
 {
+    Q_OBJECT
+    Q_INTERFACES(QGraphicsItem)
 public:
     explicit PawnItem(std::shared_ptr<Common::Pawn> pawn,  HexItem* hexItem);
 

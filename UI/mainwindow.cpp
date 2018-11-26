@@ -2,6 +2,7 @@
 #include "igamerunner.hh"
 #include "initialize.hh"
 #include "pawn.hh"
+#include "shark.hh"
 #include "hexitem.hh"
 #include "gamestate.hh"
 #include "player.hh"
@@ -16,6 +17,7 @@
 
 const static int RESO_W = 1280;
 const static int RESO_H = 720;
+const static std::vector<std::string> SUPPORTED_ACTORS = {"shark"};
 
 
 namespace Student {
@@ -49,6 +51,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
            Common::Initialization::getGameRunner(gameBoard, gameState, iplayers);
    drawGameBoard(scene, gameBoard);
    drawPawns(scene, gameBoard);
+   addActors(scene, gameBoard);
 
 
    setCentralWidget(view);
@@ -83,17 +86,11 @@ void MainWindow::drawGameBoard(
                                           pointCenter);
             _hexItemVector[cubeCoord] = newHex;
             scene->addItem(newHex);
-
-            scene->addItem(new ActorItem("shark",hex->second));
-
-
         }
     }
 }
 
-/* PAWNS ARE STILL DRAWN TO THE SAME POSITION IN EACH HEX
- * PAWN AND PLAYER ID'S are the same, change this? maybe not.
- */
+
 void MainWindow::drawPawns(QGraphicsScene *scene, std::shared_ptr<Student::GameBoard> gameBoard)
 {
     Common::CubeCoordinate coord = Common::CubeCoordinate(0,0,0);
@@ -103,6 +100,27 @@ void MainWindow::drawPawns(QGraphicsScene *scene, std::shared_ptr<Student::GameB
         gameBoard->getHex(coord)->addPawn(pawn);
         scene->addItem(pawnItem);
 
+    }
+}
+
+void MainWindow::addActors(QGraphicsScene* scene, std::shared_ptr<GameBoard> gameBoard)
+{
+    std::map<Common::CubeCoordinate, std::shared_ptr<Common::Hex>> hexes =
+            gameBoard->returnHexes();
+
+    int actorId = 1;
+    for(auto hex = hexes.begin(); hex != hexes.end(); ++hex) {
+        {
+            //TODO when more actors are in this should choose randomly
+            //random choice could be moved to the actoritem class;
+            //int randomIndex = rand() % (SUPPORTED_ACTORS.size()-1);
+            ActorItem* actorItem = new ActorItem(SUPPORTED_ACTORS.at(0), hex->second);
+            //TODO how to determine what class of actor is made here.
+            hex->second->addActor(std::make_shared<Common::Shark>(Common::Shark(actorId)));
+            scene->addItem(actorItem);
+            actorItem->hide();
+            connect(_hexItemVector.at(hex->first), &HexItem::turned, actorItem, &ActorItem::showActor);
+        }
     }
 }
 
