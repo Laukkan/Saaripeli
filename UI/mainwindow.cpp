@@ -72,7 +72,7 @@ void MainWindow::getPlayersFromDialog(int players)
     }
 }
 
-PawnItem *MainWindow::getPawnItem(int pawnId)
+PawnItem* MainWindow::getPawnItem(int pawnId)
 {
     return _pawnItems[pawnId];
 }

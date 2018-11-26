@@ -6,7 +6,6 @@
 #include <QRectF>
 #include <cmath>
 #include <QMimeData>
-#include <QWidget>
 
 
 const static int HEX_SIDES = 6;
@@ -102,7 +101,7 @@ void HexItem::dragLeaveEvent(QGraphicsSceneDragDropEvent *event)
 void HexItem::dropEvent(QGraphicsSceneDragDropEvent *event)
 {
     // Dropped PawnItem's old parent (HexItem) is the parent of the mimeData
-    HexItem* oldParent = dynamic_cast<HexItem*>(event->mimeData()->parent());
+    HexItem* oldParent = qobject_cast<HexItem*>(event->mimeData()->parent());
 
     // Do nothing when dropped on the same HexItem
     if (oldParent == this) {
@@ -114,7 +113,7 @@ void HexItem::dropEvent(QGraphicsSceneDragDropEvent *event)
     int pawnId = event->mimeData()->text().toInt();
 
     // Get the corresponding PawnItem for the pawnId
-    MainWindow* mainWindow = dynamic_cast<MainWindow*>(scene()->parent());
+    MainWindow* mainWindow = qobject_cast<MainWindow*>(scene()->parent());
     PawnItem* pawnItem = mainWindow->getPawnItem(pawnId);
 
     // Remove from old Common::Hex and in to the new
