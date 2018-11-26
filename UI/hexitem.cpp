@@ -3,7 +3,6 @@
 #include <QPainter>
 #include <QRectF>
 #include <cmath>
-#include <QWidget>
 
 
 const static int HEX_SIDES = 6;
