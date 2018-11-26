@@ -6,10 +6,15 @@
 #include <QGraphicsPixmapItem>
 #include <memory>
 
-class ActorItem : public QGraphicsPixmapItem
+class ActorItem :   public QObject, public QGraphicsPixmapItem
 {
+    Q_OBJECT
+    Q_INTERFACES(QGraphicsItem)
 public:
     ActorItem(std::string actorType, std::shared_ptr<Common::Hex> hex);
+
+public slots:
+    void showActor();
 
 private:
     QPixmap _actorImage;

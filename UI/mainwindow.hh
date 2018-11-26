@@ -38,6 +38,8 @@ private:
             QGraphicsScene* scene, std::shared_ptr<Student::GameBoard> gameBoard);
     void drawPawns(
             QGraphicsScene* scene, std::shared_ptr<Student::GameBoard> gameBoard);
+    void addActors(
+            QGraphicsScene* scene, std::shared_ptr<Student::GameBoard> gameBoard);
 
 };
 
