@@ -4,6 +4,8 @@
 #include <QPainter>
 #include <QRectF>
 #include <cmath>
+#include <QMimeData>
+#include <QWidget>
 
 
 const static int HEX_SIDES = 6;
@@ -37,6 +39,7 @@ HexItem::HexItem(int size, std::shared_ptr<Common::Hex> hex, QPointF center) :
     _pawnPositionArray[2] = QPointF(_center.x(), _center.y()-40);
 
     setAcceptedMouseButtons(Qt::LeftButton);
+    setAcceptDrops(true);
 }
 
 QPointF HexItem::pointyHexCorner(int side)
@@ -76,15 +79,43 @@ void HexItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
     emit turned();
 }
 
+void HexItem::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
+{
+    if (event->mimeData()->hasImage()) {
+        event->accept();
+        update();
+    }
+    else {
+        event->ignore();
+    }
+
+}
+
+void HexItem::dragLeaveEvent(QGraphicsSceneDragDropEvent *event)
+{
+    Q_UNUSED(event);
+    update();
+}
+
+void HexItem::dropEvent(QGraphicsSceneDragDropEvent *event)
+{
+    HexItem* oldParent = dynamic_cast<HexItem*>(event->mimeData()->parent());
+    if (oldParent == this) {
+        event->ignore();
+        return;
+    }
+    event->accept();
+    emit pawnDropped(oldParent, this, event->mimeData()->text().toInt());
+}
+
 QPointF HexItem::getPawnPosition()
 {
     return _pawnPositionArray[_hex->getPawnAmount()];
 }
 
-
-void HexItem::dropEvent(QGraphicsSceneDragDropEvent *event)
+std::shared_ptr<Common::Hex> HexItem::returnHex()
 {
-
+    return _hex;
 }
 
 }

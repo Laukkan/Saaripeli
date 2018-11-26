@@ -11,7 +11,7 @@
 
 namespace Student {
 
-class HexItem :public QObject, public QGraphicsPolygonItem
+class HexItem : public QObject, public QGraphicsPolygonItem
 {
     Q_OBJECT
     Q_INTERFACES(QGraphicsItem)
@@ -29,8 +29,11 @@ public:
 
     QPointF getPawnPosition();
 
+    std::shared_ptr<Common::Hex> returnHex();
+
 signals:
     void turned();
+    void pawnDropped(HexItem* oldHex, HexItem* newHex, int pawnId);
 
 protected:
     /**
@@ -38,6 +41,8 @@ protected:
      * @param event, Qt's mouse event class
      */
     virtual void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
+    virtual void dragEnterEvent(QGraphicsSceneDragDropEvent * event) override;
+    virtual void dragLeaveEvent(QGraphicsSceneDragDropEvent * event) override;
     virtual void dropEvent(QGraphicsSceneDragDropEvent * event) override;
 private:
 

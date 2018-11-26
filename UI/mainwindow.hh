@@ -5,6 +5,7 @@
 #include "igameboard.hh"
 #include "gameboard.hh"
 #include "hexitem.hh"
+#include "pawnitem.hh"
 
 #include <QMainWindow>
 #include <QGraphicsView>
@@ -25,21 +26,23 @@ public:
 
 public slots:
     void getPlayersFromDialog(int players);
+    void changePawnPosition(HexItem *oldParent,
+                            HexItem* newParent,
+                            int pawnId);
 
 private:
     std::vector<std::shared_ptr<Player>> _playerVector;
-    std::map<Common::CubeCoordinate, HexItem*> _hexItemVector;
+    std::map<Common::CubeCoordinate, HexItem*> _hexItems;
+    std::shared_ptr<Student::GameBoard> _gameBoard;
+    std::map<int, PawnItem*> _pawnItems;
 
     /**
      * @brief drawGameBoard Draws the game board by adding hexItems to the scene.
      * @param scene Scene to add the hexItems to.
      */
-    void drawGameBoard(
-            QGraphicsScene* scene, std::shared_ptr<Student::GameBoard> gameBoard);
-    void drawPawns(
-            QGraphicsScene* scene, std::shared_ptr<Student::GameBoard> gameBoard);
-    void addActors(
-            QGraphicsScene* scene, std::shared_ptr<Student::GameBoard> gameBoard);
+    void drawGameBoard(QGraphicsScene* scene);
+    void drawPawns(QGraphicsScene* scene);
+    void addActors(QGraphicsScene* scene);
 
 };
 

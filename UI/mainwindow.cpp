@@ -13,6 +13,7 @@
 
 #include <QDesktopWidget>
 #include <QGridLayout>
+#include <iostream>
 
 
 const static int RESO_W = 1280;
@@ -36,7 +37,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
    QGraphicsScene* scene = new QGraphicsScene(this);
    QGraphicsView* view = new QGraphicsView(this);
 
-   std::shared_ptr<Student::GameBoard> gameBoard(new Student::GameBoard());
+   _gameBoard = std::shared_ptr<Student::GameBoard>(new Student::GameBoard());
    std::shared_ptr<GameState> gameState(new GameState);
 
 
@@ -48,10 +49,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
    }
 
    std::shared_ptr<Common::IGameRunner> gameRunner =
-           Common::Initialization::getGameRunner(gameBoard, gameState, iplayers);
-   drawGameBoard(scene, gameBoard);
-   drawPawns(scene, gameBoard);
-   addActors(scene, gameBoard);
+           Common::Initialization::getGameRunner(_gameBoard, gameState, iplayers);
+   drawGameBoard(scene);
+   drawPawns(scene);
+   addActors(scene);
 
 
    setCentralWidget(view);
@@ -60,7 +61,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
 HexItem *MainWindow::getHexItem(Common::CubeCoordinate coord)
 {
-    return _hexItemVector[coord];
+    return _hexItems[coord];
 }
 
 void MainWindow::getPlayersFromDialog(int players)
@@ -71,11 +72,25 @@ void MainWindow::getPlayersFromDialog(int players)
     }
 }
 
-void MainWindow::drawGameBoard(
-        QGraphicsScene* scene, std::shared_ptr<Student::GameBoard> gameBoard)
+void MainWindow::changePawnPosition(
+        HexItem* oldParent, HexItem* newParent, int pawnId)
+{
+    std::shared_ptr<Common::Hex> oldHex = oldParent->returnHex();
+    PawnItem* pawnItem = _pawnItems[pawnId];
+
+    // Poistetaan vanhasta hexista ja lisätään uuteen
+    oldHex->removePawn(oldHex->givePawn(pawnId));
+    newParent->returnHex()->addPawn(pawnItem->returnPawn());
+
+    // Siirretään pawnItemin paikkaa
+    pawnItem->setOffset(newParent->getPawnPosition());
+    pawnItem->setParent(newParent);
+}
+
+void MainWindow::drawGameBoard(QGraphicsScene* scene)
 {
     std::map<Common::CubeCoordinate, std::shared_ptr<Common::Hex>> hexes =
-            gameBoard->returnHexes();
+            _gameBoard->returnHexes();
 
     for(auto hex = hexes.begin(); hex != hexes.end(); ++hex) {
         Common::CubeCoordinate cubeCoord = hex->first;
@@ -84,29 +99,32 @@ void MainWindow::drawGameBoard(
             HexItem* newHex = new HexItem(HEXSIZE,
                                           hex->second,
                                           pointCenter);
-            _hexItemVector[cubeCoord] = newHex;
+            connect(newHex, &HexItem::pawnDropped,
+                    this, &MainWindow::changePawnPosition);
+            _hexItems[cubeCoord] = newHex;
             scene->addItem(newHex);
         }
     }
 }
 
 
-void MainWindow::drawPawns(QGraphicsScene *scene, std::shared_ptr<Student::GameBoard> gameBoard)
+void MainWindow::drawPawns(QGraphicsScene *scene)
 {
     Common::CubeCoordinate coord = Common::CubeCoordinate(0,0,0);
     for(std::shared_ptr<Player> player : _playerVector){
-        std::shared_ptr<Common::Pawn> pawn(new Common::Pawn(player->getPlayerId(), player->getPlayerId(), coord));
-        PawnItem* pawnItem = new PawnItem(pawn, _hexItemVector[coord]);
-        gameBoard->getHex(coord)->addPawn(pawn);
+        int id = player->getPlayerId();
+        std::shared_ptr<Common::Pawn> pawn(new Common::Pawn(id, id, coord));
+        PawnItem* pawnItem = new PawnItem(pawn, _hexItems[coord]);
+        _pawnItems[id] = pawnItem;
+        _gameBoard->getHex(coord)->addPawn(pawn);
         scene->addItem(pawnItem);
-
     }
 }
 
-void MainWindow::addActors(QGraphicsScene* scene, std::shared_ptr<GameBoard> gameBoard)
+void MainWindow::addActors(QGraphicsScene* scene)
 {
     std::map<Common::CubeCoordinate, std::shared_ptr<Common::Hex>> hexes =
-            gameBoard->returnHexes();
+            _gameBoard->returnHexes();
 
     int actorId = 1;
     for(auto hex = hexes.begin(); hex != hexes.end(); ++hex) {
@@ -114,12 +132,15 @@ void MainWindow::addActors(QGraphicsScene* scene, std::shared_ptr<GameBoard> gam
             //TODO when more actors are in this should choose randomly
             //random choice could be moved to the actoritem class;
             //int randomIndex = rand() % (SUPPORTED_ACTORS.size()-1);
-            ActorItem* actorItem = new ActorItem(SUPPORTED_ACTORS.at(0), hex->second);
+            ActorItem* actorItem = new ActorItem(
+                        SUPPORTED_ACTORS.at(0), hex->second);
             //TODO how to determine what class of actor is made here.
-            hex->second->addActor(std::make_shared<Common::Shark>(Common::Shark(actorId)));
+            hex->second->addActor(
+                        std::make_shared<Common::Shark>(Common::Shark(actorId)));
             scene->addItem(actorItem);
             actorItem->hide();
-            connect(_hexItemVector.at(hex->first), &HexItem::turned, actorItem, &ActorItem::showActor);
+            connect(_hexItems.at(hex->first), &HexItem::turned,
+                    actorItem, &ActorItem::showActor);
         }
     }
 }

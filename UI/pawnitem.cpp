@@ -8,44 +8,49 @@
 
 namespace Student {
 
-PawnItem::PawnItem(std::shared_ptr<Common::Pawn> pawn, HexItem* hexItem):
-    _pawn(pawn), _hexItem(hexItem)
+PawnItem::PawnItem(std::shared_ptr<Common::Pawn> pawn, HexItem* parent):
+    _pawn(pawn), _hexItem(parent)
 {
+    setParent(parent);
     _pawnImage.load(":/pawn.png");
     setPixmap(_pawnImage.scaled(30,46));
-    setOffset(_hexItem->getPawnPosition());
+    setOffset(parent->getPawnPosition());
+
+    setFlag(QGraphicsItem::ItemIsMovable);
+    setAcceptHoverEvents(true);
+    setCursor(Qt::OpenHandCursor);
+}
+
+std::shared_ptr<Common::Pawn> PawnItem::returnPawn()
+{
+    return _pawn;
 }
 
 void PawnItem::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
+    Q_UNUSED(event);
     setCursor(Qt::ClosedHandCursor);
-
-    event->accept();
 }
 
 void PawnItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
+    Q_UNUSED(event);
     setCursor(Qt::OpenHandCursor);
 }
 
 void PawnItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
-    QDrag* drag = new QDrag(parentObject());
+    Q_UNUSED(event);
+    QDrag* drag = new QDrag(parent());
     QMimeData* mime = new QMimeData;
     drag->setMimeData(mime);
 
+    mime->setParent(parent());
+    mime->setImageData(_pawnImage);
+    mime->setText(QString::number(_pawn->getId()));
 
-    // Greyed out picture of the pawn
-    QPixmap tempPixmap = _pawnImage;
-    QPainter painter;
-    painter.begin(&tempPixmap);
-    painter.fillRect(_pawnImage.rect(), QColor(127, 127, 127, 127));
-    painter.end();
-    mime->setImageData(tempPixmap);
-
-    if (drag->exec(Qt::MoveAction) == Qt::MoveAction) {
-        setParentItem(nullptr);
-    }
+    drag->setPixmap(_pawnImage);
+    drag->exec();
     setCursor(Qt::OpenHandCursor);
 }
 
