@@ -30,7 +30,6 @@ protected:
 private:
     QPixmap _pawnImage;
     std::shared_ptr<Common::Pawn> _pawn;
-    HexItem* _hexItem;
 };
 
 }

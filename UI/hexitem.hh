@@ -29,8 +29,6 @@ public:
 
     QPointF getPawnPosition();
 
-    std::shared_ptr<Common::Hex> returnHex();
-
 signals:
     void turned();
     void pawnDropped(HexItem* oldHex, HexItem* newHex, int pawnId);

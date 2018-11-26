@@ -23,12 +23,10 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
 
     HexItem* getHexItem(Common::CubeCoordinate coord);
+    PawnItem* getPawnItem(int pawnId);
 
 public slots:
     void getPlayersFromDialog(int players);
-    void changePawnPosition(HexItem *oldParent,
-                            HexItem* newParent,
-                            int pawnId);
 
 private:
     std::vector<std::shared_ptr<Player>> _playerVector;

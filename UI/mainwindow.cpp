@@ -72,19 +72,9 @@ void MainWindow::getPlayersFromDialog(int players)
     }
 }
 
-void MainWindow::changePawnPosition(
-        HexItem* oldParent, HexItem* newParent, int pawnId)
+PawnItem *MainWindow::getPawnItem(int pawnId)
 {
-    std::shared_ptr<Common::Hex> oldHex = oldParent->returnHex();
-    PawnItem* pawnItem = _pawnItems[pawnId];
-
-    // Poistetaan vanhasta hexista ja lisätään uuteen
-    oldHex->removePawn(oldHex->givePawn(pawnId));
-    newParent->returnHex()->addPawn(pawnItem->returnPawn());
-
-    // Siirretään pawnItemin paikkaa
-    pawnItem->setOffset(newParent->getPawnPosition());
-    pawnItem->setParent(newParent);
+    return _pawnItems[pawnId];
 }
 
 void MainWindow::drawGameBoard(QGraphicsScene* scene)
@@ -99,8 +89,6 @@ void MainWindow::drawGameBoard(QGraphicsScene* scene)
             HexItem* newHex = new HexItem(HEXSIZE,
                                           hex->second,
                                           pointCenter);
-            connect(newHex, &HexItem::pawnDropped,
-                    this, &MainWindow::changePawnPosition);
             _hexItems[cubeCoord] = newHex;
             scene->addItem(newHex);
         }

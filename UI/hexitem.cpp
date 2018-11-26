@@ -1,5 +1,6 @@
 #include "hexitem.hh"
 #include "helpers.hh"
+#include "mainwindow.hh"
 
 #include <QPainter>
 #include <QRectF>
@@ -81,7 +82,8 @@ void HexItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void HexItem::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
 {
-    if (event->mimeData()->hasImage()) {
+    // Empty drags are ignored
+    if (event->mimeData()->hasText()) {
         event->accept();
         update();
     }
@@ -99,23 +101,34 @@ void HexItem::dragLeaveEvent(QGraphicsSceneDragDropEvent *event)
 
 void HexItem::dropEvent(QGraphicsSceneDragDropEvent *event)
 {
+    // Dropped PawnItem's old parent (HexItem) is the parent of the mimeData
     HexItem* oldParent = dynamic_cast<HexItem*>(event->mimeData()->parent());
+
+    // Do nothing when dropped on the same HexItem
     if (oldParent == this) {
         event->ignore();
         return;
     }
     event->accept();
-    emit pawnDropped(oldParent, this, event->mimeData()->text().toInt());
+    std::shared_ptr<Common::Hex> oldHex = oldParent->_hex;
+    int pawnId = event->mimeData()->text().toInt();
+
+    // Get the corresponding PawnItem for the pawnId
+    MainWindow* mainWindow = dynamic_cast<MainWindow*>(scene()->parent());
+    PawnItem* pawnItem = mainWindow->getPawnItem(pawnId);
+
+    // Remove from old Common::Hex and in to the new
+    oldHex->removePawn(oldHex->givePawn(pawnId));
+    _hex->addPawn(pawnItem->returnPawn());
+
+    // Move the position of the Pawn and correct the parent
+    pawnItem->setOffset(getPawnPosition());
+    pawnItem->setParent(this);
 }
 
 QPointF HexItem::getPawnPosition()
 {
     return _pawnPositionArray[_hex->getPawnAmount()];
-}
-
-std::shared_ptr<Common::Hex> HexItem::returnHex()
-{
-    return _hex;
 }
 
 }

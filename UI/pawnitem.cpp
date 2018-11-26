@@ -9,7 +9,7 @@
 namespace Student {
 
 PawnItem::PawnItem(std::shared_ptr<Common::Pawn> pawn, HexItem* parent):
-    _pawn(pawn), _hexItem(parent)
+    _pawn(pawn)
 {
     setParent(parent);
     _pawnImage.load(":/pawn.png");
@@ -45,8 +45,8 @@ void PawnItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
     QMimeData* mime = new QMimeData;
     drag->setMimeData(mime);
 
+    // Move information of the current parent and pawn Id
     mime->setParent(parent());
-    mime->setImageData(_pawnImage);
     mime->setText(QString::number(_pawn->getId()));
 
     drag->setPixmap(_pawnImage);
