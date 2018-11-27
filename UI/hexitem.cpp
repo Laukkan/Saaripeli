@@ -116,13 +116,15 @@ void HexItem::dropEvent(QGraphicsSceneDragDropEvent *event)
     MainWindow* mainWindow = qobject_cast<MainWindow*>(scene()->parent());
     PawnItem* pawnItem = mainWindow->getPawnItem(pawnId);
 
-    // Remove from old Common::Hex and in to the new
-    oldHex->removePawn(oldHex->givePawn(pawnId));
-    _hex->addPawn(pawnItem->returnPawn());
+    // Remove pawn from old Common::Hex
+    oldHex->removePawn(pawnItem->returnPawn());
 
     // Move the position of the Pawn and correct the parent
     pawnItem->setOffset(getPawnPosition());
     pawnItem->setParent(this);
+
+    // Add Pawn to Common::Hex last or getPawnPosition will return wrong
+    _hex->addPawn(pawnItem->returnPawn());
 }
 
 QPointF HexItem::getPawnPosition()
