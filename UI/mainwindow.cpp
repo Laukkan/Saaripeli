@@ -1,15 +1,12 @@
 #include "mainwindow.hh"
-#include "igamerunner.hh"
 #include "initialize.hh"
 #include "pawn.hh"
 #include "shark.hh"
-#include "hexitem.hh"
-#include "gamestate.hh"
 #include "player.hh"
 #include "startdialog.hh"
 #include "helpers.hh"
-#include "pawnitem.hh"
 #include "actoritem.hh"
+#include "illegalmoveexception.hh"
 
 #include <QDesktopWidget>
 #include <QGridLayout>
@@ -38,30 +35,59 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
    QGraphicsView* view = new QGraphicsView(this);
 
    _gameBoard = std::shared_ptr<Student::GameBoard>(new Student::GameBoard());
-   std::shared_ptr<GameState> gameState(new GameState);
+   _gameState = std::shared_ptr<GameState>(new GameState);
 
-
-
-   // Muutetaan _playerVector vektoriksi, jossa playerit ovat IPlayereitä.
+   // Change _playerVector to a vector where the players are IPlayers.
    std::vector<std::shared_ptr<Common::IPlayer>> iplayers;
    for (std::shared_ptr<Player> player : _playerVector) {
        iplayers.push_back(std::static_pointer_cast<Common::IPlayer>(player));
    }
 
-   std::shared_ptr<Common::IGameRunner> gameRunner =
-           Common::Initialization::getGameRunner(_gameBoard, gameState, iplayers);
+   _gameRunner = Common::Initialization::getGameRunner(_gameBoard,
+                                                       _gameState,
+                                                       iplayers);
    drawGameBoard(scene);
    drawPawns(scene);
    addActors(scene);
 
-
    setCentralWidget(view);
    view->setScene(scene);
+
+   // Set initial gameState
+   _gameState->changeGamePhase(Common::GamePhase::MOVEMENT);
+   _gameState->changePlayerTurn(_playerVector.at(0)->getPlayerId());
 }
 
-HexItem *MainWindow::getHexItem(Common::CubeCoordinate coord)
+HexItem* MainWindow::getHexItem(Common::CubeCoordinate coord)
 {
     return _hexItems[coord];
+}
+
+void MainWindow::movePawn(Common::CubeCoordinate origin,
+                          Common::CubeCoordinate target,
+                          int pawnId)
+{
+    if (_gameState->currentGamePhase() != Common::GamePhase::MOVEMENT) {
+        return;
+    }
+
+    try {
+        _gameRunner->movePawn(origin, target, pawnId);
+    }
+    catch (Common::IllegalMoveException) {
+        return;
+    }
+
+    PawnItem* pawnItem = _pawnItems.at(pawnId);
+    HexItem* newParent = _hexItems.at(target);
+
+    pawnItem->setOffset(newParent->getPawnPosition());
+    pawnItem->setParent(newParent);
+}
+
+void MainWindow::flipHex(Common::CubeCoordinate tileCoord)
+{
+    _gameRunner->flipTile(tileCoord);
 }
 
 void MainWindow::getPlayersFromDialog(int players)
@@ -70,11 +96,6 @@ void MainWindow::getPlayersFromDialog(int players)
         std::shared_ptr<Player> newPlayer(new Player(playerId));
         _playerVector.push_back(newPlayer);
     }
-}
-
-PawnItem* MainWindow::getPawnItem(int pawnId)
-{
-    return _pawnItems[pawnId];
 }
 
 void MainWindow::drawGameBoard(QGraphicsScene* scene)
@@ -89,6 +110,8 @@ void MainWindow::drawGameBoard(QGraphicsScene* scene)
             HexItem* newHex = new HexItem(HEXSIZE,
                                           hex->second,
                                           pointCenter);
+            connect(newHex, &HexItem::pawnDropped, this, &MainWindow::movePawn);
+            connect(newHex, &HexItem::hexFlipped, this, &MainWindow::flipHex);
             _hexItems[cubeCoord] = newHex;
             scene->addItem(newHex);
         }
@@ -101,10 +124,11 @@ void MainWindow::drawPawns(QGraphicsScene *scene)
     Common::CubeCoordinate coord = Common::CubeCoordinate(0,0,0);
     for(std::shared_ptr<Player> player : _playerVector){
         int id = player->getPlayerId();
-        std::shared_ptr<Common::Pawn> pawn(new Common::Pawn(id, id, coord));
+        _gameBoard->addPawn(id, id, coord);
+        std::shared_ptr<Common::Pawn> pawn =
+                _gameBoard->getHex(coord)->givePawn(id);
         PawnItem* pawnItem = new PawnItem(pawn, _hexItems[coord]);
         _pawnItems[id] = pawnItem;
-        _gameBoard->getHex(coord)->addPawn(pawn);
         scene->addItem(pawnItem);
     }
 }

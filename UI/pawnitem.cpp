@@ -11,7 +11,6 @@ namespace Student {
 PawnItem::PawnItem(std::shared_ptr<Common::Pawn> pawn, HexItem* parent):
     _pawn(pawn)
 {
-    setParent(parent);
     _pawnImage.load(":/pawn.png");
     setPixmap(_pawnImage.scaled(30,46));
     setOffset(parent->getPawnPosition());
@@ -19,6 +18,7 @@ PawnItem::PawnItem(std::shared_ptr<Common::Pawn> pawn, HexItem* parent):
     setFlag(QGraphicsItem::ItemIsMovable);
     setAcceptHoverEvents(true);
     setCursor(Qt::OpenHandCursor);
+    setParent(parent);
 }
 
 std::shared_ptr<Common::Pawn> PawnItem::returnPawn()

@@ -31,7 +31,10 @@ public:
 
 signals:
     void turned();
-    void pawnDropped(HexItem* oldHex, HexItem* newHex, int pawnId);
+    void pawnDropped(Common::CubeCoordinate origin,
+                     Common::CubeCoordinate target,
+                     int pawnId);
+    void hexFlipped(Common::CubeCoordinate tileCoord);
 
 protected:
     /**

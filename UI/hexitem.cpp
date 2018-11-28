@@ -1,6 +1,7 @@
 #include "hexitem.hh"
 #include "helpers.hh"
 #include "mainwindow.hh"
+#include "illegalmoveexception.hh"
 
 #include <QPainter>
 #include <QRectF>
@@ -25,7 +26,7 @@ namespace Student {
 
 
 HexItem::HexItem(int size, std::shared_ptr<Common::Hex> hex, QPointF center) :
-    _size(size),_hex(hex), _center(center)
+    _size(size), _hex(hex), _center(center)
 {
     // Get the corners around _center and make the hex.
     QVector<QPointF> points = getHexCorners();
@@ -65,17 +66,18 @@ QVector<QPointF> HexItem::getHexCorners()
 
 void HexItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    // Water-type doesn't interract
-    if (_hex->isWaterTile()) {
-        event->accept();
+    try {
+        emit hexFlipped(_hex->getCoordinates());
+    }
+    catch (Common::IllegalMoveException) {
+        event->ignore();
         return;
     }
 
-    // Everything else sinks
-    _hex->setPieceType("Water");
+    // Fix HexItem color to match Water type
+    event->accept();
     setBrush(HEX_TYPES.at("Water"));
     update();
-    event->accept();
     emit turned();
 }
 
@@ -109,27 +111,16 @@ void HexItem::dropEvent(QGraphicsSceneDragDropEvent *event)
         return;
     }
     event->accept();
-    std::shared_ptr<Common::Hex> oldHex = oldParent->_hex;
     int pawnId = event->mimeData()->text().toInt();
+    emit pawnDropped(oldParent->_hex->getCoordinates(),
+                     _hex->getCoordinates(),
+                     pawnId);
 
-    // Get the corresponding PawnItem for the pawnId
-    MainWindow* mainWindow = qobject_cast<MainWindow*>(scene()->parent());
-    PawnItem* pawnItem = mainWindow->getPawnItem(pawnId);
-
-    // Remove pawn from old Common::Hex
-    oldHex->removePawn(pawnItem->returnPawn());
-
-    // Move the position of the Pawn and correct the parent
-    pawnItem->setOffset(getPawnPosition());
-    pawnItem->setParent(this);
-
-    // Add Pawn to Common::Hex last or getPawnPosition will return wrong
-    _hex->addPawn(pawnItem->returnPawn());
 }
 
 QPointF HexItem::getPawnPosition()
 {
-    return _pawnPositionArray[_hex->getPawnAmount()];
+    return _pawnPositionArray[children().size()];
 }
 
 }
