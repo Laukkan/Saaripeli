@@ -5,6 +5,7 @@
 
 #include <QGraphicsPixmapItem>
 #include <memory>
+namespace Student {
 
 class ActorItem :   public QObject, public QGraphicsPixmapItem
 {
@@ -22,4 +23,5 @@ private:
     std::shared_ptr<Common::Hex> _hex;
 };
 
+}
 #endif // ACTORITEM_HH

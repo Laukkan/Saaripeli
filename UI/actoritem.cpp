@@ -7,6 +7,7 @@
 #include <QGraphicsPixmapItem>
 #include <QPointF>
 #include <QPainter>
+namespace Student {
 
 const static std::map<std::string,QString> ACTOR_TYPES {
     {"shark"    , ":/shark.png"},
@@ -24,4 +25,6 @@ ActorItem::ActorItem(std::string actorType, std::shared_ptr<Common::Hex> hex) :
 void ActorItem::showActor()
 {
     this->show();
+}
+
 }

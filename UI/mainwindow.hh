@@ -8,6 +8,7 @@
 #include "pawnitem.hh"
 #include "gamestate.hh"
 #include "igamerunner.hh"
+#include "gameinfobox.hh"
 
 #include <QMainWindow>
 #include <QGraphicsView>
@@ -39,6 +40,7 @@ private:
     std::map<int, PawnItem*> _pawnItems;
 
     std::shared_ptr<Student::GameBoard> _gameBoard;
+    GameInfoBox* _gameInfoBox;
     std::shared_ptr<GameState> _gameState;
     std::shared_ptr<Common::IGameRunner> _gameRunner;
 

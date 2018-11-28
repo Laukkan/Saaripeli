@@ -57,7 +57,7 @@ void MainWindow::initBoard(int playersAmount)
 
 
 
-    _gameInfoBox = new GameInfoBox(Helpers::gamePhaseToQString(_gameState->currentGamePhase()));
+    _gameInfoBox = new GameInfoBox(_gameState);
    scene->addWidget(_gameInfoBox);
    _gameInfoBox->move(600, -400);
 
@@ -68,7 +68,7 @@ void MainWindow::initBoard(int playersAmount)
     // Set initial gameState
     _gameState->changeGamePhase(Common::GamePhase::MOVEMENT);
     _gameState->changePlayerTurn(_playerVector.at(0)->getPlayerId());
-    _gameInfoBox->setGamePhaseDisplay(Helpers::gamePhaseToQString(_gameState->currentGamePhase()));
+    _gameInfoBox->updateGameState();
 }
 
 HexItem* MainWindow::getHexItem(Common::CubeCoordinate coord)
