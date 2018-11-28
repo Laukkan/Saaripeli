@@ -22,7 +22,8 @@ SOURCES += main.cpp \
     hexitem.cpp \
     pawnitem.cpp \
     helpers.cpp \
-    actoritem.cpp
+    actoritem.cpp \
+    gameinfobox.cpp
 
 HEADERS  += \
     gameboard.hh \
@@ -33,7 +34,8 @@ HEADERS  += \
     startdialog.hh \
     pawnitem.hh \
     helpers.hh \
-    actoritem.hh
+    actoritem.hh \
+    gameinfobox.hh
 
 INCLUDEPATH += $$PWD/../GameLogic/Engine
 DEPENDPATH += $$PWD/../GameLogic/Engine

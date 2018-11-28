@@ -3,10 +3,12 @@
 #include "initialize.hh"
 #include "pawn.hh"
 #include "shark.hh"
+
 #include "hexitem.hh"
 #include "gamestate.hh"
 #include "player.hh"
 #include "startdialog.hh"
+#include "gameinfobox.hh"
 #include "helpers.hh"
 #include "pawnitem.hh"
 #include "actoritem.hh"
@@ -54,6 +56,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
    drawPawns(scene);
    addActors(scene);
 
+   GameInfoBox* gameInfoBox = new GameInfoBox(Helpers::gamePhaseToQString(gameState->currentGamePhase()));
+   scene->addWidget(gameInfoBox);
+   gameInfoBox->move(600, -400);
 
    setCentralWidget(view);
    view->setScene(scene);

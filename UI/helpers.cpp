@@ -14,4 +14,15 @@ QPointF cubeToPixel(Common::CubeCoordinate cubeCoord)
     return QPointF(x, y);
 }
 
+QString gamePhaseToQString(Common::GamePhase gamePhase)
+{
+    if(gamePhase == 1){
+        return "Movement";
+    }
+    else if (gamePhase == 2){
+        return "Sinking";
+    }
+    else return "Spinning";
+}
+
 }

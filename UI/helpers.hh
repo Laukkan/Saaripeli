@@ -2,6 +2,8 @@
 #define HELPERS_HH
 
 #include <cubecoordinate.hh>
+#include <gamestate.hh>
+#include <QString>
 #include <QPointF>
 
 // Distance from each hexes corner to their middle.
@@ -18,6 +20,8 @@ namespace Helpers {
  * @return QPointF, cube coordinates changed in to pixel coordinates.
  */
 QPointF cubeToPixel(Common::CubeCoordinate cubeCoord);
+
+QString gamePhaseToQString(Common::GamePhase gamePhase);
 
 }
 #endif // HELPERS_HH
