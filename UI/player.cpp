@@ -4,7 +4,7 @@ namespace Student {
 
 
 Player::Player(int id):
-    _id(id)
+    _id(id), _actionsleft(3)
 {
 
 }

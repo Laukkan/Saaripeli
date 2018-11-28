@@ -50,8 +50,8 @@ void GameBoard::addPawn(int playerId, int pawnId)
 
 void GameBoard::addPawn(int playerId, int pawnId, Common::CubeCoordinate coord)
 {
-    std::shared_ptr<Common::Pawn> pawn(new Common::Pawn);
-    pawn->setId(pawnId,playerId);
+    std::shared_ptr<Common::Pawn> pawn(
+                new Common::Pawn(pawnId, playerId, coord));
     _pawns[pawnId] = pawn;
     _pawns[pawnId]->setCoordinates(coord);
     _hexes[coord]->addPawn(pawn);
