@@ -6,6 +6,8 @@ GameInfoBox::GameInfoBox(std::shared_ptr<GameState> gameState):
     _gameState(gameState)
 {
     _layout = new QGridLayout();
+    this->setTitle("Game Information");
+    this->resize(100,50);
 
     _gamePhaseLabel = new QLabel(Helpers::gamePhaseToQString(_gameState->currentGamePhase()));
     _layout->addWidget(_gamePhaseLabel);

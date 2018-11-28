@@ -5,14 +5,22 @@
 #include <QCursor>
 #include <QMimeData>
 #include <QPainter>
+#include <QString>
+
+const static std::map<QString,QString> PAWN_IMAGES {
+    {"White"  , ":/whitepawn.png"},
+    {"Blue"   ,  ":/bluepawn.png"},
+    {"Red"    ,   ":/redpawn.png"},
+};
+
 
 namespace Student {
 
-PawnItem::PawnItem(std::shared_ptr<Common::Pawn> pawn, HexItem* parent):
-    _pawn(pawn)
+PawnItem::PawnItem(std::shared_ptr<Player> player, std::shared_ptr<Common::Pawn> pawn, HexItem* parent):
+    _pawn(pawn), _player(player)
 {
-    _pawnImage.load(":/pawn.png");
-    setPixmap(_pawnImage.scaled(30,46));
+    _pawnImage.load(PAWN_IMAGES.at(_player->getPawnColor()));
+    setPixmap(_pawnImage.scaled(15,23));
     setOffset(parent->getPawnPosition());
 
     setFlag(QGraphicsItem::ItemIsMovable);

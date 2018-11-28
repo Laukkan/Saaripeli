@@ -132,7 +132,7 @@ void MainWindow::drawPawns(QGraphicsScene *scene)
         _gameBoard->addPawn(id, id, coord);
         std::shared_ptr<Common::Pawn> pawn =
                 _gameBoard->getHex(coord)->givePawn(id);
-        PawnItem* pawnItem = new PawnItem(pawn, _hexItems[coord]);
+        PawnItem* pawnItem = new PawnItem(player, pawn, _hexItems[coord]);
         _pawnItems[id] = pawnItem;
         scene->addItem(pawnItem);
     }

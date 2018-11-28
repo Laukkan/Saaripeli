@@ -2,6 +2,7 @@
 #define PLAYER_HH
 
 #include "iplayer.hh"
+#include "QString"
 
 namespace Student {
 
@@ -34,9 +35,12 @@ public:
      */
     virtual void setActionsLeft(unsigned int actionsLeft);
 
+    QString getPawnColor();
+
 private:
     int _id;
     unsigned int _actionsleft;
+    QString _pawnColor;
 };
 
 }
