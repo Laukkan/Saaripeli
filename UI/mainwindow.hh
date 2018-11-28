@@ -27,11 +27,11 @@ public:
     HexItem* getHexItem(Common::CubeCoordinate coord);
 
 public slots:
-    void getPlayersFromDialog(int players);
     void movePawn(Common::CubeCoordinate origin,
                   Common::CubeCoordinate target,
                   int pawnId);
     void flipHex(Common::CubeCoordinate tileCoord);
+    void initBoard(int playersAmount);
 
 private:
     std::vector<std::shared_ptr<Player>> _playerVector;

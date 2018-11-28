@@ -12,12 +12,8 @@ public:
     StartDialog();
     int getPlayers();
 
-signals:
-    void confirmed(int _players);
-
 public slots:
     void playersChange(const QString & text);
-    void confirm();
 
 private:
     int _players;

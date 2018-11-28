@@ -33,9 +33,7 @@ StartDialog::StartDialog()
 
    connect(playersAmount, &QComboBox::currentTextChanged,
            this, &StartDialog::playersChange);
-   connect(okButton,&QPushButton::pressed,this,&StartDialog::confirm);
-   connect(okButton,&QPushButton::pressed,this,&StartDialog::accept);
-
+   connect(okButton, &QPushButton::pressed, this, &StartDialog::accept);
 }
 
 int StartDialog::getPlayers()
@@ -48,9 +46,5 @@ void StartDialog::playersChange(const QString &text)
     _players = text.toInt();
 }
 
-void StartDialog::confirm()
-{
-    emit confirmed(_players);
-}
 
 }

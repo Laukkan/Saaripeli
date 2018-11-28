@@ -11,6 +11,7 @@
 #include <QDesktopWidget>
 #include <QGridLayout>
 #include <iostream>
+#include <QApplication>
 
 
 const static int RESO_W = 1280;
@@ -25,37 +26,40 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
    setMinimumSize(RESO_W, RESO_H);
    setWindowIcon(QIcon(":/ak47_icon.png"));
+}
 
-   StartDialog startDialog;
-   connect(&startDialog, &StartDialog::confirmed,
-           this, &MainWindow::getPlayersFromDialog);
-   startDialog.exec();
+void MainWindow::initBoard(int playersAmount)
+{
+    for(int playerId = 1; playerId <= playersAmount; playerId++){
+        std::shared_ptr<Player> newPlayer(new Player(playerId));
+        _playerVector.push_back(newPlayer);
+    }
 
-   QGraphicsScene* scene = new QGraphicsScene(this);
-   QGraphicsView* view = new QGraphicsView(this);
+    QGraphicsScene* scene = new QGraphicsScene(this);
+    QGraphicsView* view = new QGraphicsView(this);
 
-   _gameBoard = std::shared_ptr<Student::GameBoard>(new Student::GameBoard());
-   _gameState = std::shared_ptr<GameState>(new GameState);
+    _gameBoard = std::shared_ptr<Student::GameBoard>(new Student::GameBoard());
+    _gameState = std::shared_ptr<GameState>(new GameState);
 
-   // Change _playerVector to a vector where the players are IPlayers.
-   std::vector<std::shared_ptr<Common::IPlayer>> iplayers;
-   for (std::shared_ptr<Player> player : _playerVector) {
-       iplayers.push_back(std::static_pointer_cast<Common::IPlayer>(player));
-   }
+    // Change _playerVector to a vector where the players are IPlayers.
+    std::vector<std::shared_ptr<Common::IPlayer>> iplayers;
+    for (std::shared_ptr<Player> player : _playerVector) {
+        iplayers.push_back(std::static_pointer_cast<Common::IPlayer>(player));
+    }
 
-   _gameRunner = Common::Initialization::getGameRunner(_gameBoard,
-                                                       _gameState,
-                                                       iplayers);
-   drawGameBoard(scene);
-   drawPawns(scene);
-   addActors(scene);
+    _gameRunner = Common::Initialization::getGameRunner(_gameBoard,
+                                                        _gameState,
+                                                        iplayers);
+    drawGameBoard(scene);
+    drawPawns(scene);
+    addActors(scene);
 
-   setCentralWidget(view);
-   view->setScene(scene);
+    setCentralWidget(view);
+    view->setScene(scene);
 
-   // Set initial gameState
-   _gameState->changeGamePhase(Common::GamePhase::MOVEMENT);
-   _gameState->changePlayerTurn(_playerVector.at(0)->getPlayerId());
+    // Set initial gameState
+    _gameState->changeGamePhase(Common::GamePhase::MOVEMENT);
+    _gameState->changePlayerTurn(_playerVector.at(0)->getPlayerId());
 }
 
 HexItem* MainWindow::getHexItem(Common::CubeCoordinate coord)
@@ -88,14 +92,6 @@ void MainWindow::movePawn(Common::CubeCoordinate origin,
 void MainWindow::flipHex(Common::CubeCoordinate tileCoord)
 {
     _gameRunner->flipTile(tileCoord);
-}
-
-void MainWindow::getPlayersFromDialog(int players)
-{
-    for(int playerId = 1; playerId <= players; playerId++){
-        std::shared_ptr<Player> newPlayer(new Player(playerId));
-        _playerVector.push_back(newPlayer);
-    }
 }
 
 void MainWindow::drawGameBoard(QGraphicsScene* scene)
