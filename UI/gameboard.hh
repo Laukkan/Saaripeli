@@ -144,6 +144,13 @@ public:
      */
     std::map<Common::CubeCoordinate, std::shared_ptr<Common::Hex>> returnHexes();
 
+    /**
+     * @brief checkIfActorExists checks if any actors of a given type are on
+     * the board
+     * @param actorType, the type of the actor to search for.
+     * @return bool:true, if actors exist, false otherwise.
+     */
+    bool checkIfActorExists(std::string actorType);
 
 private:
     std::unordered_map<int, std::shared_ptr<Common::Pawn>> _pawns;

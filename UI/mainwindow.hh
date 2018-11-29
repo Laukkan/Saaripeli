@@ -6,6 +6,7 @@
 #include "gameboard.hh"
 #include "hexitem.hh"
 #include "pawnitem.hh"
+#include "actoritem.hh"
 #include "gamestate.hh"
 #include "igamerunner.hh"
 #include "gameinfobox.hh"
@@ -27,10 +28,17 @@ public:
 
     HexItem* getHexItem(Common::CubeCoordinate coord);
 
+    int getNextPlayerId();
+
+    void resetPlayerMoves(int playerId);
+
 public slots:
     void movePawn(Common::CubeCoordinate origin,
                   Common::CubeCoordinate target,
                   int pawnId);
+    void moveActor(Common::CubeCoordinate origin,
+                  Common::CubeCoordinate target,
+                  int actorId);
     void flipHex(Common::CubeCoordinate tileCoord);
     void initBoard(int playersAmount);
     void spinWheel();
@@ -39,6 +47,7 @@ private:
     std::vector<std::shared_ptr<Player>> _playerVector;
     std::map<Common::CubeCoordinate, HexItem*> _hexItems;
     std::map<int, PawnItem*> _pawnItems;
+    std::map<int, ActorItem*> _actorItems;
 
     QGraphicsScene* _scene;
     std::shared_ptr<Student::GameBoard> _gameBoard;

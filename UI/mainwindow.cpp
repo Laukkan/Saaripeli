@@ -6,7 +6,6 @@
 #include "player.hh"
 #include "startdialog.hh"
 #include "helpers.hh"
-#include "actoritem.hh"
 #include "illegalmoveexception.hh"
 
 #include <QDesktopWidget>
@@ -17,7 +16,6 @@
 
 const static int RESO_W = 1280;
 const static int RESO_H = 720;
-const static std::vector<std::string> SUPPORTED_ACTORS = {"shark"};
 
 
 namespace Student {
@@ -70,12 +68,48 @@ void MainWindow::initBoard(int playersAmount)
 
 void MainWindow::spinWheel()
 {
-    std::pair<std::string,std::string> spinResult = _gameRunner->spinWheel();
+    if (_gameState->currentGamePhase() != Common::GamePhase::SPINNING) {
+        return;
+    }
+    try {
+        std::pair<std::string,std::string> spinResult = _gameRunner->spinWheel();
+        //todo add dolphins in actors
+        if(_gameBoard->checkIfActorExists(spinResult.first)
+                and ACTOR_TYPES.find(spinResult.first) != ACTOR_TYPES.end()){
+            _gameInfoBox->updateActor(QPixmap(ACTOR_TYPES.at(spinResult.first)),spinResult.second);
+        }
+        //TODO message on spinning an actor that doesn't exist
+        else {
+            _gameState->changeGamePhase(Common::GamePhase::MOVEMENT);
+            _gameState->changePlayerTurn(getNextPlayerId());
+            _gameInfoBox->updateGameState();
+        }
+    }
+    catch (Common::IllegalMoveException) {
+        return;
+    }
 }
 
 HexItem* MainWindow::getHexItem(Common::CubeCoordinate coord)
 {
     return _hexItems[coord];
+}
+
+int MainWindow::getNextPlayerId()
+{
+    if(_gameState->currentPlayer()+1 > _playerVector.size()){
+        return _playerVector.at(0)->getPlayerId();
+    }
+    else return _playerVector.at(_gameState->currentPlayer()+1)->getPlayerId();
+}
+
+void MainWindow::resetPlayerMoves(int playerId)
+{
+    for(std::shared_ptr<Player> player : _playerVector){
+        if(player->getPlayerId() == playerId){
+            player->setActionsLeft(3);
+        }
+    }
 }
 
 void MainWindow::movePawn(Common::CubeCoordinate origin,
@@ -98,7 +132,34 @@ void MainWindow::movePawn(Common::CubeCoordinate origin,
 
     pawnItem->setOffset(newParent->getPawnPosition());
     pawnItem->setParent(newParent);
+
+    resetPlayerMoves(_gameState->currentPlayer());
     _gameState->changeGamePhase(Common::GamePhase::SINKING);
+    _gameInfoBox->updateGameState();
+}
+
+void MainWindow::moveActor(Common::CubeCoordinate origin,
+                          Common::CubeCoordinate target,
+                          int actorId)
+{
+    if (_gameState->currentGamePhase() != Common::GamePhase::SPINNING) {
+        return;
+    }
+
+    try {
+        _gameRunner->moveActor(origin, target, actorId, "1");
+    }
+    catch (Common::IllegalMoveException) {
+        return;
+    }
+
+    ActorItem* actorItem = _actorItems.at(actorId);
+    HexItem* newParent = _hexItems.at(target);
+
+    actorItem->setOffset(newParent->getActorPosition());
+    actorItem->setParent(newParent);
+    _gameState->changeGamePhase(Common::GamePhase::MOVEMENT);
+    _gameState->changePlayerTurn(_playerVector.at(1)->getPlayerId());
     _gameInfoBox->updateGameState();
 }
 
@@ -117,6 +178,8 @@ void MainWindow::flipHex(Common::CubeCoordinate tileCoord)
     if(!_gameBoard->getHex(tileCoord)->getActors().empty()){
         addActorItem(_gameBoard->returnHexes().at(tileCoord));
     }
+    _gameState->changeGamePhase(Common::GamePhase::SPINNING);
+    _gameInfoBox->updateGameState();
 }
 
 void MainWindow::drawGameBoard()
@@ -133,6 +196,7 @@ void MainWindow::drawGameBoard()
                                           pointCenter);
             connect(newHex, &HexItem::pawnDropped, this, &MainWindow::movePawn);
             connect(newHex, &HexItem::hexFlipped, this, &MainWindow::flipHex);
+            connect(newHex, &HexItem::actorDropped, this, &MainWindow::moveActor);
             _hexItems[cubeCoord] = newHex;
             _scene->addItem(newHex);
         }
@@ -157,7 +221,8 @@ void MainWindow::drawPawns()
 void MainWindow::addActorItem(std::shared_ptr<Common::Hex> hex)
 {
     //TODO transports
-    ActorItem* actorItem = new ActorItem((hex->getActors().at(0)->getActorType()), hex);
+    ActorItem* actorItem = new ActorItem((hex->getActors().at(0)), _hexItems.at(hex->getCoordinates()));
+    _actorItems[(hex->getActors().at(0)->getId())] = actorItem;
     _scene->addItem(actorItem);
 }
 

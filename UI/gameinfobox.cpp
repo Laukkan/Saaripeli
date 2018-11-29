@@ -19,6 +19,12 @@ GameInfoBox::GameInfoBox(std::shared_ptr<GameState> gameState):
     _layout->addWidget(_spinButton);
     connect(_spinButton, &QPushButton::pressed, this, &GameInfoBox::emitSpinButtonPressed);
 
+    _actorImageLabel = new QLabel();
+    _layout->addWidget(_actorImageLabel);
+
+    _actorMovesLabel = new QLabel();
+    _layout->addWidget(_actorMovesLabel);
+
     this->setLayout(_layout);
 }
 
@@ -29,6 +35,12 @@ void GameInfoBox::updateGameState(){
         _spinButton->show();
     }
     else _spinButton->hide();
+}
+
+void GameInfoBox::updateActor(QPixmap image, std::string moves)
+{
+    _actorImageLabel->setPixmap(image);
+    _actorMovesLabel->setText(QString::fromStdString(moves));
 }
 
 void GameInfoBox::emitSpinButtonPressed()

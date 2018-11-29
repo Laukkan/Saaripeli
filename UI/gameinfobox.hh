@@ -16,6 +16,7 @@ public:
     GameInfoBox(std::shared_ptr<GameState> gameState);
 
     void updateGameState();
+    void updateActor(QPixmap image, std::string moves);
 
 signals:
    void spinButtonPressed();
@@ -27,6 +28,8 @@ private:
     QLabel* _gamePhaseLabel;
     QLabel* _playerTurnLabel;
     QPushButton* _spinButton;
+    QLabel* _actorImageLabel;
+    QLabel* _actorMovesLabel;
 
     QGridLayout* _layout;
     std::shared_ptr<GameState> _gameState;

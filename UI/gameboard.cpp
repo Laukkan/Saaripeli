@@ -141,5 +141,14 @@ GameBoard::returnHexes()
     return _hexes;
 }
 
+bool GameBoard::checkIfActorExists(std::string actorType)
+{
+    for(auto actor : _actors) {
+        if(actor.second->getActorType() == actorType){
+            return true;
+        }
+    }
+    return false;
+}
 
 }

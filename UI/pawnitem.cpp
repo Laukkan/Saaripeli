@@ -55,7 +55,7 @@ void PawnItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 
     // Move information of the current parent and pawn Id
     mime->setParent(parent());
-    mime->setText(QString::number(_pawn->getId()));
+    mime->setText("pawn;" + QString::number(_pawn->getId()));
 
     drag->setPixmap(_pawnImage);
     drag->exec();

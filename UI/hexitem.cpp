@@ -101,16 +101,27 @@ void HexItem::dropEvent(QGraphicsSceneDragDropEvent *event)
         return;
     }
     event->accept();
-    int pawnId = event->mimeData()->text().toInt();
-    emit pawnDropped(oldParent->_hex->getCoordinates(),
-                     _hex->getCoordinates(),
-                     pawnId);
-
+    QStringList eventData = event->mimeData()->text().split(";");
+    if(eventData.at(0) == "pawn") {
+        emit pawnDropped(oldParent->_hex->getCoordinates(),
+                         _hex->getCoordinates(),
+                         eventData.at(1).toInt());
+    }
+    else {
+        emit actorDropped(oldParent->_hex->getCoordinates(),
+                         _hex->getCoordinates(),
+                         eventData.at(1).toInt());
+    }
 }
 
 QPointF HexItem::getPawnPosition()
 {
     return _pawnPositionArray[children().size()];
+}
+
+QPointF HexItem::getActorPosition()
+{
+    return QPointF(_center.x()-15, _center.y()-23);
 }
 
 void HexItem::flip()

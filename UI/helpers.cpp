@@ -1,9 +1,9 @@
 #include "helpers.hh"
 #include <math.h>
+#include <map>
 
 
 namespace Helpers {
-
 
 QPointF cubeToPixel(Common::CubeCoordinate cubeCoord)
 {

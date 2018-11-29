@@ -27,6 +27,7 @@ public:
      */
 
     QPointF getPawnPosition();
+    QPointF getActorPosition();
 
     void flip();
 
@@ -34,6 +35,9 @@ signals:
     void pawnDropped(Common::CubeCoordinate origin,
                      Common::CubeCoordinate target,
                      int pawnId);
+    void actorDropped(Common::CubeCoordinate origin,
+                     Common::CubeCoordinate target,
+                     int actorId);
     void hexFlipped(Common::CubeCoordinate tileCoord);
 
 protected:
