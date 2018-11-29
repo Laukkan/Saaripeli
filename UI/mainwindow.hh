@@ -33,12 +33,14 @@ public slots:
                   int pawnId);
     void flipHex(Common::CubeCoordinate tileCoord);
     void initBoard(int playersAmount);
+    void spinWheel();
 
 private:
     std::vector<std::shared_ptr<Player>> _playerVector;
     std::map<Common::CubeCoordinate, HexItem*> _hexItems;
     std::map<int, PawnItem*> _pawnItems;
 
+    QGraphicsScene* _scene;
     std::shared_ptr<Student::GameBoard> _gameBoard;
     GameInfoBox* _gameInfoBox;
     std::shared_ptr<GameState> _gameState;
@@ -48,9 +50,9 @@ private:
      * @brief drawGameBoard Draws the game board by adding hexItems to the scene.
      * @param scene Scene to add the hexItems to.
      */
-    void drawGameBoard(QGraphicsScene* scene);
-    void drawPawns(QGraphicsScene* scene);
-    void addActors(QGraphicsScene* scene);
+    void drawGameBoard();
+    void drawPawns();
+    void addActorItem(std::shared_ptr<Common::Hex> hex);
 
 };
 

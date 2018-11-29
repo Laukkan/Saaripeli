@@ -15,12 +15,21 @@ GameInfoBox::GameInfoBox(std::shared_ptr<GameState> gameState):
     _playerTurnLabel = new QLabel(QString::number(_gameState->currentPlayer()));
     _layout->addWidget(_playerTurnLabel);
 
+    _spinButton = new QPushButton("Spin");
+    _layout->addWidget(_spinButton);
+    connect(_spinButton, &QPushButton::pressed, this, &GameInfoBox::emitSpinButtonPressed);
+
     this->setLayout(_layout);
 }
 
 void GameInfoBox::updateGameState(){
     _gamePhaseLabel->setText(Helpers::gamePhaseToQString(_gameState->currentGamePhase()));
     _playerTurnLabel->setText("Player " + QString::number(_gameState->currentPlayer()));
+}
+
+void GameInfoBox::emitSpinButtonPressed()
+{
+    emit spinButtonPressed();
 }
 
 }

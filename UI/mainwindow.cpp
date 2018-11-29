@@ -36,7 +36,7 @@ void MainWindow::initBoard(int playersAmount)
         _playerVector.push_back(newPlayer);
     }
 
-    QGraphicsScene* scene = new QGraphicsScene(this);
+    _scene = new QGraphicsScene(this);
     QGraphicsView* view = new QGraphicsView(this);
 
     _gameBoard = std::shared_ptr<Student::GameBoard>(new Student::GameBoard());
@@ -51,24 +51,26 @@ void MainWindow::initBoard(int playersAmount)
     _gameRunner = Common::Initialization::getGameRunner(_gameBoard,
                                                         _gameState,
                                                         iplayers);
-    drawGameBoard(scene);
-    drawPawns(scene);
-    addActors(scene);
-
-
+    drawGameBoard();
+    drawPawns();
 
     _gameInfoBox = new GameInfoBox(_gameState);
-   scene->addWidget(_gameInfoBox);
-   _gameInfoBox->move(600, -400);
+    connect(_gameInfoBox, &GameInfoBox::spinButtonPressed, this, &MainWindow::spinWheel);
+    _scene->addWidget(_gameInfoBox);
+    _gameInfoBox->move(600, -400);
 
     setCentralWidget(view);
-    view->setScene(scene);
-
+    view->setScene(_scene);
 
     // Set initial gameState
     _gameState->changeGamePhase(Common::GamePhase::MOVEMENT);
     _gameState->changePlayerTurn(_playerVector.at(0)->getPlayerId());
     _gameInfoBox->updateGameState();
+}
+
+void MainWindow::spinWheel()
+{
+    _gameRunner->spinWheel();
 }
 
 HexItem* MainWindow::getHexItem(Common::CubeCoordinate coord)
@@ -96,14 +98,18 @@ void MainWindow::movePawn(Common::CubeCoordinate origin,
 
     pawnItem->setOffset(newParent->getPawnPosition());
     pawnItem->setParent(newParent);
+    _gameState->changeGamePhase(Common::GamePhase::SINKING);
 }
 
 void MainWindow::flipHex(Common::CubeCoordinate tileCoord)
 {
     _gameRunner->flipTile(tileCoord);
+    if(!_gameBoard->getHex(tileCoord)->getActors().empty()){
+        addActorItem(_gameBoard->returnHexes().at(tileCoord));
+    }
 }
 
-void MainWindow::drawGameBoard(QGraphicsScene* scene)
+void MainWindow::drawGameBoard()
 {
     std::map<Common::CubeCoordinate, std::shared_ptr<Common::Hex>> hexes =
             _gameBoard->returnHexes();
@@ -118,13 +124,13 @@ void MainWindow::drawGameBoard(QGraphicsScene* scene)
             connect(newHex, &HexItem::pawnDropped, this, &MainWindow::movePawn);
             connect(newHex, &HexItem::hexFlipped, this, &MainWindow::flipHex);
             _hexItems[cubeCoord] = newHex;
-            scene->addItem(newHex);
+            _scene->addItem(newHex);
         }
     }
 }
 
 
-void MainWindow::drawPawns(QGraphicsScene *scene)
+void MainWindow::drawPawns()
 {
     Common::CubeCoordinate coord = Common::CubeCoordinate(0,0,0);
     for(std::shared_ptr<Player> player : _playerVector){
@@ -134,32 +140,15 @@ void MainWindow::drawPawns(QGraphicsScene *scene)
                 _gameBoard->getHex(coord)->givePawn(id);
         PawnItem* pawnItem = new PawnItem(player, pawn, _hexItems[coord]);
         _pawnItems[id] = pawnItem;
-        scene->addItem(pawnItem);
+        _scene->addItem(pawnItem);
     }
 }
 
-void MainWindow::addActors(QGraphicsScene* scene)
+void MainWindow::addActorItem(std::shared_ptr<Common::Hex> hex)
 {
-    std::map<Common::CubeCoordinate, std::shared_ptr<Common::Hex>> hexes =
-            _gameBoard->returnHexes();
-
-    int actorId = 1;
-    for(auto hex = hexes.begin(); hex != hexes.end(); ++hex) {
-        {
-            //TODO when more actors are in this should choose randomly
-            //random choice could be moved to the actoritem class;
-            //int randomIndex = rand() % (SUPPORTED_ACTORS.size()-1);
-            ActorItem* actorItem = new ActorItem(
-                        SUPPORTED_ACTORS.at(0), hex->second);
-            //TODO how to determine what class of actor is made here.
-            hex->second->addActor(
-                        std::make_shared<Common::Shark>(Common::Shark(actorId)));
-            scene->addItem(actorItem);
-            actorItem->hide();
-            connect(_hexItems.at(hex->first), &HexItem::turned,
-                    actorItem, &ActorItem::showActor);
-        }
-    }
+    //TODO transports
+    ActorItem* actorItem = new ActorItem((hex->getActors().at(0)->getActorType()), hex);
+    _scene->addItem(actorItem);
 }
 
 }

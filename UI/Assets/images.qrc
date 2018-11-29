@@ -5,5 +5,8 @@
         <file>redpawn.png</file>
         <file>bluepawn.png</file>
         <file>whitepawn.png</file>
+        <file>seamunster.png</file>
+        <file>vortex.png</file>
+        <file>kraken.png</file>
     </qresource>
 </RCC>
