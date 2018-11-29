@@ -70,7 +70,7 @@ void MainWindow::initBoard(int playersAmount)
 
 void MainWindow::spinWheel()
 {
-    _gameRunner->spinWheel();
+    std::pair<std::string,std::string> spinResult = _gameRunner->spinWheel();
 }
 
 HexItem* MainWindow::getHexItem(Common::CubeCoordinate coord)
@@ -99,11 +99,21 @@ void MainWindow::movePawn(Common::CubeCoordinate origin,
     pawnItem->setOffset(newParent->getPawnPosition());
     pawnItem->setParent(newParent);
     _gameState->changeGamePhase(Common::GamePhase::SINKING);
+    _gameInfoBox->updateGameState();
 }
 
 void MainWindow::flipHex(Common::CubeCoordinate tileCoord)
 {
-    _gameRunner->flipTile(tileCoord);
+    if (_gameState->currentGamePhase() != Common::GamePhase::SINKING) {
+        return;
+    }
+    try {
+        _gameRunner->flipTile(tileCoord);
+    }
+    catch (Common::IllegalMoveException) {
+        return;
+    }
+    _hexItems.at(tileCoord)->flip();
     if(!_gameBoard->getHex(tileCoord)->getActors().empty()){
         addActorItem(_gameBoard->returnHexes().at(tileCoord));
     }

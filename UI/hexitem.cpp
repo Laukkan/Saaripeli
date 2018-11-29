@@ -65,20 +65,11 @@ QVector<QPointF> HexItem::getHexCorners()
 
 void HexItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    try {
-        emit hexFlipped(_hex->getCoordinates());
-    }
-    catch (Common::IllegalMoveException) {
-        event->ignore();
-        return;
-    }
-
-    // Fix HexItem color to match Water type
+    emit hexFlipped(_hex->getCoordinates());
     event->accept();
-    setBrush(HEX_TYPES.at("Water"));
-    update();
-    emit turned();
 }
+
+
 
 void HexItem::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
 {
@@ -120,6 +111,13 @@ void HexItem::dropEvent(QGraphicsSceneDragDropEvent *event)
 QPointF HexItem::getPawnPosition()
 {
     return _pawnPositionArray[children().size()];
+}
+
+void HexItem::flip()
+{
+    // Fix HexItem color to match Water type
+    setBrush(HEX_TYPES.at("Water"));
+    update();
 }
 
 }

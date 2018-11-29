@@ -19,18 +19,18 @@ public:
 
     HexItem(int size, std::shared_ptr<Common::Hex> hex, QPointF center);
 
-    QPointF pointyHexCorner(int side);
+
 
     /**
      * @brief getHexCorners Returns a vector with all of the hexes corners.
      * @return QVector<QPointF> , a vector with all of the hexes corners.
      */
-    QVector<QPointF> getHexCorners();
 
     QPointF getPawnPosition();
 
+    void flip();
+
 signals:
-    void turned();
     void pawnDropped(Common::CubeCoordinate origin,
                      Common::CubeCoordinate target,
                      int pawnId);
@@ -45,6 +45,7 @@ protected:
     virtual void dragEnterEvent(QGraphicsSceneDragDropEvent * event) override;
     virtual void dragLeaveEvent(QGraphicsSceneDragDropEvent * event) override;
     virtual void dropEvent(QGraphicsSceneDragDropEvent * event) override;
+
 private:
 
     /**
@@ -63,6 +64,13 @@ private:
     QPointF _center;
 
     QPointF _pawnPositionArray[3];
+
+    /**
+     * @brief getHexCorners Returns a vector with all of the hexes corners.
+     * @return QVector<QPointF> , a vector with all of the hexes corners.
+     */
+    QVector<QPointF> getHexCorners();
+    QPointF pointyHexCorner(int side);
 };
 
 }

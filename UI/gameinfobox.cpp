@@ -25,6 +25,10 @@ GameInfoBox::GameInfoBox(std::shared_ptr<GameState> gameState):
 void GameInfoBox::updateGameState(){
     _gamePhaseLabel->setText(Helpers::gamePhaseToQString(_gameState->currentGamePhase()));
     _playerTurnLabel->setText("Player " + QString::number(_gameState->currentPlayer()));
+    if(_gameState->currentGamePhase() == Common::GamePhase::SPINNING){
+        _spinButton->show();
+    }
+    else _spinButton->hide();
 }
 
 void GameInfoBox::emitSpinButtonPressed()
