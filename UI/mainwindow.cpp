@@ -97,10 +97,10 @@ HexItem* MainWindow::getHexItem(Common::CubeCoordinate coord)
 
 int MainWindow::getNextPlayerId()
 {
-    if(_gameState->currentPlayer()+1 > _playerVector.size()){
+    if(_gameState->currentPlayer() == _playerVector.size()){
         return _playerVector.at(0)->getPlayerId();
     }
-    else return _playerVector.at(_gameState->currentPlayer()+1)->getPlayerId();
+    else return _playerVector.at(_gameState->currentPlayer())->getPlayerId();
 }
 
 void MainWindow::resetPlayerMoves(int playerId)
@@ -156,10 +156,10 @@ void MainWindow::moveActor(Common::CubeCoordinate origin,
     ActorItem* actorItem = _actorItems.at(actorId);
     HexItem* newParent = _hexItems.at(target);
 
-    actorItem->setOffset(newParent->getActorPosition());
+    actorItem->setPos(newParent->getActorPosition());
     actorItem->setParent(newParent);
     _gameState->changeGamePhase(Common::GamePhase::MOVEMENT);
-    _gameState->changePlayerTurn(_playerVector.at(1)->getPlayerId());
+    _gameState->changePlayerTurn(getNextPlayerId());
     _gameInfoBox->updateGameState();
 }
 
