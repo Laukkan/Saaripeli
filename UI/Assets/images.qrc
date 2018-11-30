@@ -8,5 +8,7 @@
         <file>seamunster.png</file>
         <file>vortex.png</file>
         <file>kraken.png</file>
+        <file>boat.png</file>
+        <file>dolphin.png</file>
     </qresource>
 </RCC>

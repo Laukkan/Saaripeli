@@ -39,6 +39,9 @@ public slots:
     void moveActor(Common::CubeCoordinate origin,
                   Common::CubeCoordinate target,
                   int actorId);
+    void moveTransport(Common::CubeCoordinate origin,
+                  Common::CubeCoordinate target,
+                  int transportId);
     void flipHex(Common::CubeCoordinate tileCoord);
     void initBoard(int playersAmount);
     void spinWheel();
@@ -54,6 +57,7 @@ private:
     GameInfoBox* _gameInfoBox;
     std::shared_ptr<GameState> _gameState;
     std::shared_ptr<Common::IGameRunner> _gameRunner;
+    std::string _movesFromSpinner;
 
     /**
      * @brief drawGameBoard Draws the game board by adding hexItems to the scene.
@@ -62,6 +66,8 @@ private:
     void drawGameBoard();
     void drawPawns();
     void addActorItem(std::shared_ptr<Common::Hex> hex);
+    void addTransportItem(std::shared_ptr<Common::Hex> hex);
+    void addVortex(Common::CubeCoordinate coord);
 
 };
 

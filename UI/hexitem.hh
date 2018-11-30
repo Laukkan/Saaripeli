@@ -38,6 +38,9 @@ signals:
     void actorDropped(Common::CubeCoordinate origin,
                      Common::CubeCoordinate target,
                      int actorId);
+    void transportDropped(Common::CubeCoordinate origin,
+                     Common::CubeCoordinate target,
+                     int transportId);
     void hexFlipped(Common::CubeCoordinate tileCoord);
 
 protected:

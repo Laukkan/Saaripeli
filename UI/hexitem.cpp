@@ -107,10 +107,15 @@ void HexItem::dropEvent(QGraphicsSceneDragDropEvent *event)
                          _hex->getCoordinates(),
                          eventData.at(1).toInt());
     }
-    else {
+    else if (eventData.at(0) == "actor") {
         emit actorDropped(oldParent->_hex->getCoordinates(),
                          _hex->getCoordinates(),
                          eventData.at(1).toInt());
+    }
+    else {
+        emit transportDropped(oldParent->_hex->getCoordinates(),
+                              _hex->getCoordinates(),
+                              eventData.at(1).toInt());
     }
 }
 
