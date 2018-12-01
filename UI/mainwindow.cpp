@@ -4,7 +4,6 @@
 #include "shark.hh"
 #include "constants.hh"
 #include "player.hh"
-#include "transportitem.hh"
 #include "startdialog.hh"
 #include "helpers.hh"
 #include "illegalmoveexception.hh"
@@ -78,13 +77,20 @@ void MainWindow::spinWheel()
         std::pair<std::string,std::string> spinResult = _gameRunner->spinWheel();
         const std::map<std::string, QString> actorImages =
                 PathConstants::ACTOR_IMAGES;
+        const std::map<std::string, QString> transportImages =
+                PathConstants::TRANSPORT_IMAGES;
 
         //todo add dolphins in actors
-        if (_gameBoard->checkIfActorExists(spinResult.first) and
-                actorImages.find(spinResult.first) != actorImages.end())
+        if (_gameBoard->checkIfActorOrTransportExists(spinResult.first))
         {
-            _gameInfoBox->updateActor(QPixmap(actorImages.at(spinResult.first)),
-                                      spinResult.second);
+            if(spinResult.first == "dolphin"){
+                _gameInfoBox->updateActor(QPixmap(transportImages.at(spinResult.first)),
+                                          spinResult.second);
+            }
+            else {
+                _gameInfoBox->updateActor(QPixmap(actorImages.at(spinResult.first)),
+                                          spinResult.second);
+            }
             _movesFromSpinner = spinResult.second;
         }
         else {
@@ -169,6 +175,7 @@ void MainWindow::moveActor(Common::CubeCoordinate origin,
 
     try {
         _gameRunner->moveActor(origin, target, actorId, _movesFromSpinner);
+        displayActorAction(target, actorId);
     }
     catch (Common::IllegalMoveException) {
         return;
@@ -209,11 +216,11 @@ void MainWindow::moveTransport(Common::CubeCoordinate origin,
             return;
         }
     }
-    ActorItem* actorItem = _actorItems.at(transportId);
+    TransportItem* transportItem = _transportItems.at(transportId);
     HexItem* newParent = _hexItems.at(target);
 
-    actorItem->setPos(newParent->getActorPosition());
-    actorItem->setParent(newParent);
+    transportItem->setPos(newParent->getActorPosition());
+    transportItem->setParent(newParent);
     _gameState->changeGamePhase(Common::GamePhase::SINKING);
     _gameInfoBox->updateGameState();
 }
@@ -308,6 +315,7 @@ void MainWindow::addTransportItem(std::shared_ptr<Common::Hex> hex)
     TransportItem* transportItem =
             new TransportItem((hex->getTransports().at(0)),
                               _hexItems.at(hex->getCoordinates()));
+    _transportItems[hex->getTransports().at(0)->getId()] = transportItem;
     _scene->addItem(transportItem);
 }
 
@@ -320,4 +328,35 @@ void MainWindow::addVortex(Common::CubeCoordinate coord)
     vortexItem->setPos(coordinates);
     _scene->addItem(vortexItem);
 }
+
+void MainWindow::displayActorAction(Common::CubeCoordinate coord, int actorID)
+{
+    std::shared_ptr<Common::Hex> hex = _gameBoard->getHex(coord);
+    std::vector<std::shared_ptr<Common::Pawn>> pawnsBefore = hex->getPawns();
+    bool transport = false;
+    std::shared_ptr<Common::Transport> transportBefore;
+    //Only one transport per tile allowed
+    if(!hex->getTransports().empty()) {
+         transport = true;
+         transportBefore = hex->getTransports().at(0);
+    }
+
+    _gameBoard->getActor(actorID)->doAction();
+
+    std::vector<std::shared_ptr<Common::Pawn>> pawnsAfter = hex->getPawns();
+
+    for(auto pawn : pawnsBefore){
+        if(std::find(pawnsAfter.begin(), pawnsAfter.end(), pawn) == pawnsAfter.end()) {
+            _pawnItems.at(pawn->getId())->~PawnItem();
+        }
+    }
+
+    if(transport and hex->getTransports().empty()) {
+         _transportItems.at(transportBefore->getId())->~TransportItem();
+    }
+
+
+
+}
+
 }

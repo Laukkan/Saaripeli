@@ -141,14 +141,24 @@ GameBoard::returnHexes()
     return _hexes;
 }
 
-bool GameBoard::checkIfActorExists(std::string actorType)
+bool GameBoard::checkIfActorOrTransportExists(std::string type)
 {
     for(auto actor : _actors) {
-        if(actor.second->getActorType() == actorType){
+        if(actor.second->getActorType() == type){
+            return true;
+        }
+    }
+    for(auto transport : _transports) {
+        if(transport.second->getTransportType() == type){
             return true;
         }
     }
     return false;
+}
+
+std::shared_ptr<Common::Actor> GameBoard::getActor(int actorID)
+{
+    return _actors.at(actorID);
 }
 
 }

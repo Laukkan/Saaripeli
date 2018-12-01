@@ -7,6 +7,7 @@
 #include "hexitem.hh"
 #include "pawnitem.hh"
 #include "actoritem.hh"
+#include "transportitem.hh"
 #include "gamestate.hh"
 #include "igamerunner.hh"
 #include "gameinfobox.hh"
@@ -52,6 +53,7 @@ private:
     std::map<Common::CubeCoordinate, HexItem*> _hexItems;
     std::map<int, PawnItem*> _pawnItems;
     std::map<int, ActorItem*> _actorItems;
+    std::map<int, TransportItem*> _transportItems;
 
     QGraphicsScene* _scene;
     std::shared_ptr<Student::GameBoard> _gameBoard;
@@ -69,6 +71,7 @@ private:
     void addActorItem(std::shared_ptr<Common::Hex> hex);
     void addTransportItem(std::shared_ptr<Common::Hex> hex);
     void addVortex(Common::CubeCoordinate coord);
+    void displayActorAction(Common::CubeCoordinate coord, int actorID);
 
 };
 

@@ -145,12 +145,21 @@ public:
     std::map<Common::CubeCoordinate, std::shared_ptr<Common::Hex>> returnHexes();
 
     /**
-     * @brief checkIfActorExists checks if any actors of a given type are on
-     * the board
-     * @param actorType, the type of the actor to search for.
-     * @return bool:true, if actors exist, false otherwise.
+     * @brief checkIfActorExists checks if any actors or Transports of a given
+     * type are on the board.
+     * @param type, the type of the actor or Transport to search for.
+     * @return bool:true, if actor or transport exists, false otherwise.
      */
-    bool checkIfActorExists(std::string actorType);
+    bool checkIfActorOrTransportExists(std::string type);
+
+    /**
+     * @brief getActor returns an actor.
+     * @param actorID The id of the actor that is to be returned.
+     * @pre actor exists
+     * @return std::shared_ptr<Common::Actor>, pointer to
+     * the actor indicated by the paramer actorID.
+     */
+    std::shared_ptr<Common::Actor> getActor(int actorID);
 
 private:
     std::unordered_map<int, std::shared_ptr<Common::Pawn>> _pawns;
