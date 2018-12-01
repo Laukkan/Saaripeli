@@ -347,7 +347,7 @@ void MainWindow::doTheVortex(const Common::CubeCoordinate &coord)
 {
     QPixmap vortexIcon(PathConstants::ACTOR_IMAGES.at("vortex"));
     QGraphicsPixmapItem* vortexItem =
-            new QGraphicsPixmapItem(vortexIcon.scaled(30,46));
+            new QGraphicsPixmapItem(vortexIcon.scaled(SizeConstants::A_PIX_SIZE));
     QPointF coordinates = _hexItems.at(coord)->getActorPosition();
     vortexItem->setPos(coordinates);
     _scene->addItem(vortexItem);
