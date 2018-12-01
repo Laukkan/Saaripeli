@@ -29,10 +29,6 @@ void MainWindow::initBoard(int playersAmount)
         std::shared_ptr<Player> newPlayer(new Player(playerId));
         _playerVector.push_back(newPlayer);
     }
-
-    _scene = new QGraphicsScene(this);
-    QGraphicsView* view = new QGraphicsView(this);
-
     _gameBoard = std::shared_ptr<Student::GameBoard>(new Student::GameBoard());
     _gameState = std::shared_ptr<GameState>(new GameState);
 
@@ -41,21 +37,17 @@ void MainWindow::initBoard(int playersAmount)
     for (std::shared_ptr<Player> player : _playerVector) {
         iplayers.push_back(std::static_pointer_cast<Common::IPlayer>(player));
     }
-
     _gameRunner = Common::Initialization::getGameRunner(_gameBoard,
                                                         _gameState,
                                                         iplayers);
+
+    _scene = new QGraphicsScene(this);
+    QGraphicsView* view = new QGraphicsView(this);
+
     drawGameBoard();
     drawPawns();
 
-    _gameInfoBox = new GameInfoBox(_gameState, _gameRunner);
-    _gameInfoBox->
-    connect(_gameInfoBox, &GameInfoBox::spinButtonPressed,
-            this, &MainWindow::spinWheel);
-    connect(_gameInfoBox, &GameInfoBox::stayHerePressed,
-            this, &MainWindow::moveToSinking);
-    connect(_gameInfoBox, &GameInfoBox::continueFromSpinPressed,
-            this, &MainWindow::continueFromSpinning);
+    setupGameInfoBox();
 
     _scene->addWidget(_gameInfoBox);
     _gameInfoBox->move(OtherConstants::GIBOX_OFFSET);
@@ -64,6 +56,18 @@ void MainWindow::initBoard(int playersAmount)
     view->setScene(_scene);
 
     _gameInfoBox->updateGameState();
+}
+
+void MainWindow::setupGameInfoBox()
+{
+    _gameInfoBox = new GameInfoBox(_gameState, _gameRunner);
+    connect(_gameInfoBox, &GameInfoBox::spinButtonPressed,
+            this, &MainWindow::spinWheel);
+    connect(_gameInfoBox, &GameInfoBox::stayHerePressed,
+            this, &MainWindow::moveToSinking);
+    connect(_gameInfoBox, &GameInfoBox::continueFromSpinPressed,
+            this, &MainWindow::continueFromSpinning);
+
 }
 
 void MainWindow::spinWheel()
@@ -213,7 +217,7 @@ void MainWindow::moveTransport(Common::CubeCoordinate origin,
     _gameInfoBox->updateGameState();
 }
 
-void MainWindow::flipHex(Common::CubeCoordinate tileCoord)
+void MainWindow::flipHex(const Common::CubeCoordinate &tileCoord)
 {
     if (_gameState->currentGamePhase() != Common::GamePhase::SINKING) {
         return;
@@ -305,7 +309,7 @@ void MainWindow::addTransportItem(std::shared_ptr<Common::Hex> hex)
     _scene->addItem(transportItem);
 }
 
-void MainWindow::addVortex(Common::CubeCoordinate coord)
+void MainWindow::addVortex(const Common::CubeCoordinate &coord)
 {
     QPixmap vortexIcon(PathConstants::ACTOR_IMAGES.at("vortex"));
     QGraphicsPixmapItem* vortexItem =

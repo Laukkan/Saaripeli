@@ -13,20 +13,16 @@ namespace Student {
 StartDialog::StartDialog() : _playersAmount(1)
 {
    QGridLayout* dialogLayout = new QGridLayout(this);
-   QLabel* playersLabel = new QLabel(this);
-
+   QLabel* playersLabel = new QLabel("Number of players", this);
 
    QComboBox* playersAmount = new QComboBox(this);
    connect(playersAmount, &QComboBox::currentTextChanged,
            this, &StartDialog::playersChange);
+   QStringList allowedAmounts = {"1", "2", "3"};
+   playersAmount->addItems(allowedAmounts);
 
    QPushButton* okButton = new QPushButton("Confirm", this);
    connect(okButton, &QPushButton::pressed, this, &StartDialog::accept);
-
-   playersLabel->setText("Number of players");
-
-   QStringList allowedAmounts = {"1", "2", "3"};
-   playersAmount->addItems(allowedAmounts);
 
    dialogLayout->addWidget(playersLabel);
    dialogLayout->addWidget(playersAmount);

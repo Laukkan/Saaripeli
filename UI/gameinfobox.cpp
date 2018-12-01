@@ -22,6 +22,12 @@ GameInfoBox::GameInfoBox(std::shared_ptr<GameState> gameState,
     setSizePolicy(spFixed);
     resize(SizeConstants::INFO_BOX_SIZE);
 
+    initLabelsButtons();
+    setupLayout();
+}
+
+void GameInfoBox::initLabelsButtons()
+{
     _gamePhaseLabel = new QLabel(
                 Helpers::gamePhaseToQString(_gameState->currentGamePhase()));
 
@@ -53,7 +59,10 @@ GameInfoBox::GameInfoBox(std::shared_ptr<GameState> gameState,
     spRetain.setRetainSizeWhenHidden(true);
     spRetain.setHorizontalPolicy(QSizePolicy::Policy::Fixed);
     _actorImageLabel->setSizePolicy(spRetain);
+}
 
+void GameInfoBox::setupLayout()
+{
     _layout->addWidget(_gamePhaseLabel, 0, 0);
     _layout->addWidget(_playerTurnLabel, 1, 0);
     _layout->addWidget(_playerMovesLabel, 1, 1);
@@ -66,7 +75,8 @@ GameInfoBox::GameInfoBox(std::shared_ptr<GameState> gameState,
     setLayout(_layout);
 }
 
-void GameInfoBox::updateGameState(){
+void GameInfoBox::updateGameState()
+{
     Common::GamePhase currentPhase = _gameState->currentGamePhase();
 
     _playerMovesLabel->show();
@@ -117,5 +127,7 @@ void GameInfoBox::updateActor(QPixmap image, std::string moves)
     }
 
 }
+
+
 
 }

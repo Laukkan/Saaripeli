@@ -80,7 +80,7 @@ public slots:
      * @details Called by the signal emitted by HexItem's mousePressEvent
      * @param tileCoord - HexItem's coordinate
      */
-    void flipHex(Common::CubeCoordinate tileCoord);
+    void flipHex(const Common::CubeCoordinate &tileCoord);
 
     /**
      * @brief spinWheel - spins the GameEngine side of the wheel and handles
@@ -106,28 +106,11 @@ public slots:
     void continueFromSpinning();
 
 private:
-    std::string _movesFromSpinner;
-
     /**
-     * @brief Data structures for storing all the UI's Items
+     * @brief setupGameInfoBox - sets up the GameInfoBox
+     * @details used by the constructor
      */
-    std::vector<std::shared_ptr<Player>> _playerVector;
-    std::map<Common::CubeCoordinate, HexItem*> _hexItems;
-    std::map<int, PawnItem*> _pawnItems;
-    std::map<int, ActorItem*> _actorItems;
-
-    /**
-     * @brief Pointers to all of the required GameEngine stuff
-     */
-    std::shared_ptr<Student::GameBoard> _gameBoard;
-    std::shared_ptr<GameState> _gameState;
-    std::shared_ptr<Common::IGameRunner> _gameRunner;
-
-    /**
-     * @brief Mainwindow's graphical components
-     */
-    QGraphicsScene* _scene;
-    GameInfoBox* _gameInfoBox;
+    void setupGameInfoBox();
 
     /**
      * @brief drawGameBoard Draws the game board by adding hexItems to the scene.
@@ -150,8 +133,30 @@ private:
      * @brief addVortex - adds a vortex to the given coordinate
      * @param coord - CubeCoordinate represation of the coordinate
      */
-    void addVortex(Common::CubeCoordinate coord);
+    void addVortex(const Common::CubeCoordinate &coord);
 
+    std::string _movesFromSpinner;
+
+    /**
+     * @brief Data structures for storing all the UI's Items
+     */
+    std::vector<std::shared_ptr<Player>> _playerVector;
+    std::map<Common::CubeCoordinate, HexItem*> _hexItems;
+    std::map<int, PawnItem*> _pawnItems;
+    std::map<int, ActorItem*> _actorItems;
+
+    /**
+     * @brief Pointers to all of the required GameEngine stuff
+     */
+    std::shared_ptr<Student::GameBoard> _gameBoard;
+    std::shared_ptr<GameState> _gameState;
+    std::shared_ptr<Common::IGameRunner> _gameRunner;
+
+    /**
+     * @brief Mainwindow's graphical components
+     */
+    QGraphicsScene* _scene;
+    GameInfoBox* _gameInfoBox;
 };
 
 }

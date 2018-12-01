@@ -16,14 +16,15 @@ public:
      * @brief Player's constructor. Initialises the attributes.
      * @param id - the id of the Player
      */
-    explicit Player(int id) : _id(id), _moveActionsleft(3),
-                              _pawnColor(ColorConstants::PAWN_COLORS.at(_id)) {}
+    explicit Player(int id) :
+        _id(id),
+        _moveActionsleft(3),
+        _pawnColor(ColorConstants::PAWN_COLORS.at(_id)) {}
 
     /**
      * @brief Default virtual destructor
      */
     virtual ~Player() = default;
-
 
     /**
      * @brief getPlayer gets the player id.

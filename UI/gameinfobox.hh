@@ -55,6 +55,18 @@ signals:
 
 private:
    /**
+    * @brief setupLayout - sets the Layout of the GameInfoBox
+    */
+   void setupLayout();
+
+   /**
+    * @brief initLabelsButtons - initialises the GameInfoBox's labels and
+    * buttons.
+    * @details used by the constructor
+    */
+   void initLabelsButtons();
+
+   /**
     * @brief Pointers to the required GameEngine implementations used in
     * this class.
     */
