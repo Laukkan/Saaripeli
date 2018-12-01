@@ -1,11 +1,7 @@
 #include "hexitem.hh"
-#include "helpers.hh"
-#include "mainwindow.hh"
-#include "illegalmoveexception.hh"
 #include "constants.hh"
 
-#include <QPainter>
-#include <QRectF>
+#include <QBrush>
 #include <cmath>
 #include <QMimeData>
 
@@ -13,8 +9,8 @@
 namespace Student {
 
 
-HexItem::HexItem(int size, std::shared_ptr<Common::Hex> hex, QPointF center) :
-    _size(size), _hex(hex), _center(center)
+HexItem::HexItem(std::shared_ptr<Common::Hex> hex, QPointF center) :
+    _size(SizeConstants::HEXSIZE), _hex(hex), _center(center)
 {
     // Get the corners around _center and make the hex.
     QVector<QPointF> points = getHexCorners();
@@ -45,7 +41,7 @@ QVector<QPointF> HexItem::getHexCorners()
     QVector<QPointF> points;
     int side = 0;
 
-    while (side < SizeConstants::HEX_SIDES) {
+    while (side < OtherConstants::HEX_SIDES) {
         points.push_back(pointyHexCorner(side));
         side++;
     }

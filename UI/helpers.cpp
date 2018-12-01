@@ -1,7 +1,5 @@
 #include "helpers.hh"
 #include "constants.hh"
-#include <math.h>
-#include <map>
 
 
 namespace Helpers {

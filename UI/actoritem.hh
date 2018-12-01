@@ -5,16 +5,16 @@
 #include "hexitem.hh"
 
 #include <QGraphicsPixmapItem>
-#include <QGraphicsSceneMouseEvent>
 #include <memory>
 
 
 namespace Student {
 
-class ActorItem :   public QObject, public QGraphicsPixmapItem
+class ActorItem : public QObject, public QGraphicsPixmapItem
 {
     Q_OBJECT
     Q_INTERFACES(QGraphicsItem)
+
 public:
     ActorItem(std::shared_ptr<Common::Actor> actor, HexItem* parent);
 

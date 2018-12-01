@@ -5,7 +5,6 @@
 
 #include <qmath.h>
 #include <iterator>
-#include <iostream>
 
 namespace Student {
 

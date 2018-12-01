@@ -1,22 +1,18 @@
 #include "mainwindow.hh"
+
 #include "initialize.hh"
 #include "pawn.hh"
 #include "shark.hh"
+
 #include "constants.hh"
 #include "player.hh"
 #include "transportitem.hh"
-#include "startdialog.hh"
 #include "helpers.hh"
 #include "illegalmoveexception.hh"
 
 #include <QDesktopWidget>
 #include <QGridLayout>
-#include <iostream>
 #include <QApplication>
-
-
-const static int RESO_W = 1280;
-const static int RESO_H = 720;
 
 
 namespace Student {
@@ -24,7 +20,7 @@ namespace Student {
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
-   setMinimumSize(RESO_W, RESO_H);
+   setMinimumSize(SizeConstants::MW_SIZE);
 }
 
 void MainWindow::initBoard(int playersAmount)
@@ -60,8 +56,9 @@ void MainWindow::initBoard(int playersAmount)
             this, &MainWindow::moveToSinking);
     connect(_gameInfoBox, &GameInfoBox::continueFromSpinPressed,
             this, &MainWindow::continueFromSpinning);
+
     _scene->addWidget(_gameInfoBox);
-    _gameInfoBox->move(600, -400);
+    _gameInfoBox->move(OtherConstants::GIBOX_OFFSET);
 
     setCentralWidget(view);
     view->setScene(_scene);
@@ -180,9 +177,7 @@ void MainWindow::moveActor(Common::CubeCoordinate origin,
     actorItem->setPos(newParent->getActorPosition());
     actorItem->setParent(newParent);
 
-    _gameState->changeGamePhase(Common::GamePhase::MOVEMENT);
-    _gameState->changePlayerTurn(getNextPlayerId());
-    _gameInfoBox->updateGameState();
+    continueFromSpinning();
 }
 
 void MainWindow::moveTransport(Common::CubeCoordinate origin,
@@ -225,11 +220,12 @@ void MainWindow::flipHex(Common::CubeCoordinate tileCoord)
     }
     try {
         std::string actorType = _gameRunner->flipTile(tileCoord);
+
+        // The flip isn't illegal...
         _hexItems.at(tileCoord)->flip();
 
         const std::map<std::string, QString> actorImages =
                 PathConstants::ACTOR_IMAGES;
-
         const std::map<std::string, QString> transportImages =
                 PathConstants::TRANSPORT_IMAGES;
 
@@ -263,9 +259,7 @@ void MainWindow::drawGameBoard()
         Common::CubeCoordinate cubeCoord = hex->first;
         {
             QPointF pointCenter = Helpers::cubeToPixel(cubeCoord);
-            HexItem* newHex = new HexItem(SizeConstants::HEXSIZE,
-                                          hex->second,
-                                          pointCenter);
+            HexItem* newHex = new HexItem(hex->second, pointCenter);
             connect(newHex, &HexItem::pawnDropped, this, &MainWindow::movePawn);
             connect(newHex, &HexItem::hexFlipped, this, &MainWindow::flipHex);
             connect(newHex, &HexItem::actorDropped, this, &MainWindow::moveActor);

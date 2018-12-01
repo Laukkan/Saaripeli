@@ -15,9 +15,9 @@ TransportItem::TransportItem(std::shared_ptr<Common::Transport> transport,
                              HexItem* parent) :
     _transport(transport)
 {
-
     _transportImage.load(PathConstants::TRANSPORT_IMAGES.at(
                              _transport->getTransportType()));
+
     setPixmap(_transportImage.scaled(30,46));
     QPointF coordinates = parent->getActorPosition();
     setPos(coordinates);
@@ -26,12 +26,6 @@ TransportItem::TransportItem(std::shared_ptr<Common::Transport> transport,
     setAcceptHoverEvents(true);
     setCursor(Qt::OpenHandCursor);
     setParent(parent);
-
-}
-
-void TransportItem::showTransport()
-{
-    this->show();
 }
 
 void TransportItem::mousePressEvent(QGraphicsSceneMouseEvent* event)

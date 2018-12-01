@@ -26,11 +26,6 @@ PawnItem::PawnItem(std::shared_ptr<Player> player,
     setParent(parent);
 }
 
-std::shared_ptr<Common::Pawn> PawnItem::returnPawn()
-{
-    return _pawn;
-}
-
 void PawnItem::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
     Q_UNUSED(event);

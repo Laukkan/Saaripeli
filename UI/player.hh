@@ -2,15 +2,26 @@
 #define PLAYER_HH
 
 #include "iplayer.hh"
+#include "constants.hh"
 #include "QString"
+
 
 namespace Student {
 
-
 class Player : public Common::IPlayer
 {
+
 public:
-    explicit Player(int id);
+    /**
+     * @brief Player's constructor. Initialises the attributes.
+     * @param id - the id of the Player
+     */
+    explicit Player(int id) : _id(id), _moveActionsleft(3),
+                              _pawnColor(ColorConstants::PAWN_COLORS.at(_id)) {}
+
+    /**
+     * @brief Default virtual destructor
+     */
     virtual ~Player() = default;
 
 
@@ -35,11 +46,26 @@ public:
      */
     virtual void setActionsLeft(unsigned int actionsLeft);
 
+    /**
+     * @brief getPawnColor - QString representation of the color for the Pawn.
+     * @return _pawnColor
+     */
     QString getPawnColor();
 
 private:
+    /**
+     * @brief _id - the Id of the Player.
+     */
     int _id;
-    unsigned int _actionsleft;
+
+    /**
+     * @brief _actionsleft the amount of Movement actions the player has left.
+     */
+    unsigned int _moveActionsleft;
+
+    /**
+     * @brief _pawnColor - the color of the Player's PawnItem
+     */
     QString _pawnColor;
 };
 

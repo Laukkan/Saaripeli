@@ -1,17 +1,10 @@
 #include "player.hh"
-#include "constants.hh"
 
 #include <map>
 
 
 namespace Student {
 
-
-Player::Player(int id):
-    _id(id), _actionsleft(3)
-{
-    _pawnColor = ColorConstants::PAWN_COLORS.at(_id);
-}
 
 int Player::getPlayerId() const
 {
@@ -20,12 +13,12 @@ int Player::getPlayerId() const
 
 unsigned int Player::getActionsLeft() const
 {
-    return _actionsleft;
+    return _moveActionsleft;
 }
 
 void Player::setActionsLeft(unsigned int actionsLeft)
 {
-    _actionsleft = actionsLeft;
+    _moveActionsleft = actionsLeft;
 }
 
 QString Player::getPawnColor()

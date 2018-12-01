@@ -8,13 +8,19 @@
 #include <unordered_map>
 
 
-const static int HEX_SIZE = 30;
+namespace Student {
 
-namespace Student{
 class GameBoard : public Common::IGameBoard
 {
 public:
+    /**
+      * @default Default constructor.
+      */
     GameBoard() = default;
+
+    /**
+      * @brief Default virtual destructor.
+      */
     virtual ~GameBoard() = default;
 
     /**
@@ -153,6 +159,10 @@ public:
     bool checkIfActorExists(std::string actorType);
 
 private:
+    /**
+     * @brief Data structures required for storing the GameEngine's logical
+     * hexes, pawns, actors and transports.
+     */
     std::unordered_map<int, std::shared_ptr<Common::Pawn>> _pawns;
     std::map<Common::CubeCoordinate, std::shared_ptr<Common::Hex>> _hexes;
     std::map<int, std::shared_ptr<Common::Actor>> _actors;

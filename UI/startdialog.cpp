@@ -10,40 +10,39 @@
 
 namespace Student {
 
-StartDialog::StartDialog()
+StartDialog::StartDialog() : _playersAmount(1)
 {
-   _players = 1;
-
    QGridLayout* dialogLayout = new QGridLayout(this);
    QLabel* playersLabel = new QLabel(this);
+
+
    QComboBox* playersAmount = new QComboBox(this);
-   QPushButton* okButton = new QPushButton(this);
+   connect(playersAmount, &QComboBox::currentTextChanged,
+           this, &StartDialog::playersChange);
+
+   QPushButton* okButton = new QPushButton("Confirm", this);
+   connect(okButton, &QPushButton::pressed, this, &StartDialog::accept);
 
    playersLabel->setText("Number of players");
-   dialogLayout->addWidget(playersLabel);
 
    QStringList allowedAmounts = {"1", "2", "3"};
    playersAmount->addItems(allowedAmounts);
-   dialogLayout->addWidget(playersAmount);
 
-   okButton->setText("Confirm");
+   dialogLayout->addWidget(playersLabel);
+   dialogLayout->addWidget(playersAmount);
    dialogLayout->addWidget(okButton);
 
    setLayout(dialogLayout);
-
-   connect(playersAmount, &QComboBox::currentTextChanged,
-           this, &StartDialog::playersChange);
-   connect(okButton, &QPushButton::pressed, this, &StartDialog::accept);
 }
 
 int StartDialog::getPlayers()
 {
-    return _players;
+    return _playersAmount;
 }
 
 void StartDialog::playersChange(const QString &text)
 {
-    _players = text.toInt();
+    _playersAmount = text.toInt();
 }
 
 

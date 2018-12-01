@@ -5,8 +5,6 @@
 #include <QGraphicsPolygonItem>
 #include <QGraphicsSceneMouseEvent>
 #include <memory>
-#include <array>
-
 
 
 namespace Student {
@@ -15,23 +13,46 @@ class HexItem : public QObject, public QGraphicsPolygonItem
 {
     Q_OBJECT
     Q_INTERFACES(QGraphicsItem)
+
 public:
+    /**
+     * @brief HexItem's constructor
+     * @param hex - the corresponding GameEngine side's Hex
+     * @param center - the center coordinate of the HexItems location
+     */
+    explicit HexItem(std::shared_ptr<Common::Hex> hex, QPointF center);
 
-    HexItem(int size, std::shared_ptr<Common::Hex> hex, QPointF center);
-
-
+    // A virtual destructor is already provided by the QObject subclass.
 
     /**
-     * @brief getHexCorners Returns a vector with all of the hexes corners.
-     * @return QVector<QPointF> , a vector with all of the hexes corners.
+     * @brief getPawnPosition - returns a position for a new pawn based on
+     * how many pawns the HexItem has and the HexItem's location.
+     * @return the QPointF coordinate representation of the position.
      */
-
     QPointF getPawnPosition();
+
+    /**
+     * @brief getActorPosition - returns the position for the ActorItem based
+     * on the HexItem's location.
+     * @return QPointF pixel coordinate representation of the position.
+     */
     QPointF getActorPosition();
 
+    /**
+     * @brief flip - flips the HexItem upside down sinking it.
+     * @details is called by the MainWindow's flipHex slot if the flip of
+     * the Hex is legal (according to the rules).
+     */
     void flip();
 
 signals:
+    /**
+     * @brief pawn-/actor-/transportDropped - signals for each of the possible
+     * dropEvent's for the HexItem
+     * @param origin - this hex's CubeCoordinate position
+     * @param target - target hex's CubeCoordinate position
+     * @param pawn-/actor/transportId - what is getting moved
+     */
     void pawnDropped(Common::CubeCoordinate origin,
                      Common::CubeCoordinate target,
                      int pawnId);
@@ -41,6 +62,12 @@ signals:
     void transportDropped(Common::CubeCoordinate origin,
                      Common::CubeCoordinate target,
                      int transportId);
+
+    /**
+     * @brief hexFlipped - signal that is emitted every time the HexItem is
+     * pressed.
+     * @param tileCoord - the hex's CubeCoordinate position
+     */
     void hexFlipped(Common::CubeCoordinate tileCoord);
 
 protected:
@@ -56,7 +83,7 @@ protected:
 private:
 
     /**
-     * @brief _size Distance from any corne-r to the middle of the hex in pixels;
+     * @brief _size Distance from any corner to the middle of the hex in pixels
      */
     int _size;
 
@@ -70,6 +97,10 @@ private:
      */
     QPointF _center;
 
+    /**
+     * @brief _pawnPositionArray - contains the positions for each of the
+     * 3 pawns
+     */
     QPointF _pawnPositionArray[3];
 
     /**
@@ -77,6 +108,14 @@ private:
      * @return QVector<QPointF> , a vector with all of the hexes corners.
      */
     QVector<QPointF> getHexCorners();
+
+    /**
+     * @brief pointyHexCorner calculates and returns the QPointF representation
+     * of the given side's cornerpoint.
+     * @param side (0-5) the number of the side
+     * @return QPointF the coordinate of the corner
+     * @details is looped from 0 to 5 by the getHexCorners method.
+     */
     QPointF pointyHexCorner(int side);
 };
 
