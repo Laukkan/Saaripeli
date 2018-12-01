@@ -115,12 +115,6 @@ void MainWindow::moveToSinking()
     _gameInfoBox->updateGameState();
 }
 
-/*void MainWindow::continueFromSpinning()
-{
-    _gameState->changeGamePhase(Common::GamePhase::MOVEMENT);
-    _gameState->changePlayerTurn(getNextPlayerId());
-    _gameInfoBox->updateGameState();
-}*/
 
 void MainWindow::continueFromSpinning()
 {
@@ -217,29 +211,43 @@ void MainWindow::moveTransport(Common::CubeCoordinate origin,
     }
     if (_gameState->currentGamePhase() == Common::GamePhase::SPINNING) {
         try {
-            _gameRunner->moveTransportWithSpinner(origin, target,
+            int movesLeft;
+            movesLeft = _gameRunner->moveTransportWithSpinner(origin, target,
                                                   transportId,
                                                   _movesFromSpinner);
-            _gameState->changeGamePhase(Common::GamePhase::MOVEMENT);
+            TransportItem* transportItem = _transportItems.at(transportId);
+            HexItem* newParent = _hexItems.at(target);
+
+            transportItem->setPos(newParent->getActorPosition());
+            transportItem->setParent(newParent);
+            _gameInfoBox->updateGameState();
+            if (movesLeft == 0) {
+                continueFromSpinning();
+                return;
+            }
         }
         catch (Common::IllegalMoveException) {
             return;
         }
     } else {
         try {
-            _gameRunner->moveTransport(origin, target, transportId);
-            _gameState->changeGamePhase(Common::GamePhase::SINKING);
+            int movesLeft;
+            movesLeft = _gameRunner->moveTransport(origin, target, transportId);
+            TransportItem* transportItem = _transportItems.at(transportId);
+            HexItem* newParent = _hexItems.at(target);
+
+            transportItem->setPos(newParent->getActorPosition());
+            transportItem->setParent(newParent);
+            _gameInfoBox->updateGameState();
+            if (movesLeft == 0) {
+                moveToSinking();
+                return;
+            }
         }
         catch (Common::IllegalMoveException) {
             return;
         }
     }
-    TransportItem* transportItem = _transportItems.at(transportId);
-    HexItem* newParent = _hexItems.at(target);
-
-    transportItem->setPos(newParent->getActorPosition());
-    transportItem->setParent(newParent);
-    _gameInfoBox->updateGameState();
 }
 
 void MainWindow::flipHex(const Common::CubeCoordinate &tileCoord)
@@ -388,9 +396,6 @@ void MainWindow::doActorAction(Common::CubeCoordinate coord, int actorId)
     if(transport and hex->getTransports().empty()) {
          _transportItems.at(transportBefore->getId())->~TransportItem();
     }
-
-
-
 }
 
 

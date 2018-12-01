@@ -11,7 +11,6 @@
         <file>boat.png</file>
         <file>dolphin.png</file>
         <file>boatBlue.png</file>
-        <file>boatBlueRed.pdn</file>
         <file>boatBlueWhite.png</file>
         <file>boatBlueWhiteRed.png</file>
         <file>boatRed.png</file>
@@ -20,5 +19,6 @@
         <file>dolphinBlue.png</file>
         <file>dolphinRed.png</file>
         <file>dolphinWhite.png</file>
+        <file>boatBlueRed.png</file>
     </qresource>
 </RCC>
