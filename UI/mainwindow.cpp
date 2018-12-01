@@ -1,21 +1,19 @@
 #include "mainwindow.hh"
+
 #include "initialize.hh"
 #include "pawn.hh"
 #include "shark.hh"
+
 #include "constants.hh"
 #include "player.hh"
+
 #include "startdialog.hh"
 #include "helpers.hh"
 #include "illegalmoveexception.hh"
 
 #include <QDesktopWidget>
 #include <QGridLayout>
-#include <iostream>
 #include <QApplication>
-
-
-const static int RESO_W = 1280;
-const static int RESO_H = 720;
 
 
 namespace Student {
@@ -23,7 +21,7 @@ namespace Student {
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
-   setMinimumSize(RESO_W, RESO_H);
+   setMinimumSize(SizeConstants::MW_SIZE);
 }
 
 void MainWindow::initBoard(int playersAmount)
@@ -32,10 +30,6 @@ void MainWindow::initBoard(int playersAmount)
         std::shared_ptr<Player> newPlayer(new Player(playerId));
         _playerVector.push_back(newPlayer);
     }
-
-    _scene = new QGraphicsScene(this);
-    QGraphicsView* view = new QGraphicsView(this);
-
     _gameBoard = std::shared_ptr<Student::GameBoard>(new Student::GameBoard());
     _gameState = std::shared_ptr<GameState>(new GameState);
 
@@ -44,28 +38,37 @@ void MainWindow::initBoard(int playersAmount)
     for (std::shared_ptr<Player> player : _playerVector) {
         iplayers.push_back(std::static_pointer_cast<Common::IPlayer>(player));
     }
-
     _gameRunner = Common::Initialization::getGameRunner(_gameBoard,
                                                         _gameState,
                                                         iplayers);
+
+    _scene = new QGraphicsScene(this);
+    QGraphicsView* view = new QGraphicsView(this);
+
     drawGameBoard();
     drawPawns();
 
+    setupGameInfoBox();
+
+    _scene->addWidget(_gameInfoBox);
+    _gameInfoBox->move(OtherConstants::GIBOX_OFFSET);
+
+    setCentralWidget(view);
+    view->setScene(_scene);
+
+    _gameInfoBox->updateGameState();
+}
+
+void MainWindow::setupGameInfoBox()
+{
     _gameInfoBox = new GameInfoBox(_gameState, _gameRunner);
-    _gameInfoBox->
     connect(_gameInfoBox, &GameInfoBox::spinButtonPressed,
             this, &MainWindow::spinWheel);
     connect(_gameInfoBox, &GameInfoBox::stayHerePressed,
             this, &MainWindow::moveToSinking);
     connect(_gameInfoBox, &GameInfoBox::continueFromSpinPressed,
             this, &MainWindow::continueFromSpinning);
-    _scene->addWidget(_gameInfoBox);
-    _gameInfoBox->move(600, -400);
 
-    setCentralWidget(view);
-    view->setScene(_scene);
-
-    _gameInfoBox->updateGameState();
 }
 
 void MainWindow::spinWheel()
@@ -193,9 +196,7 @@ void MainWindow::moveActor(Common::CubeCoordinate origin,
     actorItem->setPos(newParent->getActorPosition());
     actorItem->setParent(newParent);
 
-    _gameState->changeGamePhase(Common::GamePhase::MOVEMENT);
-    _gameState->changePlayerTurn(getNextPlayerId());
-    _gameInfoBox->updateGameState();
+    continueFromSpinning();
 }
 
 void MainWindow::moveTransport(Common::CubeCoordinate origin,
@@ -232,18 +233,19 @@ void MainWindow::moveTransport(Common::CubeCoordinate origin,
     _gameInfoBox->updateGameState();
 }
 
-void MainWindow::flipHex(Common::CubeCoordinate tileCoord)
+void MainWindow::flipHex(const Common::CubeCoordinate &tileCoord)
 {
     if (_gameState->currentGamePhase() != Common::GamePhase::SINKING) {
         return;
     }
     try {
         std::string actorType = _gameRunner->flipTile(tileCoord);
+
+        // The flip isn't illegal...
         _hexItems.at(tileCoord)->flip();
 
         const std::map<std::string, QString> actorImages =
                 PathConstants::ACTOR_IMAGES;
-
         const std::map<std::string, QString> transportImages =
                 PathConstants::TRANSPORT_IMAGES;
 
@@ -277,9 +279,7 @@ void MainWindow::drawGameBoard()
         Common::CubeCoordinate cubeCoord = hex->first;
         {
             QPointF pointCenter = Helpers::cubeToPixel(cubeCoord);
-            HexItem* newHex = new HexItem(SizeConstants::HEXSIZE,
-                                          hex->second,
-                                          pointCenter);
+            HexItem* newHex = new HexItem(hex->second, pointCenter);
             connect(newHex, &HexItem::pawnDropped, this, &MainWindow::movePawn);
             connect(newHex, &HexItem::hexFlipped, this, &MainWindow::flipHex);
             connect(newHex, &HexItem::actorDropped, this, &MainWindow::moveActor);
@@ -326,7 +326,7 @@ void MainWindow::addTransportItem(std::shared_ptr<Common::Hex> hex)
     _scene->addItem(transportItem);
 }
 
-void MainWindow::addVortex(Common::CubeCoordinate coord)
+void MainWindow::addVortex(const Common::CubeCoordinate &coord)
 {
     QPixmap vortexIcon(PathConstants::ACTOR_IMAGES.at("vortex"));
     QGraphicsPixmapItem* vortexItem =
@@ -366,9 +366,5 @@ void MainWindow::doActorAction(Common::CubeCoordinate coord, int actorId)
 
 }
 
-/*void MainWindow::addPawnToTransport(Common::CubeCoordinate coord, int pawnId)
-{
-    _gameBoard->get
-}*/
 
 }

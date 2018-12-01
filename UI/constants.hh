@@ -3,10 +3,22 @@
 
 #include <QSize>
 #include <QColor>
+#include <QPoint>
 #include <map>
 
 
+namespace OtherConstants {
+
+// Position offset for the GameInfoBox in the MainWindow
+const static QPoint GIBOX_OFFSET = QPoint(500, -400);
+
+const static int HEX_SIDES = 6;
+}
+
 namespace SizeConstants {
+
+// The size of the MainWindow
+const static QSize MW_SIZE = QSize(1280,720);
 
 // ActorItem's pixmap's picture dimensions
 const static QSize A_PIX_SIZE = QSize(30, 46);
@@ -20,7 +32,6 @@ const static QSize INFO_BOX_SIZE = QSize(100, 200);
 // Distance from each hexes corner to their middle.
 const static unsigned int HEXSIZE = 30;
 
-const static int HEX_SIDES = 6;
 
 }
 

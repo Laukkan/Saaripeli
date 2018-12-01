@@ -1,5 +1,6 @@
 #include "gamestate.hh"
 
+
 namespace Student {
 
 Common::GamePhase GameState::currentGamePhase() const

@@ -3,19 +3,22 @@
 
 #include "igamestate.hh"
 
+
 namespace Student  {
 
 class GameState : public Common::IGameState
 {
+
 public:
     /**
      * @brief GameState initialises the GameState to begin with Player 1
      * moving the pawns
      */
-
     GameState() : _currentPhase(Common::GamePhase::MOVEMENT),
                   _currentPlayer(1) {}
-
+    /**
+      * @brief default virtual destructor
+      */
     virtual ~GameState() = default;
 
     /**

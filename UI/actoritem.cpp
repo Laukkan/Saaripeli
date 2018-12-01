@@ -6,8 +6,6 @@
 #include <QCursor>
 #include <QMimeData>
 #include <QPointF>
-#include <QPainter>
-#include <QSize>
 
 
 namespace Student {

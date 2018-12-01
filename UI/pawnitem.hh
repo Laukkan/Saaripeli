@@ -16,14 +16,27 @@ class PawnItem : public QObject, public QGraphicsPixmapItem
 {
     Q_OBJECT
     Q_INTERFACES(QGraphicsItem)
-public:
-    explicit PawnItem(QString color,std::shared_ptr<Common::Pawn> pawn, HexItem* parent);
 
-    QString getColor();
+public:
+
+    /**
+     * @brief PawnItem's constructor. Constructs the image of the PawnItem,
+     * sets the PawnItem to the board.
+     * @param color - the color of the pawn
+     * @param pawn - corresponding logical pawn
+     * @param parent - the HexItem the PawnItem resides in
+     */
+    explicit PawnItem(QString color,
+                      std::shared_ptr<Common::Pawn> pawn,
+                      HexItem* parent);
+
+    // A virtual destructor is already provided by the QObject subclass.
+
+     QString getColor();
 
 protected:
     /**
-     * @brief Interractions with mouse
+     * @brief PawnItem's Interractions with mouse
      * @param event, Qt's mouse event class
      */
     virtual void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
@@ -31,9 +44,23 @@ protected:
     virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
 
 private:
+    /**
+     * @brief _pawnImage - the pixmap image of the pawn
+     */
     QPixmap _pawnImage;
+    /**
+     * @brief _pawn - A pointer to the GameEngine side logical pawn
+     */
     std::shared_ptr<Common::Pawn> _pawn;
+    /**
+     * @brief _color - QString that indicates the pawns color.
+     */
     QString _color;
+    /**
+     * @brief _player - A pointer to the owner of this pawn.
+     */
+    std::shared_ptr<Player> _player;
+
 };
 
 }
