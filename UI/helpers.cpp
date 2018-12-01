@@ -6,7 +6,7 @@
 
 namespace Helpers {
 
-QPointF cubeToPixel(Common::CubeCoordinate cubeCoord)
+QPointF cubeToPixel(const Common::CubeCoordinate &cubeCoord)
 {
     unsigned int hexSize = SizeConstants::HEXSIZE;
 
@@ -17,7 +17,7 @@ QPointF cubeToPixel(Common::CubeCoordinate cubeCoord)
     return QPointF(x, y);
 }
 
-QString gamePhaseToQString(Common::GamePhase gamePhase)
+QString gamePhaseToQString(const Common::GamePhase &gamePhase)
 {
     if(gamePhase == 1){
         return "Movement";
@@ -26,6 +26,13 @@ QString gamePhaseToQString(Common::GamePhase gamePhase)
         return "Sinking";
     }
     else return "Spinning";
+}
+
+const QPixmap scaleActorImage(const QPixmap &pixmap, const int factor)
+{
+    return pixmap.scaled(SizeConstants::A_PIX_SIZE * factor,
+                         Qt::KeepAspectRatio,
+                         Qt::SmoothTransformation);
 }
 
 }

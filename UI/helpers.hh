@@ -5,6 +5,7 @@
 #include <gamestate.hh>
 #include <QString>
 #include <QPointF>
+#include <QPixmap>
 
 
 namespace Helpers {
@@ -16,9 +17,11 @@ namespace Helpers {
  * @param cubeCoord The cube cordinates to be changed to pixel coordinates.
  * @return QPointF, cube coordinates changed in to pixel coordinates.
  */
-QPointF cubeToPixel(Common::CubeCoordinate cubeCoord);
+QPointF cubeToPixel(const Common::CubeCoordinate &cubeCoord);
 
-QString gamePhaseToQString(Common::GamePhase gamePhase);
+QString gamePhaseToQString(const Common::GamePhase &gamePhase);
+
+const QPixmap scaleActorImage(const QPixmap &pixmap, const int factor);
 
 }
 #endif // HELPERS_HH

@@ -56,10 +56,7 @@ void ActorItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
     mime->setParent(parent());
     mime->setText("actor;" + QString::number(_actor->getId()));
 
-    QPixmap dragPixmap = _actorImage.scaled(SizeConstants::A_PIX_SIZE * 2,
-                                            Qt::KeepAspectRatio,
-                                            Qt::SmoothTransformation);
-    drag->setPixmap(dragPixmap);
+    drag->setPixmap(Helpers::scaleActorImage(_actorImage, 2));
     drag->exec();
     setCursor(Qt::OpenHandCursor);
 }

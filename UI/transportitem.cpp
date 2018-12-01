@@ -11,7 +11,8 @@
 namespace Student {
 
 
-TransportItem::TransportItem(std::shared_ptr<Common::Transport> transport, HexItem* parent) :
+TransportItem::TransportItem(std::shared_ptr<Common::Transport> transport,
+                             HexItem* parent) :
     _transport(transport)
 {
 

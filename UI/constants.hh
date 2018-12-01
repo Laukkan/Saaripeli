@@ -14,6 +14,9 @@ const static QSize A_PIX_SIZE = QSize(30, 46);
 // PawnItem's pixmap's picture dimensions
 const static QSize P_PIX_SIZE = QSize(15, 23);
 
+// GameInfoBox's size
+const static QSize INFO_BOX_SIZE = QSize(100, 200);
+
 // Distance from each hexes corner to their middle.
 const static unsigned int HEXSIZE = 30;
 
