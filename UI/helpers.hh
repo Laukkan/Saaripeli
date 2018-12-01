@@ -5,22 +5,7 @@
 #include <gamestate.hh>
 #include <QString>
 #include <QPointF>
-#include <map>
 
-// Distance from each hexes corner to their middle.
-const static int HEXSIZE = 30;
-
-const static std::map<std::string,QString> ACTOR_TYPES {
-    {"shark"    , ":/shark.png"},
-    {"kraken"    , ":/kraken.png"},
-    {"seamunster"    , ":/seamunster.png"},
-    {"vortex"    , ":/vortex.png"},
-};
-
-const static std::map<std::string,QString> TRANSPORT_TYPES {
-    {"dolphin"    , ":/dolphin.png"},
-    {"boat"    , ":/boat.png"},
-};
 
 namespace Helpers {
 

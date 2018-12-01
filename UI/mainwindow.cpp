@@ -2,7 +2,7 @@
 #include "initialize.hh"
 #include "pawn.hh"
 #include "shark.hh"
-
+#include "constants.hh"
 #include "player.hh"
 #include "transportitem.hh"
 #include "startdialog.hh"
@@ -25,7 +25,6 @@ namespace Student {
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
    setMinimumSize(RESO_W, RESO_H);
-   setWindowIcon(QIcon(":/ak47_icon.png"));
 }
 
 void MainWindow::initBoard(int playersAmount)
@@ -53,8 +52,12 @@ void MainWindow::initBoard(int playersAmount)
     drawGameBoard();
     drawPawns();
 
-    _gameInfoBox = new GameInfoBox(_gameState);
-    connect(_gameInfoBox, &GameInfoBox::spinButtonPressed, this, &MainWindow::spinWheel);
+    _gameInfoBox = new GameInfoBox(_gameState, _gameRunner);
+    _gameInfoBox->
+    connect(_gameInfoBox, &GameInfoBox::spinButtonPressed,
+            this, &MainWindow::spinWheel);
+    connect(_gameInfoBox, &GameInfoBox::stayHerePressed,
+            this, &MainWindow::moveToSinking);
     _scene->addWidget(_gameInfoBox);
     _gameInfoBox->move(600, -400);
 
@@ -74,10 +77,15 @@ void MainWindow::spinWheel()
     }
     try {
         std::pair<std::string,std::string> spinResult = _gameRunner->spinWheel();
+        const std::map<std::string, QString> actorImages =
+                PathConstants::ACTOR_IMAGES;
+
         //todo add dolphins in actors
-        if(_gameBoard->checkIfActorExists(spinResult.first)
-                and ACTOR_TYPES.find(spinResult.first) != ACTOR_TYPES.end()){
-            _gameInfoBox->updateActor(QPixmap(ACTOR_TYPES.at(spinResult.first)),spinResult.second);
+        if(_gameBoard->checkIfActorExists(spinResult.first) and
+                actorImages.find(spinResult.first) != actorImages.end())
+        {
+            _gameInfoBox->updateActor(QPixmap(actorImages.at(spinResult.first)),
+                                      spinResult.second);
             _movesFromSpinner = spinResult.second;
         }
         //TODO message on spinning an actor that doesn't exist
@@ -92,9 +100,11 @@ void MainWindow::spinWheel()
     }
 }
 
-HexItem* MainWindow::getHexItem(Common::CubeCoordinate coord)
+void MainWindow::moveToSinking()
 {
-    return _hexItems[coord];
+    resetPlayerMoves(_gameState->currentPlayer());
+    _gameState->changeGamePhase(Common::GamePhase::SINKING);
+    _gameInfoBox->updateGameState();
 }
 
 int MainWindow::getNextPlayerId()
@@ -106,6 +116,7 @@ int MainWindow::getNextPlayerId()
     }
     else return _playerVector.at(currentId)->getPlayerId();
 }
+
 void MainWindow::resetPlayerMoves(int playerId)
 {
     for(std::shared_ptr<Player> player : _playerVector){
@@ -122,9 +133,9 @@ void MainWindow::movePawn(Common::CubeCoordinate origin,
     if (_gameState->currentGamePhase() != Common::GamePhase::MOVEMENT) {
         return;
     }
-
+    int movesLeft;
     try {
-        _gameRunner->movePawn(origin, target, pawnId);
+        movesLeft = _gameRunner->movePawn(origin, target, pawnId);
     }
     catch (Common::IllegalMoveException) {
         return;
@@ -136,8 +147,10 @@ void MainWindow::movePawn(Common::CubeCoordinate origin,
     pawnItem->setOffset(newParent->getPawnPosition());
     pawnItem->setParent(newParent);
 
-    resetPlayerMoves(_gameState->currentPlayer());
-    _gameState->changeGamePhase(Common::GamePhase::SINKING);
+    if (movesLeft == 0) {
+        moveToSinking();
+        return;
+    }
     _gameInfoBox->updateGameState();
 }
 
@@ -161,19 +174,24 @@ void MainWindow::moveActor(Common::CubeCoordinate origin,
 
     actorItem->setPos(newParent->getActorPosition());
     actorItem->setParent(newParent);
+
     _gameState->changeGamePhase(Common::GamePhase::MOVEMENT);
     _gameState->changePlayerTurn(getNextPlayerId());
     _gameInfoBox->updateGameState();
 }
 
-void MainWindow::moveTransport(Common::CubeCoordinate origin, Common::CubeCoordinate target, int transportId)
+void MainWindow::moveTransport(Common::CubeCoordinate origin,
+                               Common::CubeCoordinate target,
+                               int transportId)
 {
     if (_gameState->currentGamePhase() == Common::GamePhase::SINKING) {
         return;
     }
     if (_gameState->currentGamePhase() == Common::GamePhase::SPINNING) {
         try {
-            _gameRunner->moveTransportWithSpinner(origin, target, transportId, _movesFromSpinner);
+            _gameRunner->moveTransportWithSpinner(origin, target,
+                                                  transportId,
+                                                  _movesFromSpinner);
         }
         catch (Common::IllegalMoveException) {
             return;
@@ -186,8 +204,6 @@ void MainWindow::moveTransport(Common::CubeCoordinate origin, Common::CubeCoordi
             return;
         }
     }
-
-
     ActorItem* actorItem = _actorItems.at(transportId);
     HexItem* newParent = _hexItems.at(target);
 
@@ -205,14 +221,24 @@ void MainWindow::flipHex(Common::CubeCoordinate tileCoord)
     try {
         std::string actorType = _gameRunner->flipTile(tileCoord);
         _hexItems.at(tileCoord)->flip();
-        if(ACTOR_TYPES.find(actorType) != ACTOR_TYPES.end() and actorType != "vortex") {
+
+        const std::map<std::string, QString> actorImages =
+                PathConstants::ACTOR_IMAGES;
+
+        const std::map<std::string, QString> transportImages =
+                PathConstants::TRANSPORT_IMAGES;
+
+        if (actorImages.find(actorType) != actorImages.end() and
+                actorType != "vortex")
+        {
             addActorItem(_gameBoard->returnHexes().at(tileCoord));
         }
-        else if(TRANSPORT_TYPES.find(actorType) != TRANSPORT_TYPES.end()){
+        else if (transportImages.find(actorType) != transportImages.end())
+        {
             addTransportItem(_gameBoard->returnHexes().at(tileCoord));
 
         } else{
-            // tyyppi on siis vortex
+            // type is vortex
             addVortex(tileCoord);
         }
     }
@@ -232,13 +258,15 @@ void MainWindow::drawGameBoard()
         Common::CubeCoordinate cubeCoord = hex->first;
         {
             QPointF pointCenter = Helpers::cubeToPixel(cubeCoord);
-            HexItem* newHex = new HexItem(HEXSIZE,
+            HexItem* newHex = new HexItem(SizeConstants::HEXSIZE,
                                           hex->second,
                                           pointCenter);
             connect(newHex, &HexItem::pawnDropped, this, &MainWindow::movePawn);
             connect(newHex, &HexItem::hexFlipped, this, &MainWindow::flipHex);
             connect(newHex, &HexItem::actorDropped, this, &MainWindow::moveActor);
-            connect(newHex, &HexItem::transportDropped, this, &MainWindow::moveTransport);
+            connect(newHex, &HexItem::transportDropped,
+                    this, &MainWindow::moveTransport);
+
             _hexItems[cubeCoord] = newHex;
             _scene->addItem(newHex);
         }
@@ -263,7 +291,8 @@ void MainWindow::drawPawns()
 void MainWindow::addActorItem(std::shared_ptr<Common::Hex> hex)
 {
     //TODO transports
-    ActorItem* actorItem = new ActorItem((hex->getActors().at(0)), _hexItems.at(hex->getCoordinates()));
+    ActorItem* actorItem = new ActorItem((hex->getActors().at(0)),
+                                         _hexItems.at(hex->getCoordinates()));
     _actorItems[(hex->getActors().at(0)->getId())] = actorItem;
     _scene->addItem(actorItem);
 }
@@ -271,14 +300,17 @@ void MainWindow::addActorItem(std::shared_ptr<Common::Hex> hex)
 void MainWindow::addTransportItem(std::shared_ptr<Common::Hex> hex)
 {
     //TODO transports
-    TransportItem* transportItem = new TransportItem((hex->getTransports().at(0)), _hexItems.at(hex->getCoordinates()));
+    TransportItem* transportItem =
+            new TransportItem((hex->getTransports().at(0)),
+                              _hexItems.at(hex->getCoordinates()));
     _scene->addItem(transportItem);
 }
 
 void MainWindow::addVortex(Common::CubeCoordinate coord)
 {
-    QPixmap vortexIcon(ACTOR_TYPES.at("vortex"));
-    QGraphicsPixmapItem* vortexItem = new QGraphicsPixmapItem(vortexIcon.scaled(30,46));
+    QPixmap vortexIcon(PathConstants::ACTOR_IMAGES.at("vortex"));
+    QGraphicsPixmapItem* vortexItem =
+            new QGraphicsPixmapItem(vortexIcon.scaled(30,46));
     QPointF coordinates = _hexItems.at(coord)->getActorPosition();
     vortexItem->setPos(coordinates);
     _scene->addItem(vortexItem);

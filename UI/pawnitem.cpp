@@ -1,5 +1,6 @@
 #include "pawnitem.hh"
 #include "helpers.hh"
+#include "constants.hh"
 
 #include <QDrag>
 #include <QCursor>
@@ -7,20 +8,16 @@
 #include <QPainter>
 #include <QString>
 
-const static std::map<QString,QString> PAWN_IMAGES {
-    {"White"  , ":/whitepawn.png"},
-    {"Blue"   ,  ":/bluepawn.png"},
-    {"Red"    ,   ":/redpawn.png"},
-};
-
 
 namespace Student {
 
-PawnItem::PawnItem(std::shared_ptr<Player> player, std::shared_ptr<Common::Pawn> pawn, HexItem* parent):
+PawnItem::PawnItem(std::shared_ptr<Player> player,
+                   std::shared_ptr<Common::Pawn> pawn,
+                   HexItem* parent):
     _pawn(pawn), _player(player)
 {
-    _pawnImage.load(PAWN_IMAGES.at(_player->getPawnColor()));
-    setPixmap(_pawnImage.scaled(15,23));
+    _pawnImage.load(PathConstants::PAWN_IMAGES.at(_player->getPawnColor()));
+    setPixmap(_pawnImage.scaled(SizeConstants::P_PIX_SIZE));
     setOffset(parent->getPawnPosition());
 
     setFlag(QGraphicsItem::ItemIsMovable);

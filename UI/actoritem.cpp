@@ -1,11 +1,14 @@
 #include "actoritem.hh"
 #include "helpers.hh"
+#include "constants.hh"
 
 #include <QDrag>
 #include <QCursor>
 #include <QMimeData>
 #include <QPointF>
 #include <QPainter>
+#include <QSize>
+
 
 namespace Student {
 
@@ -13,9 +16,8 @@ namespace Student {
 ActorItem::ActorItem(std::shared_ptr<Common::Actor> actor, HexItem* parent) :
     _actor(actor)
 {
-
-    _actorImage.load(ACTOR_TYPES.at(_actor->getActorType()));
-    setPixmap(_actorImage.scaled(30,46));
+    _actorImage.load(PathConstants::ACTOR_IMAGES.at(_actor->getActorType()));
+    setPixmap(_actorImage.scaled(SizeConstants::A_PIX_SIZE));
     QPointF coordinates = parent->getActorPosition();
     setPos(coordinates);
 
@@ -50,11 +52,14 @@ void ActorItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
     QMimeData* mime = new QMimeData;
     drag->setMimeData(mime);
 
-    // Move information of the current parent and pawn Id
+    // Move information of the current parent and the actor
     mime->setParent(parent());
     mime->setText("actor;" + QString::number(_actor->getId()));
 
-    drag->setPixmap(_actorImage);
+    QPixmap dragPixmap = _actorImage.scaled(SizeConstants::A_PIX_SIZE * 2,
+                                            Qt::KeepAspectRatio,
+                                            Qt::SmoothTransformation);
+    drag->setPixmap(dragPixmap);
     drag->exec();
     setCursor(Qt::OpenHandCursor);
 }

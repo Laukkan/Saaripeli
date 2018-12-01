@@ -2,24 +2,13 @@
 #include "helpers.hh"
 #include "mainwindow.hh"
 #include "illegalmoveexception.hh"
+#include "constants.hh"
 
 #include <QPainter>
 #include <QRectF>
 #include <cmath>
 #include <QMimeData>
 
-
-const static int HEX_SIDES = 6;
-
-// A constant map for determening the color of the hex depending on its type.
-const static std::map<std::string,QColor> HEX_TYPES {
-    {"Peak"    , QColor("darkGray")},
-    {"Mountain", QColor("gray")},
-    {"Forest"  , QColor("darkGreen")},
-    {"Beach"   , QColor("yellow")},
-    {"Water"   , QColor("cyan")},
-    {"Coral"   , QColor("magenta")},
-};
 
 namespace Student {
 
@@ -32,7 +21,7 @@ HexItem::HexItem(int size, std::shared_ptr<Common::Hex> hex, QPointF center) :
     setPolygon(QPolygonF(points));
 
     //  Set the color according to type.
-    setBrush(HEX_TYPES.at(_hex->getPieceType()));
+    setBrush(ColorConstants::HEX_COLORS.at(_hex->getPieceType()));
 
     _pawnPositionArray[0] = QPointF(_center.x()-8, _center.y());
     _pawnPositionArray[1] = QPointF(_center.x()-20, _center.y()-20);
@@ -56,7 +45,7 @@ QVector<QPointF> HexItem::getHexCorners()
     QVector<QPointF> points;
     int side = 0;
 
-    while (side < HEX_SIDES) {
+    while (side < SizeConstants::HEX_SIDES) {
         points.push_back(pointyHexCorner(side));
         side++;
     }
@@ -65,8 +54,8 @@ QVector<QPointF> HexItem::getHexCorners()
 
 void HexItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    emit hexFlipped(_hex->getCoordinates());
     event->accept();
+    emit hexFlipped(_hex->getCoordinates());
 }
 
 
@@ -92,7 +81,8 @@ void HexItem::dragLeaveEvent(QGraphicsSceneDragDropEvent *event)
 
 void HexItem::dropEvent(QGraphicsSceneDragDropEvent *event)
 {
-    // Dropped PawnItem's old parent (HexItem) is the parent of the mimeData
+    // Dropped PawnItem's/Actor's old parent (HexItem)
+    // is the parent of the mimeData
     HexItem* oldParent = qobject_cast<HexItem*>(event->mimeData()->parent());
 
     // Do nothing when dropped on the same HexItem
@@ -132,7 +122,7 @@ QPointF HexItem::getActorPosition()
 void HexItem::flip()
 {
     // Fix HexItem color to match Water type
-    setBrush(HEX_TYPES.at("Water"));
+    setBrush(ColorConstants::HEX_COLORS.at("Water"));
     update();
 }
 

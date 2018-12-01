@@ -1,12 +1,14 @@
 #ifndef PAWNITEM_HH
 #define PAWNITEM_HH
 
-#include <QGraphicsPixmapItem>
-#include <QGraphicsSceneMouseEvent>
-#include <QPixmap>
 #include "pawn.hh"
 #include "hexitem.hh"
 #include "player.hh"
+
+#include <QGraphicsPixmapItem>
+#include <QGraphicsSceneMouseEvent>
+#include <QPixmap>
+
 
 namespace Student {
 

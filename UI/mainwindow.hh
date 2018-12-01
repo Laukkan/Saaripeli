@@ -26,8 +26,6 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = nullptr);
 
-    HexItem* getHexItem(Common::CubeCoordinate coord);
-
     int getNextPlayerId();
 
     void resetPlayerMoves(int playerId);
@@ -45,6 +43,8 @@ public slots:
     void flipHex(Common::CubeCoordinate tileCoord);
     void initBoard(int playersAmount);
     void spinWheel();
+
+    void moveToSinking();
 
 private:
     std::vector<std::shared_ptr<Player>> _playerVector;

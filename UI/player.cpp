@@ -1,11 +1,7 @@
 #include "player.hh"
-#include <map>
+#include "constants.hh"
 
-const static std::map<int,QString> PAWN_COLORS {
-    {1    , "White"},
-    {2    , "Blue"},
-    {3    , "Red"}
-};
+#include <map>
 
 
 namespace Student {
@@ -14,7 +10,7 @@ namespace Student {
 Player::Player(int id):
     _id(id), _actionsleft(3)
 {
-    _pawnColor = PAWN_COLORS.at(_id);
+    _pawnColor = ColorConstants::PAWN_COLORS.at(_id);
 }
 
 int Player::getPlayerId() const

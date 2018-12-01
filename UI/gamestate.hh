@@ -8,9 +8,15 @@ namespace Student  {
 class GameState : public Common::IGameState
 {
 public:
-    GameState() = default;
-    virtual ~GameState() = default;
+    /**
+     * @brief GameState initialises the GameState to begin with Player 1
+     * moving the pawns
+     */
 
+    GameState() : _currentPhase(Common::GamePhase::MOVEMENT),
+                  _currentPlayer(1) {}
+
+    virtual ~GameState() = default;
 
     /**
      * @brief currentGamePhase tells the phase of the game.

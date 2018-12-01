@@ -37,7 +37,8 @@ HEADERS  += \
     helpers.hh \
     actoritem.hh \
     gameinfobox.hh \
-    transportitem.hh
+    transportitem.hh \
+    constants.hh
 
 INCLUDEPATH += $$PWD/../GameLogic/Engine
 DEPENDPATH += $$PWD/../GameLogic/Engine

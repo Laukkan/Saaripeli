@@ -1,4 +1,5 @@
 #include "helpers.hh"
+#include "constants.hh"
 #include <math.h>
 #include <map>
 
@@ -7,10 +8,12 @@ namespace Helpers {
 
 QPointF cubeToPixel(Common::CubeCoordinate cubeCoord)
 {
+    unsigned int hexSize = SizeConstants::HEXSIZE;
+
     qreal q = cubeCoord.x;
     qreal r = cubeCoord.z;
-    qreal x = HEXSIZE * ( (sqrt(3) * q)  +  ((sqrt(3)/2) * r) );
-    qreal y = HEXSIZE * ( (3./2) * r );
+    qreal x = hexSize * ( (sqrt(3) * q)  +  ((sqrt(3)/2) * r) );
+    qreal y = hexSize * ( (3./2) * r );
     return QPointF(x, y);
 }
 

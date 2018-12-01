@@ -7,6 +7,8 @@
 #include <QGraphicsPixmapItem>
 #include <QGraphicsSceneMouseEvent>
 #include <memory>
+
+
 namespace Student {
 
 class ActorItem :   public QObject, public QGraphicsPixmapItem

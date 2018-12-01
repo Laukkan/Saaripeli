@@ -2,7 +2,6 @@
 
 namespace Student {
 
-
 Common::GamePhase GameState::currentGamePhase() const
 {
     return _currentPhase;

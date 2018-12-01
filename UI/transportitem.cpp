@@ -1,6 +1,6 @@
 #include "transportitem.hh"
-
 #include "helpers.hh"
+#include "constants.hh"
 
 #include <QDrag>
 #include <QCursor>
@@ -15,7 +15,8 @@ TransportItem::TransportItem(std::shared_ptr<Common::Transport> transport, HexIt
     _transport(transport)
 {
 
-    _transportImage.load(TRANSPORT_TYPES.at(_transport->getTransportType()));
+    _transportImage.load(PathConstants::TRANSPORT_IMAGES.at(
+                             _transport->getTransportType()));
     setPixmap(_transportImage.scaled(30,46));
     QPointF coordinates = parent->getActorPosition();
     setPos(coordinates);
