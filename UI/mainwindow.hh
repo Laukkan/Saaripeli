@@ -71,7 +71,8 @@ private:
     void addActorItem(std::shared_ptr<Common::Hex> hex);
     void addTransportItem(std::shared_ptr<Common::Hex> hex);
     void addVortex(Common::CubeCoordinate coord);
-    void displayActorAction(Common::CubeCoordinate coord, int actorID);
+    void doActorAction(Common::CubeCoordinate coord, int actorId);
+    //void addPawnToTransport(Common::CubeCoordinate coord, int pawnId);
 
 };
 

@@ -3,6 +3,7 @@
 
 #include "transport.hh"
 #include "hexitem.hh"
+#include "pawnitem.hh"
 
 #include <QGraphicsPixmapItem>
 #include <QGraphicsSceneMouseEvent>
@@ -15,6 +16,7 @@ class TransportItem:   public QObject, public QGraphicsPixmapItem
     Q_INTERFACES(QGraphicsItem)
 public:
     TransportItem(std::shared_ptr<Common::Transport> transport, HexItem* parent);
+    void switchTransportIcon(PawnItem* pawnItem);
 
 public slots:
     void showTransport();
@@ -32,6 +34,7 @@ private:
     QPixmap _transportImage;
     std::string _transportType;
     std::shared_ptr<Common::Transport> _transport;
+    std::vector<PawnItem*> _pawnItemsOnBoard;
 
 };
 

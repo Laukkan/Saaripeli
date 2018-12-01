@@ -11,12 +11,12 @@
 
 namespace Student {
 
-PawnItem::PawnItem(std::shared_ptr<Player> player,
+PawnItem::PawnItem(QString color,
                    std::shared_ptr<Common::Pawn> pawn,
                    HexItem* parent):
-    _pawn(pawn), _player(player)
+    _pawn(pawn), _color(color)
 {
-    _pawnImage.load(PathConstants::PAWN_IMAGES.at(_player->getPawnColor()));
+    _pawnImage.load(PathConstants::PAWN_IMAGES.at(_color));
     setPixmap(_pawnImage.scaled(SizeConstants::P_PIX_SIZE));
     setOffset(parent->getPawnPosition());
 
@@ -26,9 +26,9 @@ PawnItem::PawnItem(std::shared_ptr<Player> player,
     setParent(parent);
 }
 
-std::shared_ptr<Common::Pawn> PawnItem::returnPawn()
+QString PawnItem::getColor()
 {
-    return _pawn;
+    return _color;
 }
 
 void PawnItem::mousePressEvent(QGraphicsSceneMouseEvent* event)

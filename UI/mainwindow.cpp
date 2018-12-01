@@ -152,11 +152,17 @@ void MainWindow::movePawn(Common::CubeCoordinate origin,
         return;
     }
 
-    PawnItem* pawnItem = _pawnItems.at(pawnId);
-    HexItem* newParent = _hexItems.at(target);
+    if(_gameBoard->getHex(target)->getTransports().empty()){
+        PawnItem* pawnItem = _pawnItems.at(pawnId);
+        HexItem* newParent = _hexItems.at(target);
 
-    pawnItem->setOffset(newParent->getPawnPosition());
-    pawnItem->setParent(newParent);
+        pawnItem->setOffset(newParent->getPawnPosition());
+        pawnItem->setParent(newParent);
+    }
+    else {
+        std::shared_ptr<Common::Transport> transport = _gameBoard->getHex(target)->getTransports().at(0);
+        _transportItems.at(transport->getId())->switchTransportIcon(_pawnItems.at(pawnId));
+    }
 
     if (movesLeft == 0) {
         moveToSinking();
@@ -175,7 +181,7 @@ void MainWindow::moveActor(Common::CubeCoordinate origin,
 
     try {
         _gameRunner->moveActor(origin, target, actorId, _movesFromSpinner);
-        displayActorAction(target, actorId);
+        doActorAction(target, actorId);
     }
     catch (Common::IllegalMoveException) {
         return;
@@ -204,6 +210,7 @@ void MainWindow::moveTransport(Common::CubeCoordinate origin,
             _gameRunner->moveTransportWithSpinner(origin, target,
                                                   transportId,
                                                   _movesFromSpinner);
+            _gameState->changeGamePhase(Common::GamePhase::MOVEMENT);
         }
         catch (Common::IllegalMoveException) {
             return;
@@ -211,6 +218,7 @@ void MainWindow::moveTransport(Common::CubeCoordinate origin,
     } else {
         try {
             _gameRunner->moveTransport(origin, target, transportId);
+            _gameState->changeGamePhase(Common::GamePhase::SINKING);
         }
         catch (Common::IllegalMoveException) {
             return;
@@ -221,7 +229,6 @@ void MainWindow::moveTransport(Common::CubeCoordinate origin,
 
     transportItem->setPos(newParent->getActorPosition());
     transportItem->setParent(newParent);
-    _gameState->changeGamePhase(Common::GamePhase::SINKING);
     _gameInfoBox->updateGameState();
 }
 
@@ -294,7 +301,7 @@ void MainWindow::drawPawns()
         _gameBoard->addPawn(id, id, coord);
         std::shared_ptr<Common::Pawn> pawn =
                 _gameBoard->getHex(coord)->givePawn(id);
-        PawnItem* pawnItem = new PawnItem(player, pawn, _hexItems[coord]);
+        PawnItem* pawnItem = new PawnItem(player->getPawnColor(), pawn, _hexItems[coord]);
         _pawnItems[id] = pawnItem;
         _scene->addItem(pawnItem);
     }
@@ -329,7 +336,7 @@ void MainWindow::addVortex(Common::CubeCoordinate coord)
     _scene->addItem(vortexItem);
 }
 
-void MainWindow::displayActorAction(Common::CubeCoordinate coord, int actorID)
+void MainWindow::doActorAction(Common::CubeCoordinate coord, int actorId)
 {
     std::shared_ptr<Common::Hex> hex = _gameBoard->getHex(coord);
     std::vector<std::shared_ptr<Common::Pawn>> pawnsBefore = hex->getPawns();
@@ -341,7 +348,7 @@ void MainWindow::displayActorAction(Common::CubeCoordinate coord, int actorID)
          transportBefore = hex->getTransports().at(0);
     }
 
-    _gameBoard->getActor(actorID)->doAction();
+    _gameBoard->getActor(actorId)->doAction();
 
     std::vector<std::shared_ptr<Common::Pawn>> pawnsAfter = hex->getPawns();
 
@@ -358,5 +365,10 @@ void MainWindow::displayActorAction(Common::CubeCoordinate coord, int actorID)
 
 
 }
+
+/*void MainWindow::addPawnToTransport(Common::CubeCoordinate coord, int pawnId)
+{
+    _gameBoard->get
+}*/
 
 }

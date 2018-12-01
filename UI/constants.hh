@@ -44,6 +44,17 @@ const static std::map<std::string, QString> ACTOR_IMAGES {
 const static std::map<std::string, QString> TRANSPORT_IMAGES {
     {"dolphin",  ":/dolphin.png"},
     {"boat",     ":/boat.png"},
+    {"boatBlue", ":/boatBlue.png"},
+    {"boatWhite", ":/boatWhite.png"},
+    {"boatRed", ":/boatRed.png"},
+    {"boatBlueRed", ":/boatBlueRed.png"},
+    {"boatBlueWhite", ":/boatBlueWhite.png"},
+    {"boatBlueWhiteRed", ":/boatBlueWhiteRed.png"},
+    {"boatWhiteRed", ":/boatWhiteRed.png"},
+    {"dolphinBlue",  ":/dolphinBlue.png"},
+    {"dolphinRed",  ":/dolphinRed.png"},
+    {"dolphinWhite",  ":/dolphinWhite.png"}
+
 };
 
 }
