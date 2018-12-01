@@ -106,6 +106,8 @@ public slots:
      */
     void continueFromSpinning();
 
+
+
 private:
     /**
      * @brief setupGameInfoBox - sets up the GameInfoBox
@@ -134,7 +136,7 @@ private:
      * @brief addVortex - adds a vortex to the given coordinate
      * @param coord - CubeCoordinate represation of the coordinate
      */
-    void addVortex(const Common::CubeCoordinate &coord);
+    void doTheVortex(const Common::CubeCoordinate &coord);
 
     void doActorAction(Common::CubeCoordinate coord, int actorId);
 

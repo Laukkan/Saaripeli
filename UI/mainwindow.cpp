@@ -14,6 +14,7 @@
 #include <QDesktopWidget>
 #include <QGridLayout>
 #include <QApplication>
+#include <QMessageBox>
 
 
 namespace Student {
@@ -114,6 +115,13 @@ void MainWindow::moveToSinking()
     _gameInfoBox->updateGameState();
 }
 
+/*void MainWindow::continueFromSpinning()
+{
+    _gameState->changeGamePhase(Common::GamePhase::MOVEMENT);
+    _gameState->changePlayerTurn(getNextPlayerId());
+    _gameInfoBox->updateGameState();
+}*/
+
 void MainWindow::continueFromSpinning()
 {
     _gameState->changeGamePhase(Common::GamePhase::MOVEMENT);
@@ -165,6 +173,7 @@ void MainWindow::movePawn(Common::CubeCoordinate origin,
     else {
         std::shared_ptr<Common::Transport> transport = _gameBoard->getHex(target)->getTransports().at(0);
         _transportItems.at(transport->getId())->switchTransportIcon(_pawnItems.at(pawnId));
+        _pawnItems.at(pawnId)->~PawnItem();
     }
 
     if (movesLeft == 0) {
@@ -260,7 +269,7 @@ void MainWindow::flipHex(const Common::CubeCoordinate &tileCoord)
 
         } else{
             // type is vortex
-            addVortex(tileCoord);
+            doTheVortex(tileCoord);
         }
     }
     catch (Common::IllegalMoveException) {
@@ -326,7 +335,7 @@ void MainWindow::addTransportItem(std::shared_ptr<Common::Hex> hex)
     _scene->addItem(transportItem);
 }
 
-void MainWindow::addVortex(const Common::CubeCoordinate &coord)
+void MainWindow::doTheVortex(const Common::CubeCoordinate &coord)
 {
     QPixmap vortexIcon(PathConstants::ACTOR_IMAGES.at("vortex"));
     QGraphicsPixmapItem* vortexItem =
@@ -334,6 +343,24 @@ void MainWindow::addVortex(const Common::CubeCoordinate &coord)
     QPointF coordinates = _hexItems.at(coord)->getActorPosition();
     vortexItem->setPos(coordinates);
     _scene->addItem(vortexItem);
+    std::vector<Common::CubeCoordinate> coordinatesToRemoveFrom = _gameBoard->getHex(coord)->getNeighbourVector();
+    coordinatesToRemoveFrom.push_back(coord);
+    for(auto coordinate : coordinatesToRemoveFrom){
+        std::shared_ptr<Common::Hex> hex = _gameBoard->getHex(coordinate);
+        for(auto transport : hex->getTransports()){
+            _transportItems.at(transport->getId())->~TransportItem();
+        }
+        for(auto pawn : hex->getPawns()){
+            _pawnItems.at(pawn->getId())->~PawnItem();
+        }
+        for(auto actor : hex->getActors()){
+            _actorItems.at(actor->getId())->~ActorItem();
+        }
+    }
+    QMessageBox vortex;
+    vortex.setText("The vortex destroyed everything around it!");
+    vortex.exec();
+    vortexItem->~QGraphicsPixmapItem();
 }
 
 void MainWindow::doActorAction(Common::CubeCoordinate coord, int actorId)

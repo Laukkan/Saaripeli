@@ -22,12 +22,6 @@ GameInfoBox::GameInfoBox(std::shared_ptr<GameState> gameState,
     setSizePolicy(spFixed);
     resize(SizeConstants::INFO_BOX_SIZE);
 
-    initLabelsButtons();
-    setupLayout();
-}
-
-void GameInfoBox::initLabelsButtons()
-{
     _gamePhaseLabel = new QLabel(
                 Helpers::gamePhaseToQString(_gameState->currentGamePhase()));
 
@@ -46,8 +40,8 @@ void GameInfoBox::initLabelsButtons()
     connect(_stayHereButton, &QPushButton::pressed,
             this, &GameInfoBox::stayHerePressed);
 
-    _continueFromNoActor = new QPushButton("Ok");
-    connect(_continueFromNoActor, &QPushButton::pressed,
+    _continueFromSpin = new QPushButton("Ok");
+    connect(_continueFromSpin, &QPushButton::pressed,
             this, &GameInfoBox::continueFromSpinPressed);
 
     _actorImageLabel = new QLabel();
@@ -59,10 +53,7 @@ void GameInfoBox::initLabelsButtons()
     spRetain.setRetainSizeWhenHidden(true);
     spRetain.setHorizontalPolicy(QSizePolicy::Policy::Fixed);
     _actorImageLabel->setSizePolicy(spRetain);
-}
 
-void GameInfoBox::setupLayout()
-{
     _layout->addWidget(_gamePhaseLabel, 0, 0);
     _layout->addWidget(_playerTurnLabel, 1, 0);
     _layout->addWidget(_playerMovesLabel, 1, 1);
@@ -70,13 +61,12 @@ void GameInfoBox::setupLayout()
     _layout->addWidget(_actorMovesLabel, 3, 2);
     _layout->addWidget(_spinButton, 5, 0);
     _layout->addWidget(_stayHereButton, 5, 1);
-    _layout->addWidget(_continueFromNoActor, 5, 1);
+    _layout->addWidget(_continueFromSpin, 5, 1);
 
     setLayout(_layout);
 }
 
-void GameInfoBox::updateGameState()
-{
+void GameInfoBox::updateGameState(){
     Common::GamePhase currentPhase = _gameState->currentGamePhase();
 
     _playerMovesLabel->show();
@@ -97,7 +87,7 @@ void GameInfoBox::updateGameState()
         _actorImageLabel->clear();
         _actorMovesLabel->clear();
         _spinButton->hide();
-        _continueFromNoActor->hide();
+        _continueFromSpin->hide();
         _actorImageLabel->hide();
         _actorMovesLabel->hide();
     }
@@ -119,7 +109,7 @@ void GameInfoBox::updateActor(QPixmap image, std::string moves)
 
     if (image.isNull()) {
         _actorImageLabel->setText("Actor hasn't been revealed yet");
-        _continueFromNoActor->show();
+        _continueFromSpin->show();
     }
     else {
         _actorImageLabel->setPixmap(Helpers::scaleActorImage(image, 3));
@@ -127,7 +117,5 @@ void GameInfoBox::updateActor(QPixmap image, std::string moves)
     }
 
 }
-
-
 
 }

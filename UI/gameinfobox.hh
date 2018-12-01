@@ -45,6 +45,8 @@ public:
      */
     void updateActor(QPixmap pixmap, std::string moves);
 
+    void informOfVortex();
+
 signals:
     /**
     * @brief Emitted when the corresponding button is pressed
@@ -104,6 +106,9 @@ private:
      * @details Connected to the MainWindow's continueFromSpinning slot.
      */
     QPushButton* _continueFromNoActor;
+
+    //MITÄ TÄÄ TEKEE
+    QPushButton* _continueFromSpin;
 
     /**
      * @brief _layout - the GroupBox's layout
