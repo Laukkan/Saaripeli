@@ -45,6 +45,7 @@ public slots:
     void spinWheel();
 
     void moveToSinking();
+    void continueFromSpinning();
 
 private:
     std::vector<std::shared_ptr<Player>> _playerVector;

@@ -24,6 +24,7 @@ public:
 signals:
    void spinButtonPressed();
    void stayHerePressed();
+   void continueFromSpinPressed();
 
 private:
     QLabel* _gamePhaseLabel;
@@ -31,6 +32,7 @@ private:
     QLabel* _playerMovesLabel;
     QPushButton* _spinButton;
     QPushButton* _stayHereButton;
+    QPushButton* _continueFromSpin;
     QLabel* _actorImageLabel;
     QLabel* _actorMovesLabel;
 

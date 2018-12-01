@@ -40,6 +40,10 @@ GameInfoBox::GameInfoBox(std::shared_ptr<GameState> gameState,
     connect(_stayHereButton, &QPushButton::pressed,
             this, &GameInfoBox::stayHerePressed);
 
+    _continueFromSpin = new QPushButton("Ok");
+    connect(_continueFromSpin, &QPushButton::pressed,
+            this, &GameInfoBox::continueFromSpinPressed);
+
     _actorImageLabel = new QLabel();
     _actorMovesLabel = new QLabel();
 
@@ -57,7 +61,7 @@ GameInfoBox::GameInfoBox(std::shared_ptr<GameState> gameState,
     _layout->addWidget(_actorMovesLabel, 3, 2);
     _layout->addWidget(_spinButton, 5, 0);
     _layout->addWidget(_stayHereButton, 5, 1);
-
+    _layout->addWidget(_continueFromSpin, 5, 1);
 
     setLayout(_layout);
 }
@@ -65,12 +69,9 @@ GameInfoBox::GameInfoBox(std::shared_ptr<GameState> gameState,
 void GameInfoBox::updateGameState(){
     Common::GamePhase currentPhase = _gameState->currentGamePhase();
 
-    // Clear the changing labels
-    _actorImageLabel->clear();
-    _actorMovesLabel->clear();
-
     _playerMovesLabel->show();
     _stayHereButton->show();
+
     // Hide the move related stuff when not moving the pawns
     if (currentPhase != Common::GamePhase::MOVEMENT) {
         _playerMovesLabel->hide();
@@ -83,7 +84,10 @@ void GameInfoBox::updateGameState(){
         _actorMovesLabel->show();
     }
     else {
+        _actorImageLabel->clear();
+        _actorMovesLabel->clear();
         _spinButton->hide();
+        _continueFromSpin->hide();
         _actorImageLabel->hide();
         _actorMovesLabel->hide();
     }
@@ -102,8 +106,16 @@ void GameInfoBox::updateGameState(){
 void GameInfoBox::updateActor(QPixmap image, std::string moves)
 {
     _spinButton->hide();
-    _actorImageLabel->setPixmap(Helpers::scaleActorImage(image, 3));
-    _actorMovesLabel->setText(QString::fromStdString(moves));
+
+    if (image.isNull()) {
+        _actorImageLabel->setText("Actor hasn't been revealed yet");
+        _continueFromSpin->show();
+    }
+    else {
+        _actorImageLabel->setPixmap(Helpers::scaleActorImage(image, 3));
+        _actorMovesLabel->setText(QString::fromStdString(moves));
+    }
+
 }
 
 }

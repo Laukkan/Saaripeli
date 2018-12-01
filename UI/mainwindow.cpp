@@ -58,15 +58,14 @@ void MainWindow::initBoard(int playersAmount)
             this, &MainWindow::spinWheel);
     connect(_gameInfoBox, &GameInfoBox::stayHerePressed,
             this, &MainWindow::moveToSinking);
+    connect(_gameInfoBox, &GameInfoBox::continueFromSpinPressed,
+            this, &MainWindow::continueFromSpinning);
     _scene->addWidget(_gameInfoBox);
     _gameInfoBox->move(600, -400);
 
     setCentralWidget(view);
     view->setScene(_scene);
 
-    // Set initial gameState
-    _gameState->changeGamePhase(Common::GamePhase::MOVEMENT);
-    _gameState->changePlayerTurn(_playerVector.at(0)->getPlayerId());
     _gameInfoBox->updateGameState();
 }
 
@@ -81,18 +80,16 @@ void MainWindow::spinWheel()
                 PathConstants::ACTOR_IMAGES;
 
         //todo add dolphins in actors
-        if(_gameBoard->checkIfActorExists(spinResult.first) and
+        if (_gameBoard->checkIfActorExists(spinResult.first) and
                 actorImages.find(spinResult.first) != actorImages.end())
         {
             _gameInfoBox->updateActor(QPixmap(actorImages.at(spinResult.first)),
                                       spinResult.second);
             _movesFromSpinner = spinResult.second;
         }
-        //TODO message on spinning an actor that doesn't exist
         else {
-            _gameState->changeGamePhase(Common::GamePhase::MOVEMENT);
-            _gameState->changePlayerTurn(getNextPlayerId());
-            _gameInfoBox->updateGameState();
+            // Update with a null pixmap to inform that the Actor doesn't exist
+            _gameInfoBox->updateActor(QPixmap(), "0");
         }
     }
     catch (Common::IllegalMoveException) {
@@ -100,10 +97,18 @@ void MainWindow::spinWheel()
     }
 }
 
+
 void MainWindow::moveToSinking()
 {
     resetPlayerMoves(_gameState->currentPlayer());
     _gameState->changeGamePhase(Common::GamePhase::SINKING);
+    _gameInfoBox->updateGameState();
+}
+
+void MainWindow::continueFromSpinning()
+{
+    _gameState->changeGamePhase(Common::GamePhase::MOVEMENT);
+    _gameState->changePlayerTurn(getNextPlayerId());
     _gameInfoBox->updateGameState();
 }
 
