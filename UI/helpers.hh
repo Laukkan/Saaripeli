@@ -17,6 +17,11 @@ const static std::map<std::string,QString> ACTOR_TYPES {
     {"vortex"    , ":/vortex.png"},
 };
 
+const static std::map<std::string,QString> TRANSPORT_TYPES {
+    {"dolphin"    , ":/dolphin.png"},
+    {"boat"    , ":/boat.png"},
+};
+
 namespace Helpers {
 
 

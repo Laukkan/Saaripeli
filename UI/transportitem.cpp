@@ -1,4 +1,5 @@
-#include "actoritem.hh"
+#include "transportitem.hh"
+
 #include "helpers.hh"
 
 #include <QDrag>
@@ -10,12 +11,12 @@
 namespace Student {
 
 
-ActorItem::ActorItem(std::shared_ptr<Common::Actor> actor, HexItem* parent) :
-    _actor(actor)
+TransportItem::TransportItem(std::shared_ptr<Common::Transport> transport, HexItem* parent) :
+    _transport(transport)
 {
 
-    _actorImage.load(ACTOR_TYPES.at(_actor->getActorType()));
-    setPixmap(_actorImage.scaled(30,46));
+    _transportImage.load(TRANSPORT_TYPES.at(_transport->getTransportType()));
+    setPixmap(_transportImage.scaled(30,46));
     QPointF coordinates = parent->getActorPosition();
     setPos(coordinates);
 
@@ -26,24 +27,24 @@ ActorItem::ActorItem(std::shared_ptr<Common::Actor> actor, HexItem* parent) :
 
 }
 
-void ActorItem::showActor()
+void TransportItem::showTransport()
 {
     this->show();
 }
 
-void ActorItem::mousePressEvent(QGraphicsSceneMouseEvent* event)
+void TransportItem::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
     Q_UNUSED(event);
     setCursor(Qt::ClosedHandCursor);
 }
 
-void ActorItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
+void TransportItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
     Q_UNUSED(event);
     setCursor(Qt::OpenHandCursor);
 }
 
-void ActorItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
+void TransportItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
     Q_UNUSED(event);
     QDrag* drag = new QDrag(parent());
@@ -52,12 +53,11 @@ void ActorItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 
     // Move information of the current parent and pawn Id
     mime->setParent(parent());
-    mime->setText("actor;" + QString::number(_actor->getId()));
+    mime->setText("transport;" + QString::number(_transport->getId()));
 
-    drag->setPixmap(_actorImage);
+    drag->setPixmap(_transportImage);
     drag->exec();
     setCursor(Qt::OpenHandCursor);
 }
 
 }
-
