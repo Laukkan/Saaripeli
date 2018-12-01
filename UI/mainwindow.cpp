@@ -97,10 +97,12 @@ HexItem* MainWindow::getHexItem(Common::CubeCoordinate coord)
 
 int MainWindow::getNextPlayerId()
 {
-    if(_gameState->currentPlayer() == _playerVector.size()){
+   unsigned currentId = static_cast<unsigned>(_gameState->currentPlayer());
+
+    if(currentId == _playerVector.size()){
         return _playerVector.at(0)->getPlayerId();
     }
-    else return _playerVector.at(_gameState->currentPlayer())->getPlayerId();
+    else return _playerVector.at(currentId)->getPlayerId();
 }
 
 void MainWindow::resetPlayerMoves(int playerId)

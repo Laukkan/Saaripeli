@@ -30,8 +30,8 @@ bool GameBoard::isWaterTile(Common::CubeCoordinate tileCoord) const
     }
 }
 
-std::shared_ptr<Common::Hex> GameBoard::getHex(
-        Common::CubeCoordinate hexCoord) const
+std::shared_ptr<Common::Hex> GameBoard::getHex(Common::CubeCoordinate hexCoord)
+const
 {
     if(_hexes.find(hexCoord) == _hexes.end()){
         return nullptr;
