@@ -16,6 +16,8 @@ const static QPoint GIBOX_OFFSET = QPoint(500, -400);
 const static unsigned ANIM_TIME = 1000;
 
 const static int HEX_SIDES = 6;
+
+const static int POINTS_FOR_WIN = 5;
 }
 
 namespace SizeConstants {

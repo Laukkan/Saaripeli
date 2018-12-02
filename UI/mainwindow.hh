@@ -139,12 +139,19 @@ private:
 
     void doActorAction(Common::CubeCoordinate coord, int actorId);
 
+    //MAYBE MOVE THIS METHOD?
+    void checkGameStatus();
+
+    void startNewRound();
+
+    void finishGame(std::shared_ptr<Player> winner);
+
     std::string _movesFromSpinner;
 
     /**
      * @brief Data structures for storing all the UI's Items
      */
-    std::vector<std::shared_ptr<Player>> _playerVector;
+    std::map<int, std::shared_ptr<Player>> _playerMap;
     std::map<Common::CubeCoordinate, HexItem*> _hexItems;
     std::map<int, PawnItem*> _pawnItems;
     std::map<int, ActorItem*> _actorItems;

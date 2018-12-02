@@ -160,4 +160,17 @@ std::shared_ptr<Common::Actor> GameBoard::getActor(int actorID)
     return _actors.at(actorID);
 }
 
+unsigned int GameBoard::getPawnsLeft()
+{
+    return _pawns.size();
+}
+
+int GameBoard::getWinner()
+{
+    if(_pawns.size() == 1){
+        return _pawns.at(0)->getPlayerId();
+    }
+    else return 0;
+}
+
 }

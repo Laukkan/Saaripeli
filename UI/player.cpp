@@ -26,4 +26,14 @@ QString Player::getPawnColor()
     return _pawnColor;
 }
 
+void Player::givePoint()
+{
+    _points += 1;
+}
+
+unsigned int Player::getPoints()
+{
+    return _points;
+}
+
 }
