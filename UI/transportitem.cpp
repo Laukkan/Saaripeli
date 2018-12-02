@@ -96,4 +96,14 @@ void TransportItem::switchTransportIcon(PawnItem* pawnItem)
     _pawnItemsOnBoard.push_back(pawnItem);
 }
 
+void TransportItem::releasePawns()
+{
+    for(PawnItem* pawnItem : _pawnItemsOnBoard){
+        HexItem* parentHex = qobject_cast<HexItem*>(parent());
+        pawnItem->setOffset(parentHex->getPawnPosition());
+        pawnItem->setParent(parentHex);
+        pawnItem->show();
+    }
+}
+
 }

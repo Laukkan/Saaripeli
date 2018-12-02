@@ -165,7 +165,7 @@ void MainWindow::movePawn(Common::CubeCoordinate origin,
     else {
         std::shared_ptr<Common::Transport> transport = _gameBoard->getHex(target)->getTransports().at(0);
         _transportItems.at(transport->getId())->switchTransportIcon(_pawnItems.at(pawnId));
-        _pawnItems.at(pawnId)->~PawnItem();
+        _pawnItems.at(pawnId)->hide();
     }
 
     if (movesLeft == 0) {
@@ -395,7 +395,9 @@ void MainWindow::doActorAction(Common::CubeCoordinate coord, int actorId)
     }
 
     if(transport and hex->getTransports().empty()) {
-         _transportItems.at(transportBefore->getId())->~TransportItem();
+        TransportItem* transportItem = _transportItems.at(transportBefore->getId());
+        transportItem->releasePawns();
+        transportItem->~TransportItem();
     }
 }
 
