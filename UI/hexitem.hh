@@ -39,6 +39,13 @@ public:
     QPointF getActorPosition();
 
     /**
+     * @brief getActorPosition - returns the position for the ActorItem based
+     * on the HexItem's location.
+     * @return QPointF pixel coordinate representation of the position.
+     */
+    QPointF getTransportPosition();
+
+    /**
      * @brief flip - flips the HexItem upside down sinking it.
      * @details is called by the MainWindow's flipHex slot if the flip of
      * the Hex is legal (according to the rules).

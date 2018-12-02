@@ -19,9 +19,9 @@ HexItem::HexItem(std::shared_ptr<Common::Hex> hex, QPointF center) :
     //  Set the color according to type.
     setBrush(ColorConstants::HEX_COLORS.at(_hex->getPieceType()));
 
-    _pawnPositionArray[0] = QPointF(_center.x()-8, _center.y());
-    _pawnPositionArray[1] = QPointF(_center.x()-20, _center.y()-20);
-    _pawnPositionArray[2] = QPointF(_center.x()+5, _center.y()-20);
+    _pawnPositionArray[0] = QPointF(_center.x()-10, _center.y()+4);
+    _pawnPositionArray[1] = QPointF(_center.x()-25, _center.y()-10);
+    _pawnPositionArray[2] = QPointF(_center.x()-10, _center.y()-25);
 
     setAcceptedMouseButtons(Qt::LeftButton);
     setAcceptDrops(true);
@@ -112,7 +112,12 @@ QPointF HexItem::getPawnPosition()
 
 QPointF HexItem::getActorPosition()
 {
-    return QPointF(_center.x()-15, _center.y()-23);
+    return QPointF(_center.x()+5, _center.y()-23);
+}
+
+QPointF HexItem::getTransportPosition()
+{
+    return QPointF(_center.x()+5, _center.y()+1);
 }
 
 void HexItem::flip()

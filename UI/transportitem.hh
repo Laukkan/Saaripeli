@@ -31,6 +31,8 @@ public:
 
     void switchTransportIcon(PawnItem* pawnItem);
 
+    void releasePawns();
+
 protected:
     /**
      * @brief TransportItems's interractions with mouse

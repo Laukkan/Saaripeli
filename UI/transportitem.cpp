@@ -18,8 +18,8 @@ TransportItem::TransportItem(std::shared_ptr<Common::Transport> transport,
     _transportImage.load(PathConstants::TRANSPORT_IMAGES.at(
                              _transport->getTransportType()));
 
-    setPixmap(_transportImage.scaled(30,46));
-    QPointF coordinates = parent->getActorPosition();
+    setPixmap(_transportImage.scaled(SizeConstants::A_PIX_SIZE));
+    QPointF coordinates = parent->getTransportPosition();
     setPos(coordinates);
 
     setFlag(QGraphicsItem::ItemIsMovable);
@@ -99,6 +99,16 @@ void TransportItem::switchTransportIcon(PawnItem* pawnItem)
     }
     setPixmap(_transportImage.scaled(SizeConstants::A_PIX_SIZE));
     _pawnItemsOnBoard.push_back(pawnItem);
+}
+
+void TransportItem::releasePawns()
+{
+    for(PawnItem* pawnItem : _pawnItemsOnBoard){
+        HexItem* parentHex = qobject_cast<HexItem*>(parent());
+        pawnItem->setOffset(parentHex->getPawnPosition());
+        pawnItem->setParent(parentHex);
+        pawnItem->show();
+    }
 }
 
 }

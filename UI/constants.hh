@@ -24,10 +24,10 @@ namespace SizeConstants {
 const static QSize MW_SIZE = QSize(1280,720);
 
 // ActorItem's pixmap's picture dimensions
-const static QSize A_PIX_SIZE = QSize(30, 46);
+const static QSize A_PIX_SIZE = QSize(15, 23);
 
 // PawnItem's pixmap's picture dimensions
-const static QSize P_PIX_SIZE = QSize(15, 23);
+const static QSize P_PIX_SIZE = QSize(12, 19);
 
 // GameInfoBox's size
 const static QSize INFO_BOX_SIZE = QSize(100, 200);
