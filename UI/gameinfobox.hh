@@ -53,7 +53,7 @@ signals:
     */
    void spinButtonPressed();
    void stayHerePressed();
-   void continueFromSpinPressed();
+   void continueFromNoActorPressed();
 
 private:
    /**
@@ -106,9 +106,6 @@ private:
      * @details Connected to the MainWindow's continueFromSpinning slot.
      */
     QPushButton* _continueFromNoActor;
-
-    //MITÄ TÄÄ TEKEE
-    QPushButton* _continueFromSpin;
 
     /**
      * @brief _layout - the GroupBox's layout

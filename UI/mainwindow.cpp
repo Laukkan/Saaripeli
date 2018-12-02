@@ -42,7 +42,6 @@ void MainWindow::initBoard(int playersAmount)
     _gameRunner = Common::Initialization::getGameRunner(_gameBoard,
                                                         _gameState,
                                                         iplayers);
-
     _scene = new QGraphicsScene(this);
     QGraphicsView* view = new QGraphicsView(this);
 
@@ -63,11 +62,13 @@ void MainWindow::initBoard(int playersAmount)
 void MainWindow::setupGameInfoBox()
 {
     _gameInfoBox = new GameInfoBox(_gameState, _gameRunner);
+
+    // Connect all the buttons of the GameInfoBox
     connect(_gameInfoBox, &GameInfoBox::spinButtonPressed,
             this, &MainWindow::spinWheel);
     connect(_gameInfoBox, &GameInfoBox::stayHerePressed,
             this, &MainWindow::moveToSinking);
-    connect(_gameInfoBox, &GameInfoBox::continueFromSpinPressed,
+    connect(_gameInfoBox, &GameInfoBox::continueFromNoActorPressed,
             this, &MainWindow::continueFromSpinning);
 
 }

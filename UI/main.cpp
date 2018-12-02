@@ -7,6 +7,11 @@
 #include <QApplication>
 #include <QMessageBox>
 
+
+/**
+ * @brief criticalError - Opens a critical error box with the message
+ * @param message
+ */
 void criticalError(const std::string &message);
 
 
