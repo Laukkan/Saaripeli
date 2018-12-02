@@ -29,7 +29,7 @@ GameInfoBox::GameInfoBox(std::shared_ptr<GameState> gameState,
 
     _randomGen.seed(static_cast<unsigned int>(time(nullptr)));
 
-    for (const auto &path : PathConstants::ACTOR_IMAGES) {
+    for (const auto &path : PathConstants::M_ACTOR_IMAGES) {
         _actorImages.push_back(QPixmap(path.second));
     }
 }
@@ -54,10 +54,11 @@ void GameInfoBox::initLabelsButtons()
     connect(_stayHereButton, &QPushButton::pressed,
             this, &GameInfoBox::stayHerePressed);
 
-    _continueFromNoActor = new QPushButton("Ok");
-    connect(_continueFromNoActor, &QPushButton::pressed,
-            this, &GameInfoBox::continueFromNoActorPressed);
+    _continueFromSpin = new QPushButton("Ok");
+    connect(_continueFromSpin, &QPushButton::pressed,
+            this, &GameInfoBox::continueFromSpinPressed);
 
+    _actorNonExistant = new QLabel("Actor hasn't been revealed yet");
     _actorImageLabel = new QLabel();
     _actorMovesLabel = new QLabel();
 
@@ -78,7 +79,8 @@ void GameInfoBox::setupLayout()
     _layout->addWidget(_actorMovesLabel, 3, 2);
     _layout->addWidget(_spinButton, 5, 0);
     _layout->addWidget(_stayHereButton, 5, 1);
-    _layout->addWidget(_continueFromNoActor, 5, 1);
+    _layout->addWidget(_continueFromSpin, 5, 1);
+    _layout->addWidget(_actorNonExistant, 5, 0);
 
     setLayout(_layout);
 }
@@ -97,14 +99,14 @@ void GameInfoBox::updateGameState(){
     //
     if (currentPhase == Common::GamePhase::SPINNING){
         _spinButton->show();
-        _actorImageLabel->show();
         _actorMovesLabel->show();
     }
     else {
         _actorImageLabel->clear();
         _actorMovesLabel->clear();
+        _continueFromSpin->hide();
         _spinButton->hide();
-        _continueFromNoActor->hide();
+        _actorNonExistant->hide();
         _actorImageLabel->hide();
         _actorMovesLabel->hide();
     }
@@ -120,15 +122,13 @@ void GameInfoBox::updateGameState(){
 
 }
 
-void GameInfoBox::updateActor(QPixmap image, std::string moves)
+void GameInfoBox::shuffleImages()
 {
-    _spinButton->hide();
-    _actorImageLabel->show();
-    std::uniform_int_distribution<unsigned> distribut(8, 12);
+    std::uniform_int_distribution<unsigned> distribut(10, 15);
     unsigned imageAmount = distribut(_randomGen);
     unsigned imageTime = OtherConstants::ANIM_TIME/imageAmount;
 
-    for (int i = 0; i < 15; i++) {
+    for (unsigned i = 0; i < imageAmount; i++) {
         QPixmap rPixmap = Helpers::selectRandomImage(_actorImages.begin(),
                                                      _actorImages.end(),
                                                      _randomGen);
@@ -137,17 +137,28 @@ void GameInfoBox::updateActor(QPixmap image, std::string moves)
         QApplication::processEvents();
         QThread::msleep(imageTime);
     }
+}
 
+void GameInfoBox::updateActor(const QPixmap &image, const std::string &moves,
+                              const bool actorExists)
+{
+    _spinButton->hide();
+    _actorImageLabel->show();
+    _actorNonExistant->hide();
 
-    if (image.isNull()) {
-        _actorImageLabel->setText("Actor hasn't been revealed yet");
-        _continueFromNoActor->setText("Ok");
-        _continueFromNoActor->show();
+    shuffleImages();
+
+    // Set the correct image at the end
+    _actorImageLabel->setPixmap(Helpers::scaleActorImage(image, 3));
+
+    if (!actorExists) {
+        _continueFromSpin->setText("Ok");
+        _continueFromSpin->show();
+        _actorNonExistant->show();
     }
     else {
-        _continueFromNoActor->setText("Don't move");
-        _continueFromNoActor->show();
-        _actorImageLabel->setPixmap(Helpers::scaleActorImage(image, 3));
+        _continueFromSpin->setText("Don't move");
+        _continueFromSpin->show();
         _actorMovesLabel->setText(QString::fromStdString(moves));
     }
 

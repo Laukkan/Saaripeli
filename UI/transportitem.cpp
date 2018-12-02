@@ -58,19 +58,24 @@ void TransportItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 
 void TransportItem::switchTransportIcon(PawnItem* pawnItem)
 {
-    if(_transportType == "dolphin"){
-        _transportImage.load(PathConstants::TRANSPORT_IMAGES.at(
-                                 _transportType + pawnItem->getColor().toStdString()));
+    const std::map<std::string, QString> transportImages =
+            PathConstants::TRANSPORT_IMAGES;
 
+    if (_transportType == "dolphin")
+    {
+        _transportImage.load(
+                    transportImages.at(_transportType +
+                                       pawnItem->getColor().toStdString()));
     }
     else{
-        if(_pawnItemsOnBoard.size() == 0){
+        if (_pawnItemsOnBoard.size() == 0) {
             _transportImage.load(
-                        PathConstants::TRANSPORT_IMAGES.at(_transportType + pawnItem->getColor().toStdString()));
+                        transportImages.at(_transportType +
+                                           pawnItem->getColor().toStdString()));
         }
-        else if(_pawnItemsOnBoard.size() == 2){
+        else if (_pawnItemsOnBoard.size() == 2) {
             _transportImage.load(
-                        PathConstants::TRANSPORT_IMAGES.at(_transportType+"BlueWhiteRed"));
+                        transportImages.at(_transportType+"BlueWhiteRed"));
         }
         else {
             std::vector<QString> colors;
@@ -79,16 +84,16 @@ void TransportItem::switchTransportIcon(PawnItem* pawnItem)
             if(std::find(colors.begin(), colors.end(), "Red") != colors.end()
                     and std::find(colors.begin(), colors.end(), "Blue") != colors.end()){
                 _transportImage.load(
-                            PathConstants::TRANSPORT_IMAGES.at(_transportType+"BlueRed"));
+                            transportImages.at(_transportType+"BlueRed"));
             }
             else if(std::find(colors.begin(), colors.end(), "White") != colors.end()
                     and std::find(colors.begin(), colors.end(), "Blue") != colors.end()){
                 _transportImage.load(
-                            PathConstants::TRANSPORT_IMAGES.at(_transportType+"BlueWhite"));
+                            transportImages.at(_transportType+"BlueWhite"));
             }
             else {
                 _transportImage.load(
-                            PathConstants::TRANSPORT_IMAGES.at(_transportType+"WhiteRed"));
+                            transportImages.at(_transportType+"WhiteRed"));
             }
         }
     }

@@ -65,7 +65,7 @@ void MainWindow::setupGameInfoBox()
             this, &MainWindow::spinWheel);
     connect(_gameInfoBox, &GameInfoBox::stayHerePressed,
             this, &MainWindow::moveToSinking);
-    connect(_gameInfoBox, &GameInfoBox::continueFromNoActorPressed,
+    connect(_gameInfoBox, &GameInfoBox::continueFromSpinPressed,
             this, &MainWindow::continueFromSpinning);
 
 }
@@ -82,23 +82,19 @@ void MainWindow::spinWheel()
         const std::map<std::string, QString> transportImages =
                 PathConstants::TRANSPORT_IMAGES;
 
-        //todo add dolphins in actors
-        if (_gameBoard->checkIfActorOrTransportExists(spinResult.first))
-        {
-            if(spinResult.first == "dolphin"){
-                _gameInfoBox->updateActor(QPixmap(transportImages.at(spinResult.first)),
-                                          spinResult.second);
-            }
-            else {
-                _gameInfoBox->updateActor(QPixmap(actorImages.at(spinResult.first)),
-                                          spinResult.second);
-            }
-            _movesFromSpinner = spinResult.second;
+        bool actorExists =
+                _gameBoard->checkIfActorOrTransportExists(spinResult.first);
+
+        if(spinResult.first == "dolphin"){
+            _gameInfoBox->updateActor(QPixmap(transportImages.at(spinResult.first)),
+                                      spinResult.second, actorExists);
         }
         else {
-            // Update with a null pixmap to inform that the Actor doesn't exist
-            _gameInfoBox->updateActor(QPixmap(), "0");
+            _gameInfoBox->updateActor(QPixmap(actorImages.at(spinResult.first)),
+                                      spinResult.second, actorExists);
         }
+        _movesFromSpinner = spinResult.second;
+
     }
     catch (Common::IllegalMoveException) {
         return;

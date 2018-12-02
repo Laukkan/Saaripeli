@@ -44,7 +44,8 @@ public:
      * _actorImageLabel is updated to inform this result and _continueFromSpin
      * button is shown.
      */
-    void updateActor(QPixmap pixmap, std::string moves);
+    void updateActor(const QPixmap &pixmap, const std::string &moves,
+                     const bool actorExists);
 
     void informOfVortex();
 
@@ -54,9 +55,15 @@ signals:
     */
    void spinButtonPressed();
    void stayHerePressed();
-   void continueFromNoActorPressed();
+   void continueFromSpinPressed();
 
 private:
+   /**
+     * @brief shuffleImages - shuffles all of the actor images visibly,
+     * mimicking a raffle.
+     */
+   void shuffleImages();
+
    /**
     * @brief setupLayout - sets the Layout of the GameInfoBox
     */
@@ -98,6 +105,7 @@ private:
     /**
      * @brief Show the result of the spin.
      */
+    QLabel* _actorNonExistant;
     QLabel* _actorImageLabel;
     QLabel* _actorMovesLabel;
 
@@ -114,11 +122,11 @@ private:
     QPushButton* _stayHereButton;
 
     /**
-     * @brief _continueFromNoActor is shown when the Player is given the message
+     * @brief _continueFromSpin is shown when the Player is given the message
      * that the spin result (Actor) doesn't exist on the GameBoard.
      * @details Connected to the MainWindow's continueFromSpinning slot.
      */
-    QPushButton* _continueFromNoActor;
+    QPushButton* _continueFromSpin;
 
     /**
      * @brief _layout - the GroupBox's layout

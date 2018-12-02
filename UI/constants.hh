@@ -39,7 +39,14 @@ const static unsigned int HEXSIZE = 30;
 
 namespace PathConstants {
 
-// Map of paths for the each of the colored pawn images
+// Movable Actor's images
+const static std::map<std::string, QString> M_ACTOR_IMAGES {
+    {"shark",      ":/shark.png"},
+    {"kraken",     ":/kraken.png"},
+    {"seamunster", ":/seamunster.png"},
+    {"dolphin",    ":/dolphin.png"},
+};
+
 const static std::map<QString, QString> PAWN_IMAGES {
     {"White", ":/whitepawn.png"},
     {"Blue",  ":/bluepawn.png"},
@@ -54,18 +61,18 @@ const static std::map<std::string, QString> ACTOR_IMAGES {
 };
 
 const static std::map<std::string, QString> TRANSPORT_IMAGES {
-    {"dolphin",  ":/dolphin.png"},
-    {"boat",     ":/boat.png"},
-    {"boatBlue", ":/boatBlue.png"},
-    {"boatWhite", ":/boatWhite.png"},
-    {"boatRed", ":/boatRed.png"},
-    {"boatBlueRed", ":/boatBlueRed.png"},
-    {"boatBlueWhite", ":/boatBlueWhite.png"},
+    {"dolphin",          ":/dolphin.png"},
+    {"boat",             ":/boat.png"},
+    {"boatBlue",         ":/boatBlue.png"},
+    {"boatWhite",        ":/boatWhite.png"},
+    {"boatRed",          ":/boatRed.png"},
+    {"boatBlueRed",      ":/boatBlueRed.png"},
+    {"boatBlueWhite",    ":/boatBlueWhite.png"},
     {"boatBlueWhiteRed", ":/boatBlueWhiteRed.png"},
-    {"boatWhiteRed", ":/boatWhiteRed.png"},
-    {"dolphinBlue",  ":/dolphinBlue.png"},
-    {"dolphinRed",  ":/dolphinRed.png"},
-    {"dolphinWhite",  ":/dolphinWhite.png"}
+    {"boatWhiteRed",     ":/boatWhiteRed.png"},
+    {"dolphinBlue",      ":/dolphinBlue.png"},
+    {"dolphinRed",       ":/dolphinRed.png"},
+    {"dolphinWhite",     ":/dolphinWhite.png"}
 
 };
 
