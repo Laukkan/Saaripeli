@@ -32,15 +32,6 @@ GameInfoBox::GameInfoBox(std::shared_ptr<GameState> gameState,
     for (const auto &path : PathConstants::ACTOR_IMAGES) {
         _actorImages.push_back(QPixmap(path.second));
     }
-    int i = 0;
-    for (const auto &path : PathConstants::TRANSPORT_IMAGES) {
-        if (i >= 1) {
-            // Get the non-colored images only
-            break;
-        }
-        _actorImages.push_back(QPixmap(path.second));
-        i++;
-    }
 }
 
 void GameInfoBox::initLabelsButtons()
@@ -133,7 +124,7 @@ void GameInfoBox::updateActor(QPixmap image, std::string moves)
 {
     _spinButton->hide();
     _actorImageLabel->show();
-    std::uniform_int_distribution<unsigned> distribut(8, 16);
+    std::uniform_int_distribution<unsigned> distribut(8, 12);
     unsigned imageAmount = distribut(_randomGen);
     unsigned imageTime = OtherConstants::ANIM_TIME/imageAmount;
 
@@ -154,7 +145,7 @@ void GameInfoBox::updateActor(QPixmap image, std::string moves)
         _continueFromNoActor->show();
     }
     else {
-        _continueFromNoActor->setText("Stay here");
+        _continueFromNoActor->setText("Don't move");
         _continueFromNoActor->show();
         _actorImageLabel->setPixmap(Helpers::scaleActorImage(image, 3));
         _actorMovesLabel->setText(QString::fromStdString(moves));
