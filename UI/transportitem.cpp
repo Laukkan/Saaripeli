@@ -98,6 +98,7 @@ void TransportItem::switchTransportIcon(PawnItem* pawnItem)
         }
     }
     setPixmap(_transportImage.scaled(SizeConstants::A_PIX_SIZE));
+    setPos(qobject_cast<HexItem*>(parent())->getPawnPosition());
     _pawnItemsOnBoard.push_back(pawnItem);
 }
 

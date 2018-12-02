@@ -231,33 +231,34 @@ void MainWindow::moveTransport(Common::CubeCoordinate origin,
     bool spinning =
             _gameState->currentGamePhase() == Common::GamePhase::SPINNING;
     int movesLeft;
+    TransportItem* transportItem = _transportItems.at(transportId);
+    HexItem* newParent = _hexItems.at(target);
 
     try {
         if (spinning) {
             movesLeft = _gameRunner->
                     moveTransportWithSpinner(origin, target, transportId,
                                              _movesFromSpinner);
+            transportItem->setPos(newParent->getActorPosition());
         }
         else {
             movesLeft = _gameRunner->moveTransport(origin, target, transportId);
+            transportItem->setPos(newParent->getPawnPosition());
         }
     } catch (Common::IllegalMoveException) {
         return;
     }
 
-    TransportItem* transportItem = _transportItems.at(transportId);
-    HexItem* newParent = _hexItems.at(target);
 
-    transportItem->setPos(newParent->getActorPosition());
     transportItem->setParent(newParent);
     _gameInfoBox->updateGameState();
 
     if (movesLeft == 0 and spinning) {
-        moveToSinking();
+        continueFromSpinning();
         return;
     }
     else if (movesLeft == 0) {
-        continueFromSpinning();
+        moveToSinking();
         return;
     }
 }
