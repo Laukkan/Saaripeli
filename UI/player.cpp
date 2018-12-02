@@ -36,4 +36,14 @@ unsigned int Player::getPoints()
     return _points;
 }
 
+void Player::setPlayerElimination(bool state)
+{
+    _eliminated = state;
+}
+
+bool Player::getPlayerElimination()
+{
+    return _eliminated;
+}
+
 }

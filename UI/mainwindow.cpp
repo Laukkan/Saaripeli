@@ -53,7 +53,7 @@ void MainWindow::initBoard(int playersAmount)
 
 void MainWindow::setupGameInfoBox()
 {
-    _gameInfoBox = new GameInfoBox(_gameState, _gameRunner);
+    _gameInfoBox = new GameInfoBox(_gameState, _gameRunner, _playerMap);
 
     // Connect all the buttons of the GameInfoBox
     connect(_gameInfoBox, &GameInfoBox::spinButtonPressed,
@@ -111,6 +111,7 @@ void MainWindow::moveToSinking()
 
 void MainWindow::continueFromSpinning()
 {
+    checkGameStatus();
     _gameState->changeGamePhase(Common::GamePhase::MOVEMENT);
     _gameState->changePlayerTurn(getNextPlayerId());
     checkGameStatus();
@@ -135,11 +136,18 @@ void MainWindow::erasePawnItem(const int pawnId)
 int MainWindow::getNextPlayerId()
 {
    unsigned currentId = static_cast<unsigned>(_gameState->currentPlayer());
-
-    if(currentId == _playerMap.size()){
-        return _playerMap.at(1)->getPlayerId();
+    bool playerEliminated = true;
+    while(playerEliminated){
+        if(currentId >= _playerMap.size()){
+            currentId = 1;
+            playerEliminated = _playerMap.at(currentId)->getPlayerElimination();
+        }
+        else {
+            currentId++;
+            playerEliminated = _playerMap.at(currentId)->getPlayerElimination();
+        }
     }
-    else return _playerMap.at(_gameState->currentPlayer())->getPlayerId()+1;
+    return static_cast<int>(currentId);
 }
 
 void MainWindow::resetPlayerMoves(int playerId)
@@ -296,6 +304,7 @@ void MainWindow::flipHex(const Common::CubeCoordinate &tileCoord)
 
     _gameState->changeGamePhase(Common::GamePhase::SPINNING);
     _gameInfoBox->updateGameState();
+    checkGameStatus();
 }
 
 void MainWindow::drawGameBoard()
@@ -437,8 +446,18 @@ void MainWindow::doActorAction(const Common::CubeCoordinate &coord,
 //MAYBE MOVE THIS METHOD?
 void MainWindow::checkGameStatus()
 {
-    unsigned int pawnsLeft = _gameBoard->getPawnsLeft();
+    std::unordered_map<int, std::shared_ptr<Common::Pawn>> pawns = _gameBoard->getPawns();
+    unsigned int pawnsLeft = pawns.size();
     if(pawnsLeft > 1){
+        for(auto player : _playerMap){
+            bool playerEliminated = true;
+            for(auto pawn : pawns){
+                if(pawn.second->getPlayerId() == player.second->getPlayerId()){
+                    playerEliminated = false;
+                }
+                player.second->setPlayerElimination(playerEliminated);
+            }
+        }
         return;
     }
     else if(pawnsLeft == 1){

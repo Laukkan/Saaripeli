@@ -19,6 +19,8 @@ public:
     explicit Player(int id) :
         _id(id),
         _moveActionsleft(3),
+        _points(0),
+        _eliminated(false),
         _pawnColor(ColorConstants::PAWN_COLORS.at(_id)) {}
 
     /**
@@ -64,6 +66,18 @@ public:
      */
     unsigned int getPoints();
 
+    /**
+     * @brief setPlayerElimination - Sets the players elimination status to state.
+     * @param state - The state to change the players elimination status to.
+     */
+    void setPlayerElimination(bool state);
+
+    /**
+     * @brief getPlayerElimination - Returns whether the player has been eliminated.
+     * @return bool - True if the player has been eliminated, false if not.
+     */
+    bool getPlayerElimination();
+
 private:
     /**
      * @brief _id - the Id of the Player.
@@ -76,14 +90,21 @@ private:
     unsigned int _moveActionsleft;
 
     /**
+     * @brief points How many points (round winds) the player has.
+     */
+    unsigned int _points;
+
+    /**
+     * @brief eliminated - Whether the player has been eliminated from the round.
+     */
+    bool _eliminated;
+
+    /**
      * @brief _pawnColor - the color of the Player's PawnItem
      */
     QString _pawnColor;
 
-    /**
-     * @brief points How many points (round winds) the player has.
-     */
-    unsigned int _points;
+
 };
 
 }

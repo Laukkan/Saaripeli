@@ -160,10 +160,11 @@ std::shared_ptr<Common::Actor> GameBoard::getActor(int actorID)
     return _actors.at(actorID);
 }
 
-unsigned int GameBoard::getPawnsLeft()
+std::unordered_map<int, std::shared_ptr<Common::Pawn>> GameBoard::getPawns()
 {
-    return _pawns.size();
+    return _pawns;
 }
+
 
 int GameBoard::getWinner()
 {

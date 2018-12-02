@@ -3,6 +3,7 @@
 
 #include "gamestate.hh"
 #include "igamerunner.hh"
+#include "player.hh"
 
 #include <QMainWindow>
 #include <QGroupBox>
@@ -23,7 +24,8 @@ public:
      * @param gameRunner - a pointer to the GameRunner
      */
     explicit GameInfoBox(std::shared_ptr<GameState> gameState,
-                         std::shared_ptr<Common::IGameRunner> gameRunner);
+                         std::shared_ptr<Common::IGameRunner> gameRunner,
+                         std::map<int, std::shared_ptr<Player>> playerMap);
 
     /**
       * @brief Default virtual destructor. Qt's parent-mechanism takes care of
@@ -77,11 +79,18 @@ private:
    void initLabelsButtons();
 
    /**
+    * @brief setPlayerPoints - Sets the player point labels to show current point
+    * counts for each player.
+    */
+   void setPlayerPoints();
+
+   /**
     * @brief Pointers to the required GameEngine implementations used in
     * this class.
     */
    std::shared_ptr<GameState> _gameState;
    std::shared_ptr<Common::IGameRunner> _gameRunner;
+   std::map<int, std::shared_ptr<Player>> _playerMap;
 
    /**
     * @brief _randomGen - random number generator for the actor image
@@ -101,6 +110,8 @@ private:
     QLabel* _gamePhaseLabel;
     QLabel* _playerTurnLabel;
     QLabel* _playerMovesLabel;
+    QLabel* _scoreBoardLabel;
+    std::map<int, QLabel*> _playerScoreLabels;
 
     /**
      * @brief Show the result of the spin.

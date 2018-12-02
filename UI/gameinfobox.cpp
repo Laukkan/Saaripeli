@@ -12,8 +12,9 @@ namespace Student {
 
 
 GameInfoBox::GameInfoBox(std::shared_ptr<GameState> gameState,
-                         std::shared_ptr<Common::IGameRunner> gameRunner):
-    _gameState(gameState), _gameRunner(gameRunner)
+                         std::shared_ptr<Common::IGameRunner> gameRunner,
+                         std::map<int, std::shared_ptr<Player>> playerMap):
+    _gameState(gameState), _gameRunner(gameRunner), _playerMap(playerMap)
 {
     _layout = new QGridLayout(this);
     setTitle("Game Information");
@@ -46,6 +47,13 @@ void GameInfoBox::initLabelsButtons()
                 "Moves left: " + QString::number(_gameRunner->
                                 getCurrentPlayer()->getActionsLeft()));
 
+    _scoreBoardLabel = new QLabel("Score Board");
+    for(auto player : _playerMap){
+        QLabel* scoreLabel = new QLabel();
+        _playerScoreLabels[player.second->getPlayerId()] = scoreLabel;
+    }
+    setPlayerPoints();
+
     _spinButton = new QPushButton("Spin");
     connect(_spinButton, &QPushButton::pressed,
             this, &GameInfoBox::spinButtonPressed);
@@ -70,6 +78,15 @@ void GameInfoBox::initLabelsButtons()
     _actorImageLabel->setSizePolicy(spRetain);
 }
 
+void GameInfoBox::setPlayerPoints()
+{
+    for(auto player : _playerMap){
+        int id =player.second->getPlayerId();
+        _playerScoreLabels.at(id)->setText("Player " + QString::number(player.second->getPlayerId())
+                                           + ": " + QString::number(player.second->getPoints()));
+    }
+}
+
 void GameInfoBox::setupLayout()
 {
     _layout->addWidget(_gamePhaseLabel, 0, 0);
@@ -81,6 +98,12 @@ void GameInfoBox::setupLayout()
     _layout->addWidget(_stayHereButton, 5, 1);
     _layout->addWidget(_continueFromSpin, 5, 1);
     _layout->addWidget(_actorNonExistant, 5, 0);
+    _layout->addWidget(_scoreBoardLabel, 6, 0);
+    int row = 7;
+    for(auto label : _playerScoreLabels){
+        _layout->addWidget(label.second, row, 0);
+        row++;
+    }
 
     setLayout(_layout);
 }
@@ -113,12 +136,16 @@ void GameInfoBox::updateGameState(){
     _gamePhaseLabel->setText(
                 Helpers::gamePhaseToQString(_gameState->currentGamePhase()));
 
+    int currentPlayerId =_gameState->currentPlayer();
     _playerTurnLabel->setText(
-                "Player " + QString::number(_gameState->currentPlayer()));
+                "Player " + QString::number(currentPlayerId) + " ("
+                + ColorConstants::PAWN_COLORS.at(currentPlayerId) + ")");
 
     _playerMovesLabel->setText(
                 "Moves left: " + QString::number(_gameRunner->
                                 getCurrentPlayer()->getActionsLeft()));
+
+    setPlayerPoints();
 
 }
 

@@ -168,10 +168,10 @@ public:
     std::shared_ptr<Common::Actor> getActor(int actorID);
 
     /**
-     * @brief getPawnsLeft returns how many pawns there are left in the game.
-     * @return unsigned int, the number of pawns left in the game.
+     * @brief getPawnsLeft returns the pawn map.
+     * @return map of the pawns with their Id's as keys,
      */
-    unsigned int getPawnsLeft();
+    std::unordered_map<int, std::shared_ptr<Common::Pawn>> getPawns();
 
     /**
      * @brief getWinner returns the winning player's Id if there is only one pawn
