@@ -179,7 +179,8 @@ void MainWindow::moveActor(Common::CubeCoordinate origin,
                           Common::CubeCoordinate target,
                           int actorId)
 {
-    if (_gameState->currentGamePhase() != Common::GamePhase::SPINNING) {
+    if (_gameState->currentGamePhase() != Common::GamePhase::SPINNING
+            or !_gameBoard->getHex(target)->getActors().empty()) {
         return;
     }
 
