@@ -167,6 +167,20 @@ public:
      */
     std::shared_ptr<Common::Actor> getActor(int actorID);
 
+    /**
+     * @brief getPawnsLeft returns how many pawns there are left in the game.
+     * @return unsigned int, the number of pawns left in the game.
+     */
+    unsigned int getPawnsLeft();
+
+    /**
+     * @brief getWinner returns the winning player's Id if there is only one pawn
+     * left in the game, otherwise returns 0.
+     * @return The winning player's Id if there is one, 0 otherwise.
+     */
+    int getWinner();
+
+
 private:
     /**
      * @brief Data structures required for storing the GameEngine's logical

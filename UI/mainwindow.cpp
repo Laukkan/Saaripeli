@@ -26,15 +26,15 @@ void MainWindow::initBoard(int playersAmount)
 {
     for(int playerId = 1; playerId <= playersAmount; playerId++){
         std::shared_ptr<Player> newPlayer(new Player(playerId));
-        _playerVector.push_back(newPlayer);
+        _playerMap[playerId] = newPlayer;
     }
     _gameBoard = std::shared_ptr<Student::GameBoard>(new Student::GameBoard());
     _gameState = std::shared_ptr<GameState>(new GameState);
 
-    // Change _playerVector to a vector where the players are IPlayers.
+    // Change _playerMap to a vector where the players are IPlayers.
     std::vector<std::shared_ptr<Common::IPlayer>> iplayers;
-    for (std::shared_ptr<Player> player : _playerVector) {
-        iplayers.push_back(std::static_pointer_cast<Common::IPlayer>(player));
+    for (auto player : _playerMap) {
+        iplayers.push_back(std::static_pointer_cast<Common::IPlayer>(player.second));
     }
     _gameRunner = Common::Initialization::getGameRunner(_gameBoard,
                                                         _gameState,
@@ -136,17 +136,17 @@ int MainWindow::getNextPlayerId()
 {
    unsigned currentId = static_cast<unsigned>(_gameState->currentPlayer());
 
-    if(currentId == _playerVector.size()){
-        return _playerVector.at(0)->getPlayerId();
+    if(currentId == _playerMap.size()){
+        return _playerMap.at(1)->getPlayerId();
     }
-    else return _playerVector.at(currentId)->getPlayerId();
+    else return _playerMap.at(_gameState->currentPlayer())->getPlayerId();
 }
 
 void MainWindow::resetPlayerMoves(int playerId)
 {
-    for(std::shared_ptr<Player> player : _playerVector){
-        if(player->getPlayerId() == playerId){
-            player->setActionsLeft(3);
+    for(auto player : _playerMap){
+        if(player.second->getPlayerId() == playerId){
+            player.second->setActionsLeft(3);
         }
     }
 }
@@ -324,14 +324,14 @@ void MainWindow::drawPawns()
 {
     Common::CubeCoordinate coord = Common::CubeCoordinate(0,0,0);
 
-    for (std::shared_ptr<Player> player : _playerVector)
+    for (const auto &player : _playerMap)
     {
-        int id = player->getPlayerId();
+        int id = player.second->getPlayerId();
         _gameBoard->addPawn(id, id, coord);
         std::shared_ptr<Common::Pawn> pawn =
                 _gameBoard->getHex(coord)->givePawn(id);
-        PawnItem* pawnItem =
-                new PawnItem(player->getPawnColor(), pawn, _hexItems[coord]);
+        PawnItem* pawnItem = new PawnItem(
+                    player.second->getPawnColor(), pawn, _hexItems[coord]);
         _pawnItems[id] = pawnItem;
         _scene->addItem(pawnItem);
     }
@@ -368,7 +368,7 @@ void MainWindow::doTheVortex(const Common::CubeCoordinate &coord)
             _gameBoard->getHex(coord)->getNeighbourVector();
     coordinatesToRemoveFrom.push_back(coord);
 
-    for (auto coordinate : coordinatesToRemoveFrom)
+    for (const auto &coordinate : coordinatesToRemoveFrom)
     {
         std::shared_ptr<Common::Hex> hex = _gameBoard->getHex(coordinate);
         for (auto transport : hex->getTransports())
@@ -431,6 +431,36 @@ void MainWindow::doActorAction(const Common::CubeCoordinate &coord,
         transportItem->releasePawns();
         eraseTransportItem(transportId);
     }
+}
+
+//MAYBE MOVE THIS METHOD?
+void MainWindow::checkGameStatus()
+{
+    unsigned int pawnsLeft = _gameBoard->getPawnsLeft();
+    if(pawnsLeft > 1){
+        return;
+    }
+    else if(pawnsLeft == 1){
+        int winnerId = _gameBoard->getWinner();
+        std::shared_ptr<Player> winningPlayer = _playerMap.at(winnerId);
+        winningPlayer->givePoint();
+        if(winningPlayer->getPoints() >= OtherConstants::POINTS_FOR_WIN){
+            finishGame(winningPlayer);
+
+        }
+    }
+    //All of the pawns were eaten, the round is a draw.
+    else startNewRound();
+}
+
+void MainWindow::startNewRound()
+{
+    return;
+}
+
+void MainWindow::finishGame(std::shared_ptr<Player> winner)
+{
+    return;
 }
 
 

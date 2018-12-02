@@ -53,6 +53,17 @@ public:
      */
     QString getPawnColor();
 
+    /**
+     * @brief givePoint gives the player 1 point.
+     */
+    void givePoint();
+
+    /**
+     * @brief getPoints returns the players points.
+     * @return unsigned int, the players points.
+     */
+    unsigned int getPoints();
+
 private:
     /**
      * @brief _id - the Id of the Player.
@@ -68,6 +79,11 @@ private:
      * @brief _pawnColor - the color of the Player's PawnItem
      */
     QString _pawnColor;
+
+    /**
+     * @brief points How many points (round winds) the player has.
+     */
+    unsigned int _points;
 };
 
 }
