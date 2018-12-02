@@ -11,7 +11,6 @@
 #include "actoritem.hh"
 #include "transportitem.hh"
 #include "gamestate.hh"
-
 #include "gameinfobox.hh"
 
 #include <QMainWindow>

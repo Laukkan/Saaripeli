@@ -4,6 +4,8 @@
 #include "actor.hh"
 
 #include <QSizePolicy>
+#include <QApplication>
+#include <QThread>
 
 
 namespace Student {
@@ -24,6 +26,21 @@ GameInfoBox::GameInfoBox(std::shared_ptr<GameState> gameState,
 
     initLabelsButtons();
     setupLayout();
+
+    _randomGen.seed(static_cast<unsigned int>(time(nullptr)));
+
+    for (const auto &path : PathConstants::ACTOR_IMAGES) {
+        _actorImages.push_back(QPixmap(path.second));
+    }
+    int i = 0;
+    for (const auto &path : PathConstants::TRANSPORT_IMAGES) {
+        if (i >= 1) {
+            // Get the non-colored images only
+            break;
+        }
+        _actorImages.push_back(QPixmap(path.second));
+        i++;
+    }
 }
 
 void GameInfoBox::initLabelsButtons()
@@ -115,6 +132,21 @@ void GameInfoBox::updateGameState(){
 void GameInfoBox::updateActor(QPixmap image, std::string moves)
 {
     _spinButton->hide();
+    _actorImageLabel->show();
+    std::uniform_int_distribution<unsigned> distribut(8, 16);
+    unsigned imageAmount = distribut(_randomGen);
+    unsigned imageTime = OtherConstants::ANIM_TIME/imageAmount;
+
+    for (int i = 0; i < 15; i++) {
+        QPixmap rPixmap = Helpers::selectRandomImage(_actorImages.begin(),
+                                                     _actorImages.end(),
+                                                     _randomGen);
+        _actorImageLabel->setPixmap(Helpers::scaleActorImage(rPixmap,3));
+        repaint();
+        QApplication::processEvents();
+        QThread::msleep(imageTime);
+    }
+
 
     if (image.isNull()) {
         _actorImageLabel->setText("Actor hasn't been revealed yet");

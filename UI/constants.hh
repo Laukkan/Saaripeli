@@ -12,6 +12,9 @@ namespace OtherConstants {
 // Position offset for the GameInfoBox in the MainWindow
 const static QPoint GIBOX_OFFSET = QPoint(500, -400);
 
+// Shuffle animation time (milliseconds) for the GameInfoBox
+const static unsigned ANIM_TIME = 3000;
+
 const static int HEX_SIDES = 6;
 }
 
@@ -32,9 +35,7 @@ const static QSize INFO_BOX_SIZE = QSize(100, 200);
 // Distance from each hexes corner to their middle.
 const static unsigned int HEXSIZE = 30;
 
-
 }
-
 
 namespace PathConstants {
 
@@ -69,7 +70,6 @@ const static std::map<std::string, QString> TRANSPORT_IMAGES {
 };
 
 }
-
 
 namespace ColorConstants {
 

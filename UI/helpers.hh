@@ -6,7 +6,10 @@
 #include <QString>
 #include <QPointF>
 #include <QPixmap>
+#include <vector>
 
+
+using PixmapIter = std::vector<QPixmap>::iterator;
 
 namespace Helpers {
 
@@ -33,6 +36,13 @@ QString gamePhaseToQString(const Common::GamePhase &gamePhase);
  * @return a constant scaled pixmap
  */
 const QPixmap scaleActorImage(const QPixmap &pixmap, const int factor);
+
+/**
+ * @brief - A function that returns a random image from a given Pixmap
+ * vector
+ */
+QPixmap selectRandomImage(PixmapIter start, PixmapIter end,
+                          std::default_random_engine &randomEng);
 
 }
 #endif // HELPERS_HH

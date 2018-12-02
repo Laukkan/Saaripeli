@@ -33,4 +33,13 @@ const QPixmap scaleActorImage(const QPixmap &pixmap, const int factor)
                          Qt::SmoothTransformation);
 }
 
+QPixmap selectRandomImage(PixmapIter start, PixmapIter end,
+                          std::default_random_engine &randomEng)
+{
+    std::uniform_int_distribution<int> distance(
+                0, std::distance(start, end) - 1);
+    std::advance(start, distance(randomEng));
+    return *start;
+}
+
 }

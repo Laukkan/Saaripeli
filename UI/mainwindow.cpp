@@ -1,12 +1,9 @@
 #include "mainwindow.hh"
-
 #include "initialize.hh"
 #include "pawn.hh"
 #include "shark.hh"
-
 #include "constants.hh"
 #include "player.hh"
-
 #include "startdialog.hh"
 #include "helpers.hh"
 #include "illegalmoveexception.hh"
