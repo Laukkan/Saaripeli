@@ -117,6 +117,21 @@ void MainWindow::continueFromSpinning()
     _gameInfoBox->updateGameState();
 }
 
+
+void MainWindow::eraseTransportItem(const int transportId)
+{
+    _gameBoard->removeTransport(transportId);
+    delete _transportItems.at(transportId);
+    _transportItems.erase(transportId);
+}
+
+void MainWindow::erasePawnItem(const int pawnId)
+{
+    _gameBoard->removePawn(pawnId);
+    delete _pawnItems.at(pawnId);
+    _pawnItems.erase(pawnId);
+}
+
 int MainWindow::getNextPlayerId()
 {
    unsigned currentId = static_cast<unsigned>(_gameState->currentPlayer());
@@ -151,16 +166,21 @@ void MainWindow::movePawn(Common::CubeCoordinate origin,
         return;
     }
 
-    if(_gameBoard->getHex(target)->getTransports().empty()){
+    // Check if the pawn is on a transport
+    if (_gameBoard->getHex(target)->getTransports().empty())
+    {
         PawnItem* pawnItem = _pawnItems.at(pawnId);
         HexItem* newParent = _hexItems.at(target);
 
         pawnItem->setOffset(newParent->getPawnPosition());
         pawnItem->setParent(newParent);
     }
-    else {
-        std::shared_ptr<Common::Transport> transport = _gameBoard->getHex(target)->getTransports().at(0);
-        _transportItems.at(transport->getId())->switchTransportIcon(_pawnItems.at(pawnId));
+    else
+    {
+        std::shared_ptr<Common::Transport> transport =
+                _gameBoard->getHex(target)->getTransports().at(0);
+        _transportItems.at(transport->getId())->
+                switchTransportIcon(_pawnItems.at(pawnId));
         _pawnItems.at(pawnId)->hide();
     }
 
@@ -172,21 +192,23 @@ void MainWindow::movePawn(Common::CubeCoordinate origin,
 }
 
 void MainWindow::moveActor(Common::CubeCoordinate origin,
-                          Common::CubeCoordinate target,
-                          int actorId)
+                           Common::CubeCoordinate target,
+                           int actorId)
 {
+    // Wrong gamePhase or targetHex already has an actor
     if (_gameState->currentGamePhase() != Common::GamePhase::SPINNING
-            or !_gameBoard->getHex(target)->getActors().empty()) {
+            or !(_gameBoard->getHex(target)->getActors().empty()))
+    {
         return;
     }
 
     try {
         _gameRunner->moveActor(origin, target, actorId, _movesFromSpinner);
-        doActorAction(target, actorId);
     }
     catch (Common::IllegalMoveException) {
         return;
     }
+    doActorAction(target, actorId);
 
     ActorItem* actorItem = _actorItems.at(actorId);
     HexItem* newParent = _hexItems.at(target);
@@ -197,6 +219,8 @@ void MainWindow::moveActor(Common::CubeCoordinate origin,
     continueFromSpinning();
 }
 
+
+
 void MainWindow::moveTransport(Common::CubeCoordinate origin,
                                Common::CubeCoordinate target,
                                int transportId)
@@ -204,44 +228,37 @@ void MainWindow::moveTransport(Common::CubeCoordinate origin,
     if (_gameState->currentGamePhase() == Common::GamePhase::SINKING) {
         return;
     }
-    if (_gameState->currentGamePhase() == Common::GamePhase::SPINNING) {
-        try {
-            int movesLeft;
-            movesLeft = _gameRunner->moveTransportWithSpinner(origin, target,
-                                                  transportId,
-                                                  _movesFromSpinner);
-            TransportItem* transportItem = _transportItems.at(transportId);
-            HexItem* newParent = _hexItems.at(target);
+    bool spinning =
+            _gameState->currentGamePhase() == Common::GamePhase::SPINNING;
+    int movesLeft;
 
-            transportItem->setPos(newParent->getActorPosition());
-            transportItem->setParent(newParent);
-            _gameInfoBox->updateGameState();
-            if (movesLeft == 0) {
-                continueFromSpinning();
-                return;
-            }
+    try {
+        if (spinning) {
+            movesLeft = _gameRunner->
+                    moveTransportWithSpinner(origin, target, transportId,
+                                             _movesFromSpinner);
         }
-        catch (Common::IllegalMoveException) {
-            return;
-        }
-    } else {
-        try {
-            int movesLeft;
+        else {
             movesLeft = _gameRunner->moveTransport(origin, target, transportId);
-            TransportItem* transportItem = _transportItems.at(transportId);
-            HexItem* newParent = _hexItems.at(target);
+        }
+    } catch (Common::IllegalMoveException) {
+        return;
+    }
 
-            transportItem->setPos(newParent->getActorPosition());
-            transportItem->setParent(newParent);
-            _gameInfoBox->updateGameState();
-            if (movesLeft == 0) {
-                moveToSinking();
-                return;
-            }
-        }
-        catch (Common::IllegalMoveException) {
-            return;
-        }
+    TransportItem* transportItem = _transportItems.at(transportId);
+    HexItem* newParent = _hexItems.at(target);
+
+    transportItem->setPos(newParent->getActorPosition());
+    transportItem->setParent(newParent);
+    _gameInfoBox->updateGameState();
+
+    if (movesLeft == 0 and spinning) {
+        moveToSinking();
+        return;
+    }
+    else if (movesLeft == 0) {
+        continueFromSpinning();
+        return;
     }
 }
 
@@ -250,34 +267,32 @@ void MainWindow::flipHex(const Common::CubeCoordinate &tileCoord)
     if (_gameState->currentGamePhase() != Common::GamePhase::SINKING) {
         return;
     }
+    std::string actorType;
     try {
-        std::string actorType = _gameRunner->flipTile(tileCoord);
-
-        // The flip isn't illegal...
-        _hexItems.at(tileCoord)->flip();
-
-        const std::map<std::string, QString> actorImages =
-                PathConstants::ACTOR_IMAGES;
-        const std::map<std::string, QString> transportImages =
-                PathConstants::TRANSPORT_IMAGES;
-
-        if (actorImages.find(actorType) != actorImages.end() and
-                actorType != "vortex")
-        {
-            addActorItem(_gameBoard->returnHexes().at(tileCoord));
-        }
-        else if (transportImages.find(actorType) != transportImages.end())
-        {
-            addTransportItem(_gameBoard->returnHexes().at(tileCoord));
-
-        } else{
-            // type is vortex
-            doTheVortex(tileCoord);
-        }
+        actorType = _gameRunner->flipTile(tileCoord);
     }
     catch (Common::IllegalMoveException) {
         return;
     }
+    _hexItems.at(tileCoord)->flip();
+
+    const std::map<std::string, QString> actorImages =
+            PathConstants::ACTOR_IMAGES;
+    const std::map<std::string, QString> transportImages =
+            PathConstants::TRANSPORT_IMAGES;
+
+    if (actorType == "vortex") {
+        doTheVortex(tileCoord);
+    }
+    else if (actorImages.find(actorType) != actorImages.end())
+    {
+        addActorItem(_gameBoard->returnHexes().at(tileCoord));
+    }
+    else if (transportImages.find(actorType) != transportImages.end())
+    {
+        addTransportItem(_gameBoard->returnHexes().at(tileCoord));
+    }
+
     _gameState->changeGamePhase(Common::GamePhase::SPINNING);
     _gameInfoBox->updateGameState();
 }
@@ -287,20 +302,20 @@ void MainWindow::drawGameBoard()
     std::map<Common::CubeCoordinate, std::shared_ptr<Common::Hex>> hexes =
             _gameBoard->returnHexes();
 
-    for(auto hex = hexes.begin(); hex != hexes.end(); ++hex) {
+    for (auto hex = hexes.begin(); hex != hexes.end(); ++hex)
+    {
         Common::CubeCoordinate cubeCoord = hex->first;
-        {
-            QPointF pointCenter = Helpers::cubeToPixel(cubeCoord);
-            HexItem* newHex = new HexItem(hex->second, pointCenter);
-            connect(newHex, &HexItem::pawnDropped, this, &MainWindow::movePawn);
-            connect(newHex, &HexItem::hexFlipped, this, &MainWindow::flipHex);
-            connect(newHex, &HexItem::actorDropped, this, &MainWindow::moveActor);
-            connect(newHex, &HexItem::transportDropped,
-                    this, &MainWindow::moveTransport);
+        QPointF pointCenter = Helpers::cubeToPixel(cubeCoord);
+        HexItem* newHex = new HexItem(hex->second, pointCenter);
 
-            _hexItems[cubeCoord] = newHex;
-            _scene->addItem(newHex);
-        }
+        connect(newHex, &HexItem::pawnDropped, this, &MainWindow::movePawn);
+        connect(newHex, &HexItem::hexFlipped, this, &MainWindow::flipHex);
+        connect(newHex, &HexItem::actorDropped, this, &MainWindow::moveActor);
+        connect(newHex, &HexItem::transportDropped,
+                this, &MainWindow::moveTransport);
+
+        _hexItems[cubeCoord] = newHex;
+        _scene->addItem(newHex);
     }
 }
 
@@ -308,12 +323,15 @@ void MainWindow::drawGameBoard()
 void MainWindow::drawPawns()
 {
     Common::CubeCoordinate coord = Common::CubeCoordinate(0,0,0);
-    for(std::shared_ptr<Player> player : _playerVector){
+
+    for (std::shared_ptr<Player> player : _playerVector)
+    {
         int id = player->getPlayerId();
         _gameBoard->addPawn(id, id, coord);
         std::shared_ptr<Common::Pawn> pawn =
                 _gameBoard->getHex(coord)->givePawn(id);
-        PawnItem* pawnItem = new PawnItem(player->getPawnColor(), pawn, _hexItems[coord]);
+        PawnItem* pawnItem =
+                new PawnItem(player->getPawnColor(), pawn, _hexItems[coord]);
         _pawnItems[id] = pawnItem;
         _scene->addItem(pawnItem);
     }
@@ -321,7 +339,6 @@ void MainWindow::drawPawns()
 
 void MainWindow::addActorItem(std::shared_ptr<Common::Hex> hex)
 {
-    //TODO transports
     ActorItem* actorItem = new ActorItem((hex->getActors().at(0)),
                                          _hexItems.at(hex->getCoordinates()));
     _actorItems[(hex->getActors().at(0)->getId())] = actorItem;
@@ -344,39 +361,50 @@ void MainWindow::doTheVortex(const Common::CubeCoordinate &coord)
     QGraphicsPixmapItem* vortexItem =
             new QGraphicsPixmapItem(vortexIcon.scaled(SizeConstants::A_PIX_SIZE));
     QPointF coordinates = _hexItems.at(coord)->getActorPosition();
+
     vortexItem->setPos(coordinates);
     _scene->addItem(vortexItem);
-    std::vector<Common::CubeCoordinate> coordinatesToRemoveFrom = _gameBoard->getHex(coord)->getNeighbourVector();
+    std::vector<Common::CubeCoordinate> coordinatesToRemoveFrom =
+            _gameBoard->getHex(coord)->getNeighbourVector();
     coordinatesToRemoveFrom.push_back(coord);
-    for(auto coordinate : coordinatesToRemoveFrom){
+
+    for (auto coordinate : coordinatesToRemoveFrom)
+    {
         std::shared_ptr<Common::Hex> hex = _gameBoard->getHex(coordinate);
-        for(auto transport : hex->getTransports()){
-            if(_transportItems.find(transport->getId()) != _transportItems.end()){
-                _gameBoard->removeTransport(transport->getId());
-                _transportItems.at(transport->getId())->~TransportItem();
+        for (auto transport : hex->getTransports())
+        {
+            int transportId = transport->getId();
+            if(_transportItems.find(transportId) != _transportItems.end()){
+                eraseTransportItem(transportId);
             }
         }
-        for(auto pawn : hex->getPawns()){
-            _gameBoard->removePawn(pawn->getId());
-            _pawnItems.at(pawn->getId())->~PawnItem();
+        for (auto pawn : hex->getPawns())
+        {
+            erasePawnItem(pawn->getId());
         }
-        for(auto actor : hex->getActors()){
-            _gameBoard->removeActor(actor->getId());
-            _actorItems.at(actor->getId())->~ActorItem();
+        for (auto actor : hex->getActors())
+        {
+            int actorId = actor->getId();
+
+            _gameBoard->removeActor(actorId);
+            delete _actorItems.at(actorId);
+            _actorItems.erase(actorId);
         }
     }
     QMessageBox vortex;
     vortex.setText("The vortex destroyed everything around it!");
     vortex.exec();
-    vortexItem->~QGraphicsPixmapItem();
+    delete vortexItem;
 }
 
-void MainWindow::doActorAction(Common::CubeCoordinate coord, int actorId)
+void MainWindow::doActorAction(const Common::CubeCoordinate &coord,
+                               const int actorId)
 {
     std::shared_ptr<Common::Hex> hex = _gameBoard->getHex(coord);
     std::vector<std::shared_ptr<Common::Pawn>> pawnsBefore = hex->getPawns();
     bool transport = false;
     std::shared_ptr<Common::Transport> transportBefore;
+
     //Only one transport per tile allowed
     if(!hex->getTransports().empty()) {
          transport = true;
@@ -387,18 +415,21 @@ void MainWindow::doActorAction(Common::CubeCoordinate coord, int actorId)
 
     std::vector<std::shared_ptr<Common::Pawn>> pawnsAfter = hex->getPawns();
 
-    for(auto pawn : pawnsBefore){
-        if(std::find(pawnsAfter.begin(), pawnsAfter.end(), pawn) == pawnsAfter.end()) {
-            _gameBoard->removePawn(pawn->getId());
-            _pawnItems.at(pawn->getId())->~PawnItem();
+    for(auto pawn : pawnsBefore)
+    {
+        if (std::find(pawnsAfter.begin(), pawnsAfter.end(), pawn) ==
+                pawnsAfter.end())
+        {
+            erasePawnItem(pawn->getId());
         }
     }
 
-    if(transport and hex->getTransports().empty()) {
-        TransportItem* transportItem = _transportItems.at(transportBefore->getId());
+    if (transport and hex->getTransports().empty())
+    {
+        int transportId = transportBefore->getId();
+        TransportItem* transportItem = _transportItems.at(transportId);
         transportItem->releasePawns();
-        _gameBoard->removeTransport(transportBefore->getId());
-        transportItem->~TransportItem();
+        eraseTransportItem(transportId);
     }
 }
 

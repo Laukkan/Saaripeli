@@ -105,9 +105,15 @@ public slots:
      */
     void continueFromSpinning();
 
-
-
 private:
+    /**
+     * @brief *erase - deletes the Item, the ptr from the map
+     * and the logical side.
+     * @param *id  - the id of the Item
+     */
+    void eraseTransportItem(const int transportId);
+    void erasePawnItem(const int pawnId);
+
     /**
      * @brief setupGameInfoBox - sets up the GameInfoBox
      * @details used by the constructor
@@ -137,7 +143,7 @@ private:
      */
     void doTheVortex(const Common::CubeCoordinate &coord);
 
-    void doActorAction(Common::CubeCoordinate coord, int actorId);
+    void doActorAction(const Common::CubeCoordinate &coord, const int actorId);
 
     std::string _movesFromSpinner;
 

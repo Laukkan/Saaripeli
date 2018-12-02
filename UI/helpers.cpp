@@ -42,4 +42,6 @@ QPixmap selectRandomImage(PixmapIter start, PixmapIter end,
     return *start;
 }
 
+
+
 }
