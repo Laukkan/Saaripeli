@@ -356,13 +356,16 @@ void MainWindow::doTheVortex(const Common::CubeCoordinate &coord)
         std::shared_ptr<Common::Hex> hex = _gameBoard->getHex(coordinate);
         for(auto transport : hex->getTransports()){
             if(_transportItems.find(transport->getId()) != _transportItems.end()){
+                _gameBoard->removeTransport(transport->getId());
                 _transportItems.at(transport->getId())->~TransportItem();
             }
         }
         for(auto pawn : hex->getPawns()){
+            _gameBoard->removePawn(pawn->getId());
             _pawnItems.at(pawn->getId())->~PawnItem();
         }
         for(auto actor : hex->getActors()){
+            _gameBoard->removeActor(actor->getId());
             _actorItems.at(actor->getId())->~ActorItem();
         }
     }
@@ -390,6 +393,7 @@ void MainWindow::doActorAction(Common::CubeCoordinate coord, int actorId)
 
     for(auto pawn : pawnsBefore){
         if(std::find(pawnsAfter.begin(), pawnsAfter.end(), pawn) == pawnsAfter.end()) {
+            _gameBoard->removePawn(pawn->getId());
             _pawnItems.at(pawn->getId())->~PawnItem();
         }
     }
@@ -397,6 +401,7 @@ void MainWindow::doActorAction(Common::CubeCoordinate coord, int actorId)
     if(transport and hex->getTransports().empty()) {
         TransportItem* transportItem = _transportItems.at(transportBefore->getId());
         transportItem->releasePawns();
+        _gameBoard->removeTransport(transportBefore->getId());
         transportItem->~TransportItem();
     }
 }
