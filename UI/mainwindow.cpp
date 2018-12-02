@@ -47,13 +47,8 @@ void MainWindow::initBoard(int playersAmount)
 
     setupGameInfoBox();
 
-    _scene->addWidget(_gameInfoBox);
-    _gameInfoBox->move(OtherConstants::GIBOX_OFFSET);
-
     setCentralWidget(view);
     view->setScene(_scene);
-
-    _gameInfoBox->updateGameState();
 }
 
 void MainWindow::setupGameInfoBox()
@@ -67,6 +62,10 @@ void MainWindow::setupGameInfoBox()
             this, &MainWindow::moveToSinking);
     connect(_gameInfoBox, &GameInfoBox::continueFromSpinPressed,
             this, &MainWindow::continueFromSpinning);
+
+    _scene->addWidget(_gameInfoBox);
+    _gameInfoBox->move(OtherConstants::GIBOX_OFFSET);
+    _gameInfoBox->updateGameState();
 
 }
 
@@ -114,6 +113,7 @@ void MainWindow::continueFromSpinning()
 {
     _gameState->changeGamePhase(Common::GamePhase::MOVEMENT);
     _gameState->changePlayerTurn(getNextPlayerId());
+    checkGameStatus();
     _gameInfoBox->updateGameState();
 }
 
@@ -139,7 +139,7 @@ int MainWindow::getNextPlayerId()
     if(currentId == _playerMap.size()){
         return _playerMap.at(1)->getPlayerId();
     }
-    else return _playerMap.at(_gameState->currentPlayer())->getPlayerId();
+    else return _playerMap.at(_gameState->currentPlayer())->getPlayerId()+1;
 }
 
 void MainWindow::resetPlayerMoves(int playerId)
@@ -448,19 +448,40 @@ void MainWindow::checkGameStatus()
             finishGame(winningPlayer);
 
         }
+        else startNewRound();
     }
-    //All of the pawns were eaten, the round is a draw.
+    //All of the pawns have been removed, the round is a draw.
     else startNewRound();
 }
 
 void MainWindow::startNewRound()
 {
-    return;
+    QMessageBox newRound;
+    newRound.setText("New round will start");
+    newRound.exec();
+    _gameBoard = std::shared_ptr<Student::GameBoard>(new Student::GameBoard());
+    _gameState = std::shared_ptr<GameState>(new GameState);
+     std::vector<std::shared_ptr<Common::IPlayer>> iplayers;
+    for (auto player : _playerMap) {
+        iplayers.push_back(std::static_pointer_cast<Common::IPlayer>(player.second));
+    }
+    _gameRunner = Common::Initialization::getGameRunner(_gameBoard,
+                                                        _gameState,
+                                                        iplayers);
+    _hexItems.clear();
+    drawGameBoard();
+    _pawnItems.clear();
+    drawPawns();
+
+    setupGameInfoBox();
 }
 
 void MainWindow::finishGame(std::shared_ptr<Player> winner)
 {
-    return;
+    QMessageBox gameWon;
+    gameWon.setText("Player " + QString(winner->getPlayerId()) + " has won the game!");
+    gameWon.exec();
+
 }
 
 

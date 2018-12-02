@@ -168,7 +168,7 @@ unsigned int GameBoard::getPawnsLeft()
 int GameBoard::getWinner()
 {
     if(_pawns.size() == 1){
-        return _pawns.at(0)->getPlayerId();
+        return _pawns.begin()->second->getPlayerId();
     }
     else return 0;
 }
