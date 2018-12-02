@@ -136,15 +136,16 @@ void MainWindow::erasePawnItem(const int pawnId)
 int MainWindow::getNextPlayerId()
 {
    unsigned currentId = static_cast<unsigned>(_gameState->currentPlayer());
+   //bool used to skip eliminated players.
     bool playerEliminated = true;
     while(playerEliminated){
-        if(currentId >= _playerMap.size()){
+        if(currentId == _playerMap.size()){
             currentId = 1;
-            playerEliminated = _playerMap.at(currentId)->getPlayerElimination();
+            playerEliminated = _playerMap.at(static_cast<int>(currentId))->getPlayerElimination();
         }
         else {
             currentId++;
-            playerEliminated = _playerMap.at(currentId)->getPlayerElimination();
+            playerEliminated = _playerMap.at(static_cast<int>(currentId))->getPlayerElimination();
         }
     }
     return static_cast<int>(currentId);
@@ -305,6 +306,7 @@ void MainWindow::flipHex(const Common::CubeCoordinate &tileCoord)
     _gameState->changeGamePhase(Common::GamePhase::SPINNING);
     _gameInfoBox->updateGameState();
     checkGameStatus();
+
 }
 
 void MainWindow::drawGameBoard()
@@ -468,19 +470,20 @@ void MainWindow::checkGameStatus()
             finishGame(winningPlayer);
 
         }
-        else startNewRound();
+        else newRound();
     }
     //All of the pawns have been removed, the round is a draw.
-    else startNewRound();
+    else newRound();
 }
 
-void MainWindow::startNewRound()
+void MainWindow::newRound()
 {
     QMessageBox newRound;
     newRound.setText("New round will start");
     newRound.exec();
     _gameBoard = std::shared_ptr<Student::GameBoard>(new Student::GameBoard());
     _gameState = std::shared_ptr<GameState>(new GameState);
+    _gameState->changePlayerTurn(1);
      std::vector<std::shared_ptr<Common::IPlayer>> iplayers;
     for (auto player : _playerMap) {
         iplayers.push_back(std::static_pointer_cast<Common::IPlayer>(player.second));
@@ -493,6 +496,7 @@ void MainWindow::startNewRound()
     _pawnItems.clear();
     drawPawns();
 
+    delete _gameInfoBox;
     setupGameInfoBox();
 }
 

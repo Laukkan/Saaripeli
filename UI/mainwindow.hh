@@ -148,7 +148,7 @@ private:
     //MAYBE MOVE THIS METHOD?
     void checkGameStatus();
 
-    void startNewRound();
+    void newRound();
 
     void finishGame(std::shared_ptr<Player> winner);
 

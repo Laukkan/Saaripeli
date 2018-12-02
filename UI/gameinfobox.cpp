@@ -82,6 +82,7 @@ void GameInfoBox::setPlayerPoints()
 {
     for(auto player : _playerMap){
         int id =player.second->getPlayerId();
+        _playerScoreLabels.at(id)->clear();
         _playerScoreLabels.at(id)->setText("Player " + QString::number(player.second->getPlayerId())
                                            + ": " + QString::number(player.second->getPoints()));
     }
