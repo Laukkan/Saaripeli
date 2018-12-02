@@ -118,9 +118,12 @@ void GameInfoBox::updateActor(QPixmap image, std::string moves)
 
     if (image.isNull()) {
         _actorImageLabel->setText("Actor hasn't been revealed yet");
+        _continueFromNoActor->setText("Ok");
         _continueFromNoActor->show();
     }
     else {
+        _continueFromNoActor->setText("Stay here");
+        _continueFromNoActor->show();
         _actorImageLabel->setPixmap(Helpers::scaleActorImage(image, 3));
         _actorMovesLabel->setText(QString::fromStdString(moves));
     }

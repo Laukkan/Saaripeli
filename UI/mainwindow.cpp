@@ -357,7 +357,9 @@ void MainWindow::doTheVortex(const Common::CubeCoordinate &coord)
     for(auto coordinate : coordinatesToRemoveFrom){
         std::shared_ptr<Common::Hex> hex = _gameBoard->getHex(coordinate);
         for(auto transport : hex->getTransports()){
-            _transportItems.at(transport->getId())->~TransportItem();
+            if(_transportItems.find(transport->getId()) != _transportItems.end()){
+                _transportItems.at(transport->getId())->~TransportItem();
+            }
         }
         for(auto pawn : hex->getPawns()){
             _pawnItems.at(pawn->getId())->~PawnItem();
