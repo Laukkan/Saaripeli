@@ -479,7 +479,7 @@ void MainWindow::startNewRound()
 void MainWindow::finishGame(std::shared_ptr<Player> winner)
 {
     QMessageBox gameWon;
-    gameWon.setText("Player " + QString(winner->getPlayerId()) + " has won the game!");
+    gameWon.setText("Player " + QString::number(winner->getPlayerId()) + " has won the game!");
     gameWon.exec();
 
 }
