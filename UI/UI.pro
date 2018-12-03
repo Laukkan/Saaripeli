@@ -24,7 +24,8 @@ SOURCES += main.cpp \
     helpers.cpp \
     actoritem.cpp \
     gameinfobox.cpp \
-    transportitem.cpp
+    transportitem.cpp \
+    zoomgraphicsview.cpp
 
 HEADERS  += \
     gameboard.hh \
@@ -38,7 +39,8 @@ HEADERS  += \
     actoritem.hh \
     gameinfobox.hh \
     transportitem.hh \
-    constants.hh
+    constants.hh \
+    zoomgraphicsview.hh
 
 INCLUDEPATH += $$PWD/../GameLogic/Engine
 DEPENDPATH += $$PWD/../GameLogic/Engine

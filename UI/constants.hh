@@ -19,6 +19,9 @@ const static unsigned ANIM_TIME = 1000;
 
 const static int HEX_SIDES = 6;
 
+const static double zoomMin = 0.5;
+const static double zoomMax = 6;
+
 }
 
 namespace GameConstants {
@@ -27,6 +30,7 @@ const static int MIN_PLAYERS = 2;
 const static int MAX_PLAYERS = 3;
 
 const static int POINTS_FOR_WIN = 5;
+
 
 // Used to determine the next GamePhase from a GamePhase
 const static std::map<Common::GamePhase, Common::GamePhase> NEXT_GAME_PHASE {
