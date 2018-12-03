@@ -81,8 +81,9 @@ void GameInfoBox::setPlayerPoints()
     for(auto player : _playerMap){
         int id =player.second->getPlayerId();
         _playerScoreLabels.at(id)->clear();
-        _playerScoreLabels.at(id)->setText("Player " + QString::number(player.second->getPlayerId())
-                                           + ": " + QString::number(player.second->getPoints()));
+        _playerScoreLabels.at(id)->setText(
+                    "Player " + QString::number(player.second->getPlayerId())
+                     + ": " + QString::number(player.second->getPoints()));
     }
 }
 
@@ -155,7 +156,7 @@ void GameInfoBox::shuffleImages()
 
     for (unsigned i = 0; i < imageAmount; i++) {
         QPixmap rPixmap = Helpers::selectRandomImage(_actorImages.begin(),
-                                                     _actorImages.end());
+                                                      _actorImages.end());
         _actorImageLabel->setPixmap(Helpers::scaleActorImage(rPixmap,3));
         repaint();
         QApplication::processEvents();

@@ -1,7 +1,6 @@
 #include "helpers.hh"
 #include "constants.hh"
 
-#include <random>
 #include <time.h>
 
 
@@ -38,7 +37,6 @@ const QPixmap scaleActorImage(const QPixmap &pixmap, const int factor)
 
 QPixmap selectRandomImage(PixmapIter start, PixmapIter end)
 {
-    std::default_random_engine randomEng;
     std::uniform_int_distribution<int> distance(
                 0, std::distance(start, end) - 1);
     std::advance(start, distance(randomEng));
@@ -47,7 +45,6 @@ QPixmap selectRandomImage(PixmapIter start, PixmapIter end)
 
 int randomNumber(const int min, const int max)
 {
-    std::default_random_engine randomEng;
     randomEng.seed(static_cast<unsigned>(time(nullptr)));
     std::uniform_int_distribution<int> distribution(min, max);
 

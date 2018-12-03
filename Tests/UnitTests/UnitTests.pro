@@ -1,5 +1,6 @@
 TEMPLATE = subdirs
 
 SUBDIRS += \
-    GameBoard
+    GameBoard \
+    GameState
 

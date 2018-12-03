@@ -3,15 +3,22 @@
 
 #include <cubecoordinate.hh>
 #include <gamestate.hh>
+
 #include <QString>
 #include <QPointF>
 #include <QPixmap>
 #include <vector>
-
+#include <random>
+#include <iterator>
 
 using PixmapIter = std::vector<QPixmap>::iterator;
 
 namespace Helpers {
+
+/**
+ * @brief randomEng - a Random engine for selectRandomImage and randomNumber
+ */
+static std::default_random_engine randomEng;
 
 /**
  * @brief cube_to_pixel transforms cubeCoordinates into pixel coordinates.
@@ -51,6 +58,7 @@ QPixmap selectRandomImage(PixmapIter start, PixmapIter end);
  * @return - a random number between this interval
  */
 int randomNumber(const int min, const int max);
+
 
 }
 #endif // HELPERS_HH
