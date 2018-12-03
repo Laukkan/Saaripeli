@@ -3,9 +3,8 @@
 #include <iostream>
 #include "constants.hh"
 
-ZoomGraphicsView::ZoomGraphicsView(QMainWindow* parent)
+ZoomGraphicsView::ZoomGraphicsView()
 {
-    setParent(parent);
     //_currentZoom = 1.0;
 }
 

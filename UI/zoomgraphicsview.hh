@@ -8,7 +8,7 @@ class ZoomGraphicsView : public QGraphicsView
 {
     Q_OBJECT
 public:
-    ZoomGraphicsView(QMainWindow* parent);
+    ZoomGraphicsView();
 
 public slots:
     //void scalingTime();
