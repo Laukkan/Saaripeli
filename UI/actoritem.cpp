@@ -26,11 +26,6 @@ ActorItem::ActorItem(std::shared_ptr<Common::Actor> actor, HexItem* parent) :
 
 }
 
-void ActorItem::showActor()
-{
-    this->show();
-}
-
 void ActorItem::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
     Q_UNUSED(event);
