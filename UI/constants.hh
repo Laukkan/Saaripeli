@@ -18,6 +18,9 @@ const static unsigned ANIM_TIME = 1000;
 const static int HEX_SIDES = 6;
 
 const static int POINTS_FOR_WIN = 5;
+
+const static double zoomMin = 0.5;
+const static double zoomMax = 6;
 }
 
 namespace SizeConstants {

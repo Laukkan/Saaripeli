@@ -18,6 +18,7 @@
 #include <memory>
 #include <map>
 
+#include "zoomgraphicsview.hh"
 
 namespace Student {
 
@@ -191,7 +192,7 @@ private:
      * @brief Mainwindow's graphical components
      */
     QGraphicsScene* _scene;
-    QGraphicsView* _view;
+    ZoomGraphicsView* _view;
     GameInfoBox* _gameInfoBox;
 };
 

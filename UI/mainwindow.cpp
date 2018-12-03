@@ -20,7 +20,7 @@ namespace Student {
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
    setMinimumSize(SizeConstants::MW_SIZE);
-   _view = new QGraphicsView(this);
+   _view = new ZoomGraphicsView(this);
 }
 
 void MainWindow::initBoard(int playersAmount, const bool reset)
