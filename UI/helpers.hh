@@ -9,16 +9,9 @@
 #include <QPixmap>
 #include <vector>
 #include <random>
-#include <iterator>
 
-using PixmapIter = std::vector<QPixmap>::iterator;
 
 namespace Helpers {
-
-/**
- * @brief randomEng - a Random engine for selectRandomImage and randomNumber
- */
-static std::default_random_engine randomEng;
 
 /**
  * @brief cube_to_pixel transforms cubeCoordinates into pixel coordinates.
@@ -43,12 +36,6 @@ QString gamePhaseToQString(const Common::GamePhase &gamePhase);
  * @return a constant scaled pixmap
  */
 const QPixmap scaleActorImage(const QPixmap &pixmap, const int factor);
-
-/**
- * @brief - A function that returns a random image from a given Pixmap
- * vector
- */
-QPixmap selectRandomImage(PixmapIter start, PixmapIter end);
 
 /**
  * @brief randomNumber - returns a random number between the interval defined

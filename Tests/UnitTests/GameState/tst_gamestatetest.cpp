@@ -24,9 +24,11 @@ private slots:
     void initTestCase();
     void cleanupTestCase();
 
+    // Test changePlayerTurn
     void testNextPlayerValid();
     void testNextPlayerInvalid();
 
+    // Test changeGamePhase
     void testNextPhaseValid();
     void testNextPhaseInvalid();
 
