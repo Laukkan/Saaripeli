@@ -45,6 +45,22 @@ GameBoard:
     expire_in: 2d
   dependencies: 
     - BuildUnitTests
+    
+GameState:
+  stage: test
+  tags:
+    - qt
+  script: 
+    - cd Tests/UnitTests/GameState/
+    - ./bin/tst_gamestatetest
+    - gcov *.gcno -r
+    #- cp gameboard.*.gcov ../../../coverage/UnitTests
+  artifacts:
+    paths:
+      - "Tests/UnitTests/*/gamestate.*.gcov"
+    expire_in: 2d
+  dependencies: 
+    - BuildUnitTests
 
 # Compile and prepare the source code for analysis.
 # The output is stored in directory bw_output

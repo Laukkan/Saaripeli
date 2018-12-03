@@ -2,6 +2,7 @@
 #define GAMESTATE_HH
 
 #include "igamestate.hh"
+#include <map>
 
 
 namespace Student  {
@@ -50,9 +51,9 @@ public:
     virtual void changePlayerTurn(int nextPlayer);
 
 private:
-
     Common::GamePhase _currentPhase;
     int _currentPlayer;
+    int _playerAmount;
 };
 
 }

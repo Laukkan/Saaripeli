@@ -1,4 +1,6 @@
 #include "startdialog.hh"
+#include "constants.hh"
+
 #include <memory>
 #include <QLayout>
 #include <QLabel>
@@ -18,7 +20,13 @@ StartDialog::StartDialog() : _playersAmount(1)
    QComboBox* playersAmount = new QComboBox(this);
    connect(playersAmount, &QComboBox::currentTextChanged,
            this, &StartDialog::playersChange);
-   QStringList allowedAmounts = {"2", "3"};
+
+   QStringList allowedAmounts;
+   for (int i = GameConstants::MIN_PLAYERS; i <= GameConstants::MAX_PLAYERS;
+        i++)
+   {
+        allowedAmounts.append(QString::number(i));
+   }
    playersAmount->addItems(allowedAmounts);
 
    QPushButton* okButton = new QPushButton("Confirm", this);

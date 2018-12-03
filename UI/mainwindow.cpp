@@ -474,7 +474,7 @@ void MainWindow::checkGameStatus()
         int winnerId = _gameBoard->getWinner();
         std::shared_ptr<Player> winningPlayer = _playerMap.at(winnerId);
         winningPlayer->givePoint();
-        if(winningPlayer->getPoints() >= OtherConstants::POINTS_FOR_WIN){
+        if(winningPlayer->getPoints() >= GameConstants::POINTS_FOR_WIN){
             finishGame(winningPlayer);
 
         }
