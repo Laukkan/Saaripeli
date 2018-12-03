@@ -12,7 +12,15 @@
 #include <QGridLayout>
 #include <QApplication>
 #include <QMessageBox>
+#include <QInputDialog>
 #include <QGridLayout>
+#include <iostream>
+#include <fstream>
+#include <cstring>
+#include <stdio.h>
+
+#include <QFile>
+#include <QStringList>
 
 namespace Student {
 
@@ -67,7 +75,7 @@ void MainWindow::initPlayers()
 
 void MainWindow::setupGameInfoBox()
 {
-    _gameInfoBox = new GameInfoBox(_gameState, _gameRunner, _playerMap);
+    _gameInfoBox = new GameInfoBox(_gameState, _gameRunner, _playerMap, getRanking());
 
     // Connect all the buttons of the GameInfoBox
     connect(_gameInfoBox, &GameInfoBox::spinButtonPressed,
@@ -126,6 +134,7 @@ void MainWindow::continueFromSpinning()
 {
     checkGameStatus();
     _gameState->changeGamePhase(Common::GamePhase::MOVEMENT);
+    _playerMap.at(_gameState->currentPlayer())->addTurn();
     _gameState->changePlayerTurn(getNextPlayerId());
     checkGameStatus();
     _gameInfoBox->updateGameState();
@@ -507,9 +516,76 @@ void MainWindow::newRound()
 void MainWindow::finishGame(std::shared_ptr<Player> winner)
 {
     QMessageBox gameWon;
-    gameWon.setText("Player " + QString::number(winner->getPlayerId()) + " has won the game!");
+    gameWon.setText("Player " + QString::number(winner->getPlayerId()) + " has won the game!\n" +
+                    "They had used" + QString::number(winner->getTotalTurns()) + " turns!");
     gameWon.exec();
+    std::vector<std::vector<std::string>> ranking = getRanking();
+    bool topTen = checkRanking(winner, ranking);
+    if(topTen){
+        updateRanking(winner,ranking);
+    }
     QApplication::quit();
+}
+
+std::vector<std::vector<std::string>> MainWindow::getRanking()
+{
+    std::ifstream rankingfile;
+    rankingfile.open(PathConstants::RANKING_FILE);
+    std::vector<std::vector<std::string>> ranking;
+    std::string line;
+    if(rankingfile.is_open()){
+        while(std::getline(rankingfile,line)){
+            ranking.push_back(Helpers::split(line, OtherConstants::delimiter));
+        }
+        std::sort(ranking.begin(),ranking.end());
+        rankingfile.close();
+    }
+    else {
+        QMessageBox errorReadingFile;
+        errorReadingFile.setText("Error reading ranking file");
+        errorReadingFile.exec();
+    }
+    return  ranking;
+}
+
+bool MainWindow::checkRanking(std::shared_ptr<Player> winner, std::vector<std::vector<std::string>> ranking)
+{
+    unsigned int winnerTurns = winner->getTotalTurns();
+    bool topTen = false;
+    for(auto player: ranking){
+        if(std::stoul(player.at(1)) <= winnerTurns){
+            topTen = true;
+            break;
+        }
+    }
+    return topTen;
+}
+
+void MainWindow::updateRanking(std::shared_ptr<Player> winner, std::vector<std::vector<std::string>> ranking)
+{
+    QInputDialog top10;
+    top10.setLabelText("Wow, you got to the to 10! Please enter a name to save to the rankings!");
+    bool ok;
+    QString playerName = QInputDialog::getText(this, "Top 10!",
+                                       "Wow, player" +QString::number(winner->getPlayerId())+
+                                         " made it the to 10! Please enter a name to save to the rankings!", QLineEdit::Normal, "", &ok);
+    if (!ok or playerName.isEmpty()) {
+      playerName = "Anonymous";
+    }
+    ranking.pop_back();
+    ranking.push_back(std::vector<std::string>{playerName.toStdString(), std::to_string(winner->getTotalTurns())});
+    writeRanking(ranking);
+
+}
+
+void MainWindow::writeRanking(std::vector<std::vector<std::string> > ranking)
+{
+    remove(PathConstants::RANKING_FILE.c_str());
+    std::ofstream newRankingFile(PathConstants::RANKING_FILE);
+    for(auto line : ranking){
+        newRankingFile << line.at(0) + ";" + line.at(1);
+    }
+    newRankingFile.close();
 }
 
 

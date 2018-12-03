@@ -31,9 +31,19 @@ void Player::givePoint()
     _points += 1;
 }
 
+void Player::addTurn()
+{
+    _totalTurns++;
+}
+
 unsigned int Player::getPoints()
 {
     return _points;
+}
+
+unsigned int Player::getTotalTurns()
+{
+    return _totalTurns;
 }
 
 void Player::setPlayerElimination(bool state)

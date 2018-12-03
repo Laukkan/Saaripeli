@@ -161,6 +161,13 @@ private:
 
     void finishGame(std::shared_ptr<Player> winner);
 
+    std::vector<std::vector<std::string>> getRanking();
+
+    bool checkRanking(std::shared_ptr<Player> winner, std::vector<std::vector<std::string>> ranking);
+
+    void updateRanking(std::shared_ptr<Player> winner, std::vector<std::vector<std::string>> ranking);
+    void writeRanking(std::vector<std::vector<std::string>> ranking);
+
     /**
      * @brief _movesFromSpinner - tells the amount of moves a spinner has
      * given an actor in the spin.

@@ -14,8 +14,9 @@ namespace Student {
 
 GameInfoBox::GameInfoBox(std::shared_ptr<GameState> gameState,
                          std::shared_ptr<Common::IGameRunner> gameRunner,
-                         std::map<int, std::shared_ptr<Player>> playerMap):
-    _gameState(gameState), _gameRunner(gameRunner), _playerMap(playerMap)
+                         std::map<int, std::shared_ptr<Player>> playerMap,
+                         std::vector<std::vector<std::string>> ranking):
+    _gameState(gameState), _gameRunner(gameRunner), _playerMap(playerMap), _ranking(ranking)
 
 {
     _layout = new QGridLayout(this);
@@ -55,6 +56,13 @@ void GameInfoBox::initLabelsButtons()
         QLabel* scoreLabel = new QLabel();
         _playerScoreLabels[player.second->getPlayerId()] = scoreLabel;
     }
+
+    _rankingLabel = new QLabel("Rankings");
+    for(auto player : _ranking){
+        QLabel* playerRankLabel = new QLabel(QString::fromStdString(player.at(0) + ": " + player.at(1)));
+        _playerRankingLabels.push_back(playerRankLabel);
+    }
+
     setPlayerPoints();
 
     _spinButton = new QPushButton("Spin");
@@ -107,6 +115,12 @@ void GameInfoBox::setupLayout()
     int row = 7;
     for(auto label : _playerScoreLabels){
         _layout->addWidget(label.second, row, 0);
+        row++;
+    }
+    _layout->addWidget(_rankingLabel,row,0);
+    row++;
+    for(auto label : _playerRankingLabels){
+        _layout->addWidget(label, row, 0);
         row++;
     }
 

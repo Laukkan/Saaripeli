@@ -21,6 +21,7 @@ const static int HEX_SIDES = 6;
 
 const static double zoomMin = 0.5;
 const static double zoomMax = 6;
+const static char delimiter = ';';
 
 }
 
@@ -99,6 +100,8 @@ const static std::map<std::string, QString> TRANSPORT_IMAGES {
 
 };
 
+//const static std::string RANKING_FILE = "C:/Users/Eeru/opisto_ohjelmointi/OTEK/kansakas/UI/ranking.csv";
+const static std::string RANKING_FILE = "ranking.csv";
 }
 
 namespace ColorConstants {
