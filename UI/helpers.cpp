@@ -1,10 +1,9 @@
 #include "helpers.hh"
 #include "constants.hh"
 
-#include <time.h>
-
 
 namespace Helpers {
+
 
 QPointF cubeToPixel(const Common::CubeCoordinate &cubeCoord)
 {
@@ -35,20 +34,13 @@ const QPixmap scaleActorImage(const QPixmap &pixmap, const int factor)
                          Qt::SmoothTransformation);
 }
 
-QPixmap selectRandomImage(PixmapIter start, PixmapIter end)
-{
-    std::uniform_int_distribution<int> distance(
-                0, std::distance(start, end) - 1);
-    std::advance(start, distance(randomEng));
-    return *start;
-}
-
 int randomNumber(const int min, const int max)
 {
-    randomEng.seed(static_cast<unsigned>(time(nullptr)));
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
     std::uniform_int_distribution<int> distribution(min, max);
 
-    return distribution(randomEng);
+    return distribution(gen);
 }
 
 

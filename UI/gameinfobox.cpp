@@ -6,6 +6,7 @@
 #include <QSizePolicy>
 #include <QApplication>
 #include <QThread>
+#include <algorithm>
 
 
 namespace Student {
@@ -15,6 +16,7 @@ GameInfoBox::GameInfoBox(std::shared_ptr<GameState> gameState,
                          std::shared_ptr<Common::IGameRunner> gameRunner,
                          std::map<int, std::shared_ptr<Player>> playerMap):
     _gameState(gameState), _gameRunner(gameRunner), _playerMap(playerMap)
+
 {
     _layout = new QGridLayout(this);
     setTitle("Game Information");
@@ -24,6 +26,9 @@ GameInfoBox::GameInfoBox(std::shared_ptr<GameState> gameState,
     spFixed.setVerticalPolicy(QSizePolicy::Policy::Fixed);
     setSizePolicy(spFixed);
     resize(SizeConstants::INFO_BOX_SIZE);
+
+    std::random_device rd;
+    _randomGen = std::mt19937(rd());
 
     initLabelsButtons();
     setupLayout();
@@ -153,11 +158,15 @@ void GameInfoBox::shuffleImages()
 {
     unsigned imageAmount = static_cast<unsigned>(Helpers::randomNumber(10, 15));
     unsigned imageTime = OtherConstants::ANIM_TIME/imageAmount;
+    std::vector<QPixmap>::iterator iter = _actorImages.begin();
+    std::shuffle(iter, _actorImages.end(), _randomGen);
 
-    for (unsigned i = 0; i < imageAmount; i++) {
-        QPixmap rPixmap = Helpers::selectRandomImage(_actorImages.begin(),
-                                                      _actorImages.end());
-        _actorImageLabel->setPixmap(Helpers::scaleActorImage(rPixmap,3));
+    for (unsigned i = 0; i < imageAmount; i++, iter++)
+    {
+        if (iter == _actorImages.end()) {
+            iter = _actorImages.begin();
+        }
+        _actorImageLabel->setPixmap(Helpers::scaleActorImage(*iter,3));
         repaint();
         QApplication::processEvents();
         QThread::msleep(imageTime);

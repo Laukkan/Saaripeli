@@ -10,6 +10,7 @@
 #include <QLabel>
 #include <QGridLayout>
 #include <QPushButton>
+#include <random>
 
 namespace Student {
 
@@ -83,6 +84,11 @@ private:
     * counts for each player.
     */
    void setPlayerPoints();
+
+   /**
+    * @brief _randomGen - a random generator for shuffleImages
+    */
+   std::mt19937 _randomGen;
 
    /**
     * @brief Pointers to the required GameEngine implementations used in
