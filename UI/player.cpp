@@ -41,16 +41,12 @@ unsigned int Player::getPoints()
     return _points;
 }
 
-<<<<<<< HEAD
 unsigned int Player::getTotalTurns()
 {
     return _totalTurns;
 }
 
-void Player::setPlayerElimination(bool state)
-=======
 void Player::eliminatePlayer()
->>>>>>> refs/remotes/origin/master
 {
     _eliminated = true;
 }

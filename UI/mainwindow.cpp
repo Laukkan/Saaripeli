@@ -12,24 +12,15 @@
 #include <QGridLayout>
 #include <QApplication>
 #include <QMessageBox>
-<<<<<<< HEAD
 #include <QInputDialog>
 #include <QGridLayout>
 #include <iostream>
 #include <fstream>
 #include <cstring>
 #include <stdio.h>
-
-#include <QFile>
-#include <QStringList>
-=======
-<<<<<<< HEAD
 #include <QTimer>
-
-=======
 #include <QGridLayout>
->>>>>>> 213e02fe84fdd044c47b53a0ab8451e2b4ee3e97
->>>>>>> refs/remotes/origin/master
+
 
 namespace Student {
 
@@ -331,6 +322,7 @@ void MainWindow::flipHex(const Common::CubeCoordinate &tileCoord)
     else if (actorImages.find(actorType) != actorImages.end())
     {
         addActorItem(_gameBoard->returnHexes().at(tileCoord));
+        doActorAction(tileCoord,_gameBoard->getHex(tileCoord)->getActors().at(0)->getId());
     }
     else if (transportImages.find(actorType) != transportImages.end())
     {
@@ -536,6 +528,7 @@ void MainWindow::newRound(int roundWinnerId)
 
         _hexItems.clear();
         _pawnItems.clear();
+        delete _gameInfoBox;
         initBoard(_playersAmount, true);
     });
 }
@@ -543,7 +536,6 @@ void MainWindow::newRound(int roundWinnerId)
 void MainWindow::finishGame(std::shared_ptr<Player> winner)
 {
     QMessageBox gameWon;
-<<<<<<< HEAD
     gameWon.setText("Player " + QString::number(winner->getPlayerId()) + " has won the game!\n" +
                     "They had used" + QString::number(winner->getTotalTurns()) + " turns!");
     gameWon.exec();
@@ -552,7 +544,7 @@ void MainWindow::finishGame(std::shared_ptr<Player> winner)
     if(topTen){
         updateRanking(winner,ranking);
     }
-    QApplication::quit();
+     qApp->quit();
 }
 
 std::vector<std::vector<std::string>> MainWindow::getRanking()
@@ -601,7 +593,10 @@ void MainWindow::updateRanking(std::shared_ptr<Player> winner, std::vector<std::
       playerName = "Anonymous";
     }
     ranking.pop_back();
-    ranking.push_back(std::vector<std::string>{playerName.toStdString(), std::to_string(winner->getTotalTurns())});
+    std::vector<std::string> vectorToAdd;
+    vectorToAdd.push_back(playerName.toStdString());
+    vectorToAdd.push_back(std::to_string(winner->getTotalTurns()));
+    ranking.push_back(vectorToAdd);
     writeRanking(ranking);
 
 }
@@ -611,18 +606,9 @@ void MainWindow::writeRanking(std::vector<std::vector<std::string> > ranking)
     remove(PathConstants::RANKING_FILE.c_str());
     std::ofstream newRankingFile(PathConstants::RANKING_FILE);
     for(auto line : ranking){
-        newRankingFile << line.at(0) + ";" + line.at(1);
+        newRankingFile << line.at(0) + ";" + line.at(1) + "\n";
     }
     newRankingFile.close();
 }
 
-
-=======
-    gameWon.setText("Player " + QString::number(winner->getPlayerId()) +
-                    " has won the game!");
-    gameWon.exec();
-    qApp->quit();
-}
-
->>>>>>> refs/remotes/origin/master
 }

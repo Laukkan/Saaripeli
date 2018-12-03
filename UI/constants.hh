@@ -30,7 +30,7 @@ namespace GameConstants {
 const static int MIN_PLAYERS = 2;
 const static int MAX_PLAYERS = 3;
 
-const static int POINTS_FOR_WIN = 5;
+const static int POINTS_FOR_WIN = 3;
 
 
 // Used to determine the next GamePhase from a GamePhase

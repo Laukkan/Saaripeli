@@ -73,18 +73,13 @@ public:
     unsigned int getPoints();
 
     /**
-<<<<<<< HEAD
      * @brief getTotalTurns returns the total turns the player has had this far.
      * @return unsigned int, number of turns the player has had.
      */
     unsigned int getTotalTurns();
 
     /**
-     * @brief setPlayerElimination - Sets the players elimination status to state.
-     * @param state - The state to change the players elimination status to.
-=======
      * @brief setPlayerElimination - Sets the players elimination status to true
->>>>>>> refs/remotes/origin/master
      */
     void eliminatePlayer();
 
