@@ -82,12 +82,12 @@ void TransportItem::switchTransportIcon(PawnItem* pawnItem)
             QString color2 = _pawnItemsOnBoard.at(0)->getColor();
             QString concat = color1 + color2;
 
-            if (concat.contains("Blue") and concat.contains("Red"))
+            if (concat.contains("Blue") && concat.contains("Red"))
             {
                 _transportImage.load(
                             transportImages.at(_transportType+"BlueRed"));
             }
-            else if (concat.contains("Blue") and concat.contains("White"))
+            else if (concat.contains("Blue") && concat.contains("White"))
             {
                 _transportImage.load(
                             transportImages.at(_transportType+"BlueWhite"));

@@ -23,7 +23,7 @@ StartDialog::StartDialog() : _playersAmount(1)
 
    QStringList allowedAmounts;
    for (int i = GameConstants::MIN_PLAYERS; i <= GameConstants::MAX_PLAYERS;
-        i++)
+        ++i)
    {
         allowedAmounts.append(QString::number(i));
    }
