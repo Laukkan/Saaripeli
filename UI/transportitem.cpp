@@ -67,7 +67,7 @@ void TransportItem::switchTransportIcon(PawnItem* pawnItem)
                     transportImages.at(_transportType +
                                        pawnItem->getColor().toStdString()));
     }
-    else{
+    else {
         if (_pawnItemsOnBoard.size() == 0) {
             _transportImage.load(
                         transportImages.at(_transportType +
@@ -78,16 +78,17 @@ void TransportItem::switchTransportIcon(PawnItem* pawnItem)
                         transportImages.at(_transportType+"BlueWhiteRed"));
         }
         else {
-            std::vector<QString> colors;
-            colors.push_back(pawnItem->getColor());
-            colors.push_back(_pawnItemsOnBoard.at(0)->getColor());
-            if(std::find(colors.begin(), colors.end(), "Red") != colors.end()
-                    and std::find(colors.begin(), colors.end(), "Blue") != colors.end()){
+            QString color1 = pawnItem->getColor();
+            QString color2 = _pawnItemsOnBoard.at(0)->getColor();
+            QString concat = color1 + color2;
+
+            if (concat.contains("Blue") and concat.contains("Red"))
+            {
                 _transportImage.load(
                             transportImages.at(_transportType+"BlueRed"));
             }
-            else if(std::find(colors.begin(), colors.end(), "White") != colors.end()
-                    and std::find(colors.begin(), colors.end(), "Blue") != colors.end()){
+            else if (concat.contains("Blue") and concat.contains("White"))
+            {
                 _transportImage.load(
                             transportImages.at(_transportType+"BlueWhite"));
             }

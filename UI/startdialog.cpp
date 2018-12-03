@@ -18,7 +18,7 @@ StartDialog::StartDialog() : _playersAmount(1)
    QComboBox* playersAmount = new QComboBox(this);
    connect(playersAmount, &QComboBox::currentTextChanged,
            this, &StartDialog::playersChange);
-   QStringList allowedAmounts = {"1", "2", "3"};
+   QStringList allowedAmounts = {"2", "3"};
    playersAmount->addItems(allowedAmounts);
 
    QPushButton* okButton = new QPushButton("Confirm", this);

@@ -17,7 +17,6 @@ void criticalError(const std::string &message);
 
 int main(int argc, char *argv[])
 {
-
     QApplication a(argc, argv);
     a.setWindowIcon(QIcon(":/ak47_icon.png"));
 

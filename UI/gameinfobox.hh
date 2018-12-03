@@ -93,12 +93,6 @@ private:
    std::map<int, std::shared_ptr<Player>> _playerMap;
 
    /**
-    * @brief _randomGen - random number generator for the actor image
-    * shuffling
-    */
-   std::default_random_engine _randomGen;
-
-   /**
     * @brief _actorImages - Stores all of the images of the actors. Is used
     * with the shuffle animation.
     */

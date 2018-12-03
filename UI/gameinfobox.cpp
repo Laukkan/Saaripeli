@@ -28,8 +28,6 @@ GameInfoBox::GameInfoBox(std::shared_ptr<GameState> gameState,
     initLabelsButtons();
     setupLayout();
 
-    _randomGen.seed(static_cast<unsigned int>(time(nullptr)));
-
     for (const auto &path : PathConstants::M_ACTOR_IMAGES) {
         _actorImages.push_back(QPixmap(path.second));
     }
@@ -152,14 +150,12 @@ void GameInfoBox::updateGameState(){
 
 void GameInfoBox::shuffleImages()
 {
-    std::uniform_int_distribution<unsigned> distribut(10, 15);
-    unsigned imageAmount = distribut(_randomGen);
+    unsigned imageAmount = static_cast<unsigned>(Helpers::randomNumber(10, 15));
     unsigned imageTime = OtherConstants::ANIM_TIME/imageAmount;
 
     for (unsigned i = 0; i < imageAmount; i++) {
         QPixmap rPixmap = Helpers::selectRandomImage(_actorImages.begin(),
-                                                     _actorImages.end(),
-                                                     _randomGen);
+                                                     _actorImages.end());
         _actorImageLabel->setPixmap(Helpers::scaleActorImage(rPixmap,3));
         repaint();
         QApplication::processEvents();

@@ -115,6 +115,11 @@ private:
     void erasePawnItem(const int pawnId);
 
     /**
+     * @brief _playersAmount - amount of players playing the game (2-3)
+     */
+    int _playersAmount;
+
+    /**
      * @brief setupGameInfoBox - sets up the GameInfoBox
      * @details used by the constructor
      */

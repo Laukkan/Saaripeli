@@ -11,11 +11,11 @@ class GameState : public Common::IGameState
 
 public:
     /**
-     * @brief GameState initialises the GameState to begin with Player 1
-     * moving the pawns
+     * @brief GameState chooses a random player to start the game (1-3) and
+     * initialises the _currentPhase as MOVING
      */
-    GameState() : _currentPhase(Common::GamePhase::MOVEMENT),
-                  _currentPlayer(1) {}
+    explicit GameState(const int playerAmount);
+
     /**
       * @brief default virtual destructor
       */

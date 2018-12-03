@@ -24,12 +24,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
 void MainWindow::initBoard(int playersAmount)
 {
-    for(int playerId = 1; playerId <= playersAmount; playerId++){
+    _playersAmount = playersAmount;
+
+    for(int playerId = 1; playerId <= _playersAmount; playerId++){
         std::shared_ptr<Player> newPlayer(new Player(playerId));
         _playerMap[playerId] = newPlayer;
     }
     _gameBoard = std::shared_ptr<Student::GameBoard>(new Student::GameBoard());
-    _gameState = std::shared_ptr<GameState>(new GameState);
+    _gameState = std::shared_ptr<GameState>(new GameState(_playersAmount));
 
     // Change _playerMap to a vector where the players are IPlayers.
     std::vector<std::shared_ptr<Common::IPlayer>> iplayers;
@@ -482,9 +484,9 @@ void MainWindow::newRound()
     newRound.setText("New round will start");
     newRound.exec();
     _gameBoard = std::shared_ptr<Student::GameBoard>(new Student::GameBoard());
-    _gameState = std::shared_ptr<GameState>(new GameState);
-    _gameState->changePlayerTurn(1);
-     std::vector<std::shared_ptr<Common::IPlayer>> iplayers;
+    _gameState = std::shared_ptr<GameState>(new GameState(_playersAmount));
+
+    std::vector<std::shared_ptr<Common::IPlayer>> iplayers;
     for (auto player : _playerMap) {
         iplayers.push_back(std::static_pointer_cast<Common::IPlayer>(player.second));
     }

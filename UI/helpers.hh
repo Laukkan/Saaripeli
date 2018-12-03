@@ -41,8 +41,16 @@ const QPixmap scaleActorImage(const QPixmap &pixmap, const int factor);
  * @brief - A function that returns a random image from a given Pixmap
  * vector
  */
-QPixmap selectRandomImage(PixmapIter start, PixmapIter end,
-                          std::default_random_engine &randomEng);
+QPixmap selectRandomImage(PixmapIter start, PixmapIter end);
+
+/**
+ * @brief randomNumber - returns a random number between the interval defined
+ * by the parameters (min <= return value <= max)
+ * @param min - min of the interval
+ * @param max - max of the interval
+ * @return - a random number between this interval
+ */
+int randomNumber(const int min, const int max);
 
 }
 #endif // HELPERS_HH
