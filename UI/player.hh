@@ -67,10 +67,9 @@ public:
     unsigned int getPoints();
 
     /**
-     * @brief setPlayerElimination - Sets the players elimination status to state.
-     * @param state - The state to change the players elimination status to.
+     * @brief setPlayerElimination - Sets the players elimination status to true
      */
-    void setPlayerElimination(bool state);
+    void eliminatePlayer();
 
     /**
      * @brief getPlayerElimination - Returns whether the player has been eliminated.

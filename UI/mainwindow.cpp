@@ -12,6 +12,7 @@
 #include <QGridLayout>
 #include <QApplication>
 #include <QMessageBox>
+#include <QTimer>
 
 
 namespace Student {
@@ -54,7 +55,7 @@ void MainWindow::initBoard(int playersAmount, const bool reset)
 
 void MainWindow::initPlayers()
 {
-    for (int playerId = 1; playerId <= _playersAmount; playerId++){
+    for (int playerId = 1; playerId <= _playersAmount; ++playerId){
         std::shared_ptr<Player> newPlayer(new Player(playerId));
         _playerMap[playerId] = newPlayer;
     }
@@ -84,7 +85,8 @@ void MainWindow::spinWheel()
         return;
     }
     try {
-        std::pair<std::string,std::string> spinResult = _gameRunner->spinWheel();
+        std::pair<std::string,std::string> spinResult =
+                _gameRunner->spinWheel();
         const std::map<std::string, QString> actorImages =
                 PathConstants::ACTOR_IMAGES;
         const std::map<std::string, QString> transportImages =
@@ -94,12 +96,16 @@ void MainWindow::spinWheel()
                 _gameBoard->checkIfActorOrTransportExists(spinResult.first);
 
         if(spinResult.first == "dolphin"){
-            _gameInfoBox->updateActor(QPixmap(transportImages.at(spinResult.first)),
-                                      spinResult.second, actorExists);
+            _gameInfoBox->updateActor(
+                        QPixmap(transportImages.at(spinResult.first)),
+                        spinResult.second,
+                        actorExists);
         }
         else {
-            _gameInfoBox->updateActor(QPixmap(actorImages.at(spinResult.first)),
-                                      spinResult.second, actorExists);
+            _gameInfoBox->updateActor(
+                        QPixmap(actorImages.at(spinResult.first)),
+                        spinResult.second,
+                        actorExists);
         }
         _movesFromSpinner = spinResult.second;
 
@@ -143,20 +149,22 @@ void MainWindow::erasePawnItem(const int pawnId)
 
 int MainWindow::getNextPlayerId()
 {
-   unsigned currentId = static_cast<unsigned>(_gameState->currentPlayer());
-   //bool used to skip eliminated players.
+   int currentId = _gameState->currentPlayer();
+
+   // bool used to skip eliminated players.
     bool playerEliminated = true;
-    while(playerEliminated){
-        if(currentId == _playerMap.size()){
+    while (playerEliminated)
+    {
+        if (static_cast<unsigned>(currentId) == _playerMap.size()) {
             currentId = 1;
-            playerEliminated = _playerMap.at(static_cast<int>(currentId))->getPlayerElimination();
+            playerEliminated = _playerMap.at(currentId)->getPlayerElimination();
         }
         else {
-            currentId++;
-            playerEliminated = _playerMap.at(static_cast<int>(currentId))->getPlayerElimination();
+            ++currentId;
+            playerEliminated = _playerMap.at(currentId)->getPlayerElimination();
         }
     }
-    return static_cast<int>(currentId);
+    return currentId;
 }
 
 void MainWindow::resetPlayerMoves(int playerId)
@@ -213,8 +221,8 @@ void MainWindow::moveActor(Common::CubeCoordinate origin,
                            int actorId)
 {
     // Wrong gamePhase or targetHex already has an actor
-    if (_gameState->currentGamePhase() != Common::GamePhase::SPINNING
-            or !(_gameBoard->getHex(target)->getActors().empty()))
+    if ( (_gameState->currentGamePhase() != Common::GamePhase::SPINNING)
+         || (!( _gameBoard->getHex(target)->getActors().empty())))
     {
         return;
     }
@@ -266,17 +274,14 @@ void MainWindow::moveTransport(Common::CubeCoordinate origin,
         return;
     }
 
-
     transportItem->setParent(newParent);
     _gameInfoBox->updateGameState();
 
-    if (movesLeft == 0 and spinning) {
+    if ( (movesLeft == 0) && spinning) {
         continueFromSpinning();
-        return;
     }
     else if (movesLeft == 0) {
         moveToSinking();
-        return;
     }
 }
 
@@ -361,13 +366,12 @@ void MainWindow::addActorItem(std::shared_ptr<Common::Hex> hex)
 {
     ActorItem* actorItem = new ActorItem((hex->getActors().at(0)),
                                          _hexItems.at(hex->getCoordinates()));
-    _actorItems[(hex->getActors().at(0)->getId())] = actorItem;
+    _actorItems[hex->getActors().at(0)->getId()] = actorItem;
     _scene->addItem(actorItem);
 }
 
 void MainWindow::addTransportItem(std::shared_ptr<Common::Hex> hex)
 {
-    //TODO transports
     TransportItem* transportItem =
             new TransportItem((hex->getTransports().at(0)),
                               _hexItems.at(hex->getCoordinates()));
@@ -379,7 +383,9 @@ void MainWindow::doTheVortex(const Common::CubeCoordinate &coord)
 {
     QPixmap vortexIcon(PathConstants::ACTOR_IMAGES.at("vortex"));
     QGraphicsPixmapItem* vortexItem =
-            new QGraphicsPixmapItem(vortexIcon.scaled(SizeConstants::A_PIX_SIZE));
+            new QGraphicsPixmapItem(
+                vortexIcon.scaled(SizeConstants::A_PIX_SIZE));
+
     QPointF coordinates = _hexItems.at(coord)->getActorPosition();
 
     vortexItem->setPos(coordinates);
@@ -444,7 +450,7 @@ void MainWindow::doActorAction(const Common::CubeCoordinate &coord,
         }
     }
 
-    if (transport and hex->getTransports().empty())
+    if (transport && hex->getTransports().empty())
     {
         int transportId = transportBefore->getId();
         TransportItem* transportItem = _transportItems.at(transportId);
@@ -456,57 +462,70 @@ void MainWindow::doActorAction(const Common::CubeCoordinate &coord,
 //MAYBE MOVE THIS METHOD?
 void MainWindow::checkGameStatus()
 {
-    std::unordered_map<int, std::shared_ptr<Common::Pawn>> pawns = _gameBoard->getPawns();
+    std::unordered_map<int, std::shared_ptr<Common::Pawn>> pawns =
+            _gameBoard->getPawns();
     unsigned int pawnsLeft = pawns.size();
-    if(pawnsLeft > 1){
-        for(auto player : _playerMap){
-            bool playerEliminated = true;
-            for(auto pawn : pawns){
-                if(pawn.second->getPlayerId() == player.second->getPlayerId()){
-                    playerEliminated = false;
-                }
-                player.second->setPlayerElimination(playerEliminated);
+
+    if (pawnsLeft > 1)
+    {
+        for(auto player : _playerMap)
+        {
+            if (pawns.find(player.second->getPlayerId()) == pawns.end()) {
+                player.second->eliminatePlayer();
             }
         }
-        return;
     }
-    else if(pawnsLeft == 1){
+    else if (pawnsLeft == 1)
+    {
         int winnerId = _gameBoard->getWinner();
         std::shared_ptr<Player> winningPlayer = _playerMap.at(winnerId);
         winningPlayer->givePoint();
-        if(winningPlayer->getPoints() >= GameConstants::POINTS_FOR_WIN){
+        if (winningPlayer->getPoints() >= GameConstants::POINTS_FOR_WIN) {
             finishGame(winningPlayer);
-
         }
-        else newRound();
+        else {
+            newRound(winnerId);
+        }
     }
     //All of the pawns have been removed, the round is a draw.
-    else newRound();
+    else {
+        newRound(0);
+    }
 }
 
-void MainWindow::newRound()
+void MainWindow::newRound(int roundWinnerId)
 {
     QMessageBox newRound;
-    newRound.setText("New round will start");
+
+    if (roundWinnerId == 0) {
+        newRound.setText("A draw! \n New round will start");
+    }
+    else {
+        newRound.setText("Round winner was Player " +
+                         QString::number(roundWinnerId) +
+                         "\n New round will start");
+    }
     newRound.exec();
 
-    // Qt's Object Tree makes sure all items and GameInfoBox are destroyed
-    // as scene is parent for them all.
-    delete _scene;
+    // Reset board only after the dropEvent has been processed completely
+    QTimer::singleShot(0, this, [this] () {
+        // Qt's Object Tree makes sure all items and GameInfoBox are destroyed
+        // as scene is parent for them all.
+        delete _scene;
 
-    _hexItems.clear();
-    _pawnItems.clear();
-
-    initBoard(_playersAmount, true);
+        _hexItems.clear();
+        _pawnItems.clear();
+        initBoard(_playersAmount, true);
+    });
 }
 
 void MainWindow::finishGame(std::shared_ptr<Player> winner)
 {
     QMessageBox gameWon;
-    gameWon.setText("Player " + QString::number(winner->getPlayerId()) + " has won the game!");
+    gameWon.setText("Player " + QString::number(winner->getPlayerId()) +
+                    " has won the game!");
     gameWon.exec();
-    QApplication::quit();
+    qApp->quit();
 }
-
 
 }

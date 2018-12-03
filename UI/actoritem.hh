@@ -32,7 +32,6 @@ protected:
 
 private:
     QPixmap _actorImage;
-    std::string _actorType;
     std::shared_ptr<Common::Actor> _actor;
 
 };

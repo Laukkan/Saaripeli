@@ -171,7 +171,9 @@ int GameBoard::getWinner()
     if(_pawns.size() == 1){
         return _pawns.begin()->second->getPlayerId();
     }
-    else return 0;
+    else {
+        return 0;
+    }
 }
 
 }

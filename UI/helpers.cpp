@@ -24,7 +24,9 @@ QString gamePhaseToQString(const Common::GamePhase &gamePhase)
     else if (gamePhase == 2){
         return "Sinking";
     }
-    else return "Spinning";
+    else {
+        return "Spinning";
+    }
 }
 
 const QPixmap scaleActorImage(const QPixmap &pixmap, const int factor)

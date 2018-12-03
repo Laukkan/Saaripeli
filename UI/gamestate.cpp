@@ -3,7 +3,6 @@
 #include "constants.hh"
 
 #include <random>
-#include <time.h>
 
 
 namespace Student {

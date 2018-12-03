@@ -56,11 +56,6 @@ private:
      * @brief _color - QString that indicates the pawns color.
      */
     QString _color;
-    /**
-     * @brief _player - A pointer to the owner of this pawn.
-     */
-    std::shared_ptr<Player> _player;
-
 };
 
 }

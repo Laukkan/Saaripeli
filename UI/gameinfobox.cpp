@@ -107,7 +107,7 @@ void GameInfoBox::setupLayout()
     int row = 7;
     for(auto label : _playerScoreLabels){
         _layout->addWidget(label.second, row, 0);
-        row++;
+        ++row;
     }
 
     setLayout(_layout);
@@ -161,7 +161,7 @@ void GameInfoBox::shuffleImages()
     std::vector<QPixmap>::iterator iter = _actorImages.begin();
     std::shuffle(iter, _actorImages.end(), _randomGen);
 
-    for (unsigned i = 0; i < imageAmount; i++, iter++)
+    for (unsigned i = 0; i < imageAmount; ++i, ++iter)
     {
         if (iter == _actorImages.end()) {
             iter = _actorImages.begin();
