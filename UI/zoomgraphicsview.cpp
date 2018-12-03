@@ -5,7 +5,7 @@
 
 ZoomGraphicsView::ZoomGraphicsView()
 {
-    //_currentZoom = 1.0;
+    setDragMode(QGraphicsView::ScrollHandDrag);
 }
 
 /*void ZoomGraphicsView::scalingTime()

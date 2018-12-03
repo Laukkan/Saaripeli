@@ -23,7 +23,7 @@ HexItem::HexItem(std::shared_ptr<Common::Hex> hex, QPointF center) :
     _pawnPositionArray[1] = QPointF(_center.x()-25, _center.y()-10);
     _pawnPositionArray[2] = QPointF(_center.x()-10, _center.y()-25);
 
-    setAcceptedMouseButtons(Qt::LeftButton);
+    setAcceptedMouseButtons(Qt::RightButton);
     setAcceptDrops(true);
 }
 

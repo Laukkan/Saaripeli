@@ -141,7 +141,6 @@ void MainWindow::continueFromSpinning()
     _gameState->changeGamePhase(Common::GamePhase::MOVEMENT);
     _playerMap.at(_gameState->currentPlayer())->addTurn();
     _gameState->changePlayerTurn(getNextPlayerId());
-    checkGameStatus();
     _gameInfoBox->updateGameState();
 }
 
@@ -218,6 +217,7 @@ void MainWindow::movePawn(Common::CubeCoordinate origin,
     {
         std::shared_ptr<Common::Transport> transport =
                 _gameBoard->getHex(target)->getTransports().at(0);
+        transport->addPawn(_gameBoard->getPawns().at(pawnId));
         _transportItems.at(transport->getId())->
                 switchTransportIcon(_pawnItems.at(pawnId));
         _pawnItems.at(pawnId)->hide();
@@ -456,6 +456,14 @@ void MainWindow::doActorAction(const Common::CubeCoordinate &coord,
 
     std::vector<std::shared_ptr<Common::Pawn>> pawnsAfter = hex->getPawns();
 
+    if (transport && hex->getTransports().empty())
+    {
+        int transportId = transportBefore->getId();
+        TransportItem* transportItem = _transportItems.at(transportId);
+        transportItem->releasePawns();
+        eraseTransportItem(transportId);
+    }
+
     for(auto pawn : pawnsBefore)
     {
         if (std::find(pawnsAfter.begin(), pawnsAfter.end(), pawn) ==
@@ -465,16 +473,8 @@ void MainWindow::doActorAction(const Common::CubeCoordinate &coord,
         }
     }
 
-    if (transport && hex->getTransports().empty())
-    {
-        int transportId = transportBefore->getId();
-        TransportItem* transportItem = _transportItems.at(transportId);
-        transportItem->releasePawns();
-        eraseTransportItem(transportId);
-    }
 }
 
-//MAYBE MOVE THIS METHOD?
 void MainWindow::checkGameStatus()
 {
     std::unordered_map<int, std::shared_ptr<Common::Pawn>> pawns =
@@ -539,7 +539,7 @@ void MainWindow::finishGame(std::shared_ptr<Player> winner)
 {
     QMessageBox gameWon;
     gameWon.setText("Player " + QString::number(winner->getPlayerId()) + " has won the game!\n" +
-                    "They had used" + QString::number(winner->getTotalTurns()) + " turns!");
+                    "They used " + QString::number(winner->getTotalTurns()) + " turns!");
     gameWon.exec();
     std::vector<std::vector<std::string>> ranking = getRanking();
     bool topTen = checkRanking(winner, ranking);
@@ -559,7 +559,14 @@ std::vector<std::vector<std::string>> MainWindow::getRanking()
         while(std::getline(rankingfile,line)){
             ranking.push_back(Helpers::split(line, OtherConstants::delimiter));
         }
-        std::sort(ranking.begin(),ranking.end());
+        //Quick function to sort the vector.
+        struct {
+               bool operator()(std::vector<std::string> a, std::vector<std::string> b) const
+               {
+                   return std::stoi(a.at(1)) < std::stoi(b.at(1));
+               }
+           } customLess;
+        std::sort(ranking.begin(),ranking.end(), customLess);
         rankingfile.close();
     }
     else {

@@ -111,6 +111,7 @@ void TransportItem::releasePawns()
         pawnItem->setParent(parentHex);
         pawnItem->show();
     }
+     _pawnItemsOnBoard.clear();
 }
 
 }
