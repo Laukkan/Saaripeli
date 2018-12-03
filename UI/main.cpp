@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
         return 0;
     }
     try {
-        m.initBoard(startDialog.getPlayers());
+        m.initBoard(startDialog.getPlayers(), false);
     }
     catch (Common::IoException &e) {
         criticalError(e.msg());

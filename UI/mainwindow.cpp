@@ -20,37 +20,44 @@ namespace Student {
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
    setMinimumSize(SizeConstants::MW_SIZE);
+   _view = new QGraphicsView(this);
 }
 
-void MainWindow::initBoard(int playersAmount)
+void MainWindow::initBoard(int playersAmount, const bool reset)
 {
     _playersAmount = playersAmount;
 
-    for(int playerId = 1; playerId <= _playersAmount; playerId++){
-        std::shared_ptr<Player> newPlayer(new Player(playerId));
-        _playerMap[playerId] = newPlayer;
-    }
     _gameBoard = std::shared_ptr<Student::GameBoard>(new Student::GameBoard());
     _gameState = std::shared_ptr<GameState>(new GameState(_playersAmount));
 
-    // Change _playerMap to a vector where the players are IPlayers.
-    std::vector<std::shared_ptr<Common::IPlayer>> iplayers;
+    if (!reset) {
+        initPlayers();
+    }
+
+    std::vector<std::shared_ptr<Common::IPlayer>> iPlayers;
     for (auto player : _playerMap) {
-        iplayers.push_back(std::static_pointer_cast<Common::IPlayer>(player.second));
+        iPlayers.push_back(
+                    std::static_pointer_cast<Common::IPlayer>(player.second));
     }
     _gameRunner = Common::Initialization::getGameRunner(_gameBoard,
                                                         _gameState,
-                                                        iplayers);
+                                                        iPlayers);
     _scene = new QGraphicsScene(this);
-    QGraphicsView* view = new QGraphicsView(this);
 
     drawGameBoard();
     drawPawns();
-
     setupGameInfoBox();
 
-    setCentralWidget(view);
-    view->setScene(_scene);
+    setCentralWidget(_view);
+    _view->setScene(_scene);
+}
+
+void MainWindow::initPlayers()
+{
+    for (int playerId = 1; playerId <= _playersAmount; playerId++){
+        std::shared_ptr<Player> newPlayer(new Player(playerId));
+        _playerMap[playerId] = newPlayer;
+    }
 }
 
 void MainWindow::setupGameInfoBox()
@@ -119,7 +126,6 @@ void MainWindow::continueFromSpinning()
     checkGameStatus();
     _gameInfoBox->updateGameState();
 }
-
 
 void MainWindow::eraseTransportItem(const int transportId)
 {
@@ -483,23 +489,15 @@ void MainWindow::newRound()
     QMessageBox newRound;
     newRound.setText("New round will start");
     newRound.exec();
-    _gameBoard = std::shared_ptr<Student::GameBoard>(new Student::GameBoard());
-    _gameState = std::shared_ptr<GameState>(new GameState(_playersAmount));
 
-    std::vector<std::shared_ptr<Common::IPlayer>> iplayers;
-    for (auto player : _playerMap) {
-        iplayers.push_back(std::static_pointer_cast<Common::IPlayer>(player.second));
-    }
-    _gameRunner = Common::Initialization::getGameRunner(_gameBoard,
-                                                        _gameState,
-                                                        iplayers);
+    // Qt's Object Tree makes sure all items and GameInfoBox are destroyed
+    // as scene is parent for them all.
+    delete _scene;
+
     _hexItems.clear();
-    drawGameBoard();
     _pawnItems.clear();
-    drawPawns();
 
-    delete _gameInfoBox;
-    setupGameInfoBox();
+    initBoard(_playersAmount, true);
 }
 
 void MainWindow::finishGame(std::shared_ptr<Player> winner)

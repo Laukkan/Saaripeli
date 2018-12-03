@@ -54,8 +54,10 @@ public:
      * @brief initBoard initialises the board
      * @param playersAmount - The amount of players to initilise the board with.
      * Is given by the StartDialog.
+     * @param reset - if the initBoard is called for reset purposes this is
+     * set to true
      */
-    void initBoard(int playersAmount);
+    void initBoard(int playersAmount, const bool reset);
 
 public slots:
     /**
@@ -107,17 +109,18 @@ public slots:
 
 private:
     /**
+     * @brief initPlayers - initialises the _playerMap with Player's for the
+     * game
+     */
+    void initPlayers();
+
+    /**
      * @brief *erase - deletes the Item, the ptr from the map
      * and the logical side.
      * @param *id  - the id of the Item
      */
     void eraseTransportItem(const int transportId);
     void erasePawnItem(const int pawnId);
-
-    /**
-     * @brief _playersAmount - amount of players playing the game (2-3)
-     */
-    int _playersAmount;
 
     /**
      * @brief setupGameInfoBox - sets up the GameInfoBox
@@ -157,7 +160,16 @@ private:
 
     void finishGame(std::shared_ptr<Player> winner);
 
+    /**
+     * @brief _movesFromSpinner - tells the amount of moves a spinner has
+     * given an actor in the spin.
+     */
     std::string _movesFromSpinner;
+
+    /**
+     * @brief _playersAmount - amount of players playing the game (2-3)
+     */
+    int _playersAmount;
 
     /**
      * @brief Data structures for storing all the UI's Items
@@ -179,6 +191,7 @@ private:
      * @brief Mainwindow's graphical components
      */
     QGraphicsScene* _scene;
+    QGraphicsView* _view;
     GameInfoBox* _gameInfoBox;
 };
 
