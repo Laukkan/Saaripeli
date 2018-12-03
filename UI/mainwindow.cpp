@@ -12,8 +12,12 @@
 #include <QGridLayout>
 #include <QApplication>
 #include <QMessageBox>
+<<<<<<< HEAD
 #include <QTimer>
 
+=======
+#include <QGridLayout>
+>>>>>>> 213e02fe84fdd044c47b53a0ab8451e2b4ee3e97
 
 namespace Student {
 
@@ -21,7 +25,9 @@ namespace Student {
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
    setMinimumSize(SizeConstants::MW_SIZE);
-   _view = new ZoomGraphicsView(this);
+   _layout = new QGridLayout(this);
+   _centralWidget = new QWidget();
+   _view = new ZoomGraphicsView();
 }
 
 void MainWindow::initBoard(int playersAmount, const bool reset)
@@ -48,9 +54,12 @@ void MainWindow::initBoard(int playersAmount, const bool reset)
     drawGameBoard();
     drawPawns();
     setupGameInfoBox();
-
-    setCentralWidget(_view);
     _view->setScene(_scene);
+    _layout->addWidget(_view,0,0);
+    _layout->addWidget(_gameInfoBox,0,1);
+
+    _centralWidget->setLayout(_layout);
+    setCentralWidget(_centralWidget);
 }
 
 void MainWindow::initPlayers()
@@ -73,7 +82,6 @@ void MainWindow::setupGameInfoBox()
     connect(_gameInfoBox, &GameInfoBox::continueFromSpinPressed,
             this, &MainWindow::continueFromSpinning);
 
-    _scene->addWidget(_gameInfoBox);
     _gameInfoBox->move(OtherConstants::GIBOX_OFFSET);
     _gameInfoBox->updateGameState();
 

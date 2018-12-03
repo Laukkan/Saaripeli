@@ -194,6 +194,8 @@ private:
     QGraphicsScene* _scene;
     ZoomGraphicsView* _view;
     GameInfoBox* _gameInfoBox;
+    QGridLayout* _layout;
+    QWidget* _centralWidget;
 };
 
 }
