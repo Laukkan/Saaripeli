@@ -192,7 +192,9 @@ void MainWindow::movePawn(Common::CubeCoordinate origin,
                           Common::CubeCoordinate target,
                           int pawnId)
 {
-    if (_gameState->currentGamePhase() != Common::GamePhase::MOVEMENT) {
+    if (_gameState->currentGamePhase() != Common::GamePhase::MOVEMENT
+            or (!_gameBoard->getHex(target)->getActors().empty()
+            and _gameBoard->getHex(target)->getActors().at(0)->getActorType() != "kraken")) {
         return;
     }
     int movesLeft;
