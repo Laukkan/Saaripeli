@@ -597,7 +597,7 @@ std::vector<std::vector<std::string>> MainWindow::getRanking()
     try{
         if(rankingfile.is_open()){
             while(std::getline(rankingfile,line)){
-                ranking.push_back(Helpers::split(line, OtherConstants::delimiter));
+                ranking.push_back(Helpers::split(line, OtherConstants::DELIMITER));
             }
             // Using a lambda to sort the vector
             std::sort(ranking.begin(),ranking.end(),

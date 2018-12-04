@@ -16,10 +16,10 @@ void ZoomGraphicsView::wheelEvent(QWheelEvent *event)
 
     QPointF oldPos = mapToScene(event->pos());
 
-    if (event->delta() > 0 && (currentZoom < OtherConstants::zoomMax)) {
+    if (event->delta() > 0 && (currentZoom < OtherConstants::ZOOM_MAX)) {
         scale(zoomFactor, zoomFactor);
         currentZoom *= zoomFactor;
-    } else if (currentZoom > OtherConstants::zoomMin) {
+    } else if (currentZoom > OtherConstants::ZOOM_MIN) {
         scale(1 / zoomFactor, 1 / zoomFactor);
         currentZoom /= zoomFactor;
     }

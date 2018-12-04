@@ -22,11 +22,11 @@ GameInfoBox::GameInfoBox(std::shared_ptr<GameState> gameState,
     _layout = new QGridLayout(this);
     setTitle("Game Information");
 
-    QSizePolicy spFixed = sizePolicy();
+    /*QSizePolicy spFixed = sizePolicy();
     spFixed.setHorizontalPolicy(QSizePolicy::Policy::Fixed);
     spFixed.setVerticalPolicy(QSizePolicy::Policy::Fixed);
     setSizePolicy(spFixed);
-    resize(SizeConstants::INFO_BOX_SIZE);
+    resize(SizeConstants::INFO_BOX_SIZE);*/
 
     std::random_device rd;
     _randomGen = std::mt19937(rd());
@@ -151,7 +151,6 @@ void GameInfoBox::updateGameState(){
         _actorMovesLabel->show();
     }
     else {
-        _actorImageLabel->clear();
         _actorMovesLabel->clear();
         _continueFromSpin->hide();
         _spinButton->hide();
