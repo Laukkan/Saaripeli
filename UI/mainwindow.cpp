@@ -39,6 +39,7 @@ void MainWindow::initBoard(int playersAmount, const bool reset)
 
     _gameBoard = std::shared_ptr<Student::GameBoard>(new Student::GameBoard());
     _gameState = std::shared_ptr<GameState>(new GameState(_playersAmount));
+    _spinned = false;
 
     if (!reset) {
         initPlayers();
@@ -121,7 +122,9 @@ void MainWindow::spinWheel()
                         spinResult.second,
                         actorExists);
         }
+        _animalTypeFromSpinner = spinResult.first;
         _movesFromSpinner = spinResult.second;
+        _spinned = true;
 
     }
     catch (Common::IllegalMoveException) {
@@ -141,6 +144,7 @@ void MainWindow::moveToSinking()
 void MainWindow::continueFromSpinning()
 {
     checkGameStatus();
+    _spinned = false;
     _gameState->changeGamePhase(Common::GamePhase::MOVEMENT);
     _playerMap.at(_gameState->currentPlayer())->addTurn();
     _gameState->changePlayerTurn(getNextPlayerId());
@@ -240,7 +244,9 @@ void MainWindow::moveActor(Common::CubeCoordinate origin,
 {
     // Wrong gamePhase or targetHex already has an actor
     if ( (_gameState->currentGamePhase() != Common::GamePhase::SPINNING)
-         || (!( _gameBoard->getHex(target)->getActors().empty())))
+         || (!( _gameBoard->getHex(target)->getActors().empty()))
+         or _gameBoard->getActor(actorId)->getActorType() != _animalTypeFromSpinner
+         or !_spinned)
     {
         return;
     }
@@ -268,11 +274,12 @@ void MainWindow::moveTransport(Common::CubeCoordinate origin,
                                Common::CubeCoordinate target,
                                int transportId)
 {
-    if (_gameState->currentGamePhase() == Common::GamePhase::SINKING) {
+    bool spinning =
+                 _gameState->currentGamePhase() == Common::GamePhase::SPINNING;
+    if (_gameState->currentGamePhase() == Common::GamePhase::SINKING
+            or (spinning and !_spinned) or (spinning and _gameBoard->getTransport(transportId)->getTransportType() != _animalTypeFromSpinner)) {
         return;
     }
-    bool spinning =
-            _gameState->currentGamePhase() == Common::GamePhase::SPINNING;
     int movesLeft;
     TransportItem* transportItem = _transportItems.at(transportId);
     HexItem* newParent = _hexItems.at(target);
