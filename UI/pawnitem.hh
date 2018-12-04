@@ -34,6 +34,12 @@ public:
 
      QString getColor();
 
+     /**
+      * @brief getId - returns the logical pawn id
+      * @return - id (1-3)
+      */
+     int getId() const;
+
 protected:
     /**
      * @brief PawnItem's Interractions with mouse

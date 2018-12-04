@@ -25,25 +25,22 @@ public:
     // A virtual destructor is already provided by the QObject subclass.
 
     /**
-     * @brief getPawnPosition - returns a position for a new pawn based on
-     * how many pawns the HexItem has and the HexItem's location.
+     * @brief getPawnPosition - returns a position for a pawn based on it's id
+     * @param pawnId - the id of the pawn (1-3)
      * @return the QPointF coordinate representation of the position.
      */
-    QPointF getPawnPosition();
+    QPointF getPawnPosition(int pawnId) const;
 
     /**
      * @brief getActorPosition - returns the position for the ActorItem based
      * on the HexItem's location.
      * @return QPointF pixel coordinate representation of the position.
      */
-    QPointF getActorPosition();
+    QPointF getEmptyATPosition() const;
 
-    /**
-     * @brief getActorPosition - returns the position for the ActorItem based
-     * on the HexItem's location.
-     * @return QPointF pixel coordinate representation of the position.
-     */
-    QPointF getTransportPosition();
+
+    QPointF getFilledDolphinPosition() const;
+    QPointF getFilledBoatPosition() const;
 
     /**
      * @brief flip - flips the HexItem upside down sinking it.
@@ -105,13 +102,24 @@ private:
     QPointF _center;
 
     /**
-     * @brief _pawnPositionArray - contains the positions for each of the
-     * 3 pawns
+     * @brief _aTPosition - position for empty transport and actor
      */
-    QPointF _pawnPositionArray[3];
+    QPointF _aTPosition;
 
     /**
-     * @brief getHexCorners Returns a vector with all of the hexes corners.
+     * @brief Positions for filled transports
+     */
+    QPointF _filledDolphinPosition[3];
+
+    /**
+     * @brief _pawnPositionMap - contains the positions for each of the
+     * 3 pawns based on their Id
+     */
+    std::map<int, QPointF> _pawnPositionMap;
+
+    /**
+     * @brief getHexCorners Returns a vector with all of the hexes corners and
+     * calcutates the points for Pawns and Actor/Transport
      * @return QVector<QPointF> , a vector with all of the hexes corners.
      */
     QVector<QPointF> getHexCorners();

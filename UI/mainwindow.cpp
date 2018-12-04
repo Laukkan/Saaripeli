@@ -214,7 +214,7 @@ void MainWindow::movePawn(Common::CubeCoordinate origin,
         PawnItem* pawnItem = _pawnItems.at(pawnId);
         HexItem* newParent = _hexItems.at(target);
 
-        pawnItem->setOffset(newParent->getPawnPosition());
+        pawnItem->setOffset(newParent->getPawnPosition(pawnId));
         pawnItem->setParent(newParent);
     }
     else
@@ -256,7 +256,7 @@ void MainWindow::moveActor(Common::CubeCoordinate origin,
     ActorItem* actorItem = _actorItems.at(actorId);
     HexItem* newParent = _hexItems.at(target);
 
-    actorItem->setPos(newParent->getActorPosition());
+    actorItem->setPos(newParent->getEmptyATPosition());
     actorItem->setParent(newParent);
 
     continueFromSpinning();
@@ -282,17 +282,22 @@ void MainWindow::moveTransport(Common::CubeCoordinate origin,
             movesLeft = _gameRunner->
                     moveTransportWithSpinner(origin, target, transportId,
                                              _movesFromSpinner);
-            transportItem->setPos(newParent->getActorPosition());
+            transportItem->setPos(newParent->getEmptyATPosition());
         }
         else {
             movesLeft = _gameRunner->moveTransport(origin, target, transportId);
-            transportItem->setPos(newParent->getPawnPosition());
+            if (_transportItems.at(transportId)->isABoat()) {
+                transportItem->setPos(newParent->getFilledBoatPosition());
+            }
+            else {
+                transportItem->setPos(newParent->getFilledDolphinPosition());
+            }
         }
     } catch (Common::IllegalMoveException) {
         return;
     }
-
     transportItem->setParent(newParent);
+
     _gameInfoBox->updateGameState();
 
     if ( (movesLeft == 0) && spinning) {
@@ -404,9 +409,9 @@ void MainWindow::doTheVortex(const Common::CubeCoordinate &coord)
     QPixmap vortexIcon(PathConstants::ACTOR_IMAGES.at("vortex"));
     QGraphicsPixmapItem* vortexItem =
             new QGraphicsPixmapItem(
-                Helpers::scaleActorImage(vortexIcon, 4));
+                Helpers::scaleActorImage(vortexIcon, 3));
 
-    QPointF coordinates = _hexItems.at(coord)->getActorPosition();
+    QPointF coordinates = _hexItems.at(coord)->getEmptyATPosition();
 
     vortexItem->setPos(coordinates);
     _scene->addItem(vortexItem);

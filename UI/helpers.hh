@@ -35,7 +35,7 @@ QString gamePhaseToQString(const Common::GamePhase &gamePhase);
  * @param factor - the factor the scale done with.
  * @return a constant scaled pixmap
  */
-const QPixmap scaleActorImage(const QPixmap &pixmap, const int factor);
+const QPixmap scaleActorImage(const QPixmap &pixmap, const int factor = 1);
 
 /**
  * @brief randomNumber - returns a random number between the interval defined

@@ -187,7 +187,7 @@ void GameInfoBox::shuffleImages()
         if (iter == _actorImages.end()) {
             iter = _actorImages.begin();
         }
-        _actorImageLabel->setPixmap(Helpers::scaleActorImage(*iter,3));
+        _actorImageLabel->setPixmap(Helpers::scaleActorImage(*iter, 2));
         repaint();
         QApplication::processEvents();
         QThread::msleep(imageTime);
@@ -204,7 +204,7 @@ void GameInfoBox::updateActor(const QPixmap &image, const std::string &moves,
     shuffleImages();
 
     // Set the correct image at the end
-    _actorImageLabel->setPixmap(Helpers::scaleActorImage(image, 3));
+    _actorImageLabel->setPixmap(Helpers::scaleActorImage(image, 2));
 
     if (!actorExists) {
         _continueFromSpin->setText("Ok");

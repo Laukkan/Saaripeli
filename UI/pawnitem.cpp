@@ -20,7 +20,7 @@ PawnItem::PawnItem(QString color,
     setPixmap(_pawnImage.scaled(SizeConstants::P_PIX_SIZE,
                                 Qt::KeepAspectRatio,
                                 Qt::SmoothTransformation));
-    setOffset(parent->getPawnPosition());
+    setOffset(parent->getPawnPosition(pawn->getId()));
 
     setFlag(QGraphicsItem::ItemIsMovable);
     setAcceptHoverEvents(true);
@@ -31,6 +31,11 @@ PawnItem::PawnItem(QString color,
 QString PawnItem::getColor()
 {
     return _color;
+}
+
+int PawnItem::getId() const
+{
+    return _pawn->getId();
 }
 
 void PawnItem::mousePressEvent(QGraphicsSceneMouseEvent* event)

@@ -19,10 +19,6 @@ HexItem::HexItem(std::shared_ptr<Common::Hex> hex, QPointF center) :
     //  Set the color according to type.
     setBrush(ColorConstants::HEX_COLORS.at(_hex->getPieceType()));
 
-    _pawnPositionArray[0] = QPointF(_center.x()-10, _center.y()+4);
-    _pawnPositionArray[1] = QPointF(_center.x()-25, _center.y()-10);
-    _pawnPositionArray[2] = QPointF(_center.x()-10, _center.y()-25);
-
     setAcceptedMouseButtons(Qt::RightButton);
     setAcceptDrops(true);
 }
@@ -36,16 +32,77 @@ QPointF HexItem::pointyHexCorner(int side)
                    _center.y() + ( _size * sin(angle_rad) ));
 }
 
+
 QVector<QPointF> HexItem::getHexCorners()
 {
     QVector<QPointF> points;
     int side = 0;
 
+    const QSize pPixSize = SizeConstants::P_PIX_SIZE;
+    const QSize aPixSize = SizeConstants::A_PIX_SIZE;
+
     while (side < OtherConstants::HEX_SIDES) {
-        points.push_back(pointyHexCorner(side));
-        side++;
+        QPointF corner = pointyHexCorner(side);
+
+        // Calculate the pawn and actor/transport positions
+        if (side == 5) {
+            _aTPosition = QPointF(corner.x() - aPixSize.width()/2,
+                                  corner.y() + aPixSize.height()/2);
+        }
+        if (side == 1) {
+            _pawnPositionMap[2] = QPointF(corner.x() - pPixSize.width(),
+                                            corner.y() - pPixSize.height());
+            _filledDolphinPosition[1] = QPointF(corner.x() - aPixSize.width(),
+                                                corner.y() - aPixSize.height());
+        }
+        else if (side == 2)
+        {
+            _pawnPositionMap[1] = QPointF(corner.x() - pPixSize.width()/2,
+                                            corner.y() - pPixSize.height());
+            _filledDolphinPosition[0] = QPointF(corner.x() - aPixSize.width()/2,
+                                                corner.y() - aPixSize.height());
+        }
+        else if (side == 3) {
+            _pawnPositionMap[3] = QPointF(corner.x(),
+                                            corner.y() - pPixSize.height());
+            _filledDolphinPosition[2] = QPointF(corner.x(),
+                                                corner.y() - aPixSize.height());
+        }
+
+
+        points.push_back(corner);
+        ++side;
     }
     return points;
+}
+
+QPointF HexItem::getPawnPosition(int pawnId) const
+{
+    return _pawnPositionMap.at(pawnId);
+}
+
+QPointF HexItem::getEmptyATPosition() const
+{
+    return _aTPosition;
+}
+
+QPointF HexItem::getFilledDolphinPosition() const
+{
+    return _filledDolphinPosition[_hex->getPawnAmount()];
+}
+
+QPointF HexItem::getFilledBoatPosition() const
+{
+    // same as Center filledDolphin spot
+    return _filledDolphinPosition[0];
+}
+
+
+void HexItem::flip()
+{
+    // Fix HexItem color to match Water type
+    setBrush(ColorConstants::HEX_COLORS.at("Water"));
+    update();
 }
 
 void HexItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -53,7 +110,6 @@ void HexItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
     event->accept();
     emit hexFlipped(_hex->getCoordinates());
 }
-
 
 
 void HexItem::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
@@ -103,28 +159,6 @@ void HexItem::dropEvent(QGraphicsSceneDragDropEvent *event)
                               _hex->getCoordinates(),
                               eventData.at(1).toInt());
     }
-}
-
-QPointF HexItem::getPawnPosition()
-{
-    return _pawnPositionArray[children().size()];
-}
-
-QPointF HexItem::getActorPosition()
-{
-    return QPointF(_center.x() - 20, _center.y() - 23);
-}
-
-QPointF HexItem::getTransportPosition()
-{
-    return QPointF(_center.x() - 20, _center.y() - 10);
-}
-
-void HexItem::flip()
-{
-    // Fix HexItem color to match Water type
-    setBrush(ColorConstants::HEX_COLORS.at("Water"));
-    update();
 }
 
 }

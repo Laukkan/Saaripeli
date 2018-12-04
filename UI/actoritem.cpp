@@ -15,8 +15,8 @@ ActorItem::ActorItem(std::shared_ptr<Common::Actor> actor, HexItem* parent) :
     _actor(actor)
 {
     _actorImage.load(PathConstants::ACTOR_IMAGES.at(_actor->getActorType()));
-    setPixmap(Helpers::scaleActorImage(_actorImage, 2));
-    QPointF coordinates = parent->getActorPosition();
+    setPixmap(Helpers::scaleActorImage(_actorImage));
+    QPointF coordinates = parent->getEmptyATPosition();
     setPos(coordinates);
 
     setFlag(QGraphicsItem::ItemIsMovable);
@@ -49,7 +49,7 @@ void ActorItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
     mime->setParent(parent());
     mime->setText("actor;" + QString::number(_actor->getId()));
 
-    drag->setPixmap(Helpers::scaleActorImage(_actorImage, 2));
+    drag->setPixmap(Helpers::scaleActorImage(_actorImage));
     drag->exec();
     setCursor(Qt::OpenHandCursor);
 }

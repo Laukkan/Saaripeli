@@ -42,6 +42,12 @@ public:
      */
     void releasePawns();
 
+    /**
+     * @brief isABoat - Returns true if the transportItem is a boat
+     * @return true or false
+     */
+    bool isABoat() const;
+
 protected:
     /**
      * @brief TransportItems's interractions with mouse
