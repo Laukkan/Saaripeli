@@ -222,13 +222,15 @@ bool MainWindow::validPawnMove(const Common::CubeCoordinate &target)
     if (
             _gameState->currentGamePhase() != Common::GamePhase::MOVEMENT
          || (
-                (!targetHex->getActors().empty()) &&
-                (targetHex->getActors().at(0)->getActorType() != "kraken")
-            )
-         || (
+                (!targetHex->getActors().empty() &&
+                   (targetHex->getActors().at(0)->getActorType() != "kraken"))
+
+         && (
                 !targetHex->getTransports().empty() &&
                 !targetHex->getTransports().at(0)->getCapacity())
-    )
+            )
+        )
+
     {
         return false;
     }
