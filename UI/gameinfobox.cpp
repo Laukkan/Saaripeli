@@ -59,7 +59,9 @@ void GameInfoBox::initLabelsButtons()
 
     _rankingLabel = new QLabel("Rankings");
     for(auto player : _ranking){
-        QLabel* playerRankLabel = new QLabel(QString::fromStdString(player.at(0) + ": " + player.at(1)));
+        QLabel* playerRankLabel = new QLabel(
+                    QString::fromStdString(player.at(0) + " : "
+                                           + player.at(1)));
         _playerRankingLabels.push_back(playerRankLabel);
     }
 

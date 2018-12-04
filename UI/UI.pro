@@ -80,5 +80,4 @@ POST_TARGETDEPS += copyfiles
 RESOURCES += \
     Assets/resources.qrc
 
-DISTFILES += \
-    ranking.csv
+DISTFILES +=

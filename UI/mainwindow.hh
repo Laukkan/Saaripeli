@@ -237,6 +237,19 @@ private:
     void finishGame(std::shared_ptr<Player> winner);
 
     /**
+     * @brief sortAndValidateRanking - sorts the ranking list and makes sure
+     * it's a top 10 list.
+     */
+    void sortAndValidateRanking(
+            std::vector<std::vector<std::string> > &ranking);
+
+    /**
+     * @brief openNewRanking - opens a new Ranking file when existing wasn't
+     * found or it wasn't correctly formatted.
+     */
+    void openNewRanking();
+
+    /**
      * @brief getRanking reads the ranking file or creates it.
      * @return - the rankings in a string vector.
      */

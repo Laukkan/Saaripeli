@@ -50,8 +50,7 @@ void MainWindow::initBoard(int playersAmount, const bool reset)
         iPlayers.push_back(
                     std::static_pointer_cast<Common::IPlayer>(player.second));
     }
-    _gameRunner = Common::Initialization::getGameRunner(_gameBoard,
-                                                        _gameState,
+    _gameRunner = Common::Initialization::getGameRunner(_gameBoard, _gameState,
                                                         iPlayers);
     _scene = new QGraphicsScene(this);
 
@@ -65,7 +64,6 @@ void MainWindow::initBoard(int playersAmount, const bool reset)
 
     _centralWidget->setLayout(_layout);
     setCentralWidget(_centralWidget);
-
 }
 
 void MainWindow::initPlayers()
@@ -215,19 +213,22 @@ bool MainWindow::validPawnMove(const Common::CubeCoordinate &target)
 {
     // Not valid if :
     //   (1) GamePhase is not right
-    //   (2) or there is an actor that would eat the pawn
-    //   (3) and no transporter with room for the pawn in the hex.
+    //   (2) or there is an actor that would eat the pawn and
+    //          no transporter with room for the pawn in the hex.
     std::shared_ptr<Common::Hex> targetHex = _gameBoard->getHex(target);
 
     if (
             _gameState->currentGamePhase() != Common::GamePhase::MOVEMENT
          || (
+                (
                 (!targetHex->getActors().empty()) &&
                 (targetHex->getActors().at(0)->getActorType() != "kraken")
-            )
-         || (
+                )
+             && (
                 !targetHex->getTransports().empty() &&
-                !targetHex->getTransports().at(0)->getCapacity())
+                !targetHex->getTransports().at(0)->getCapacity()
+                )
+            )
     )
     {
         return false;
@@ -640,13 +641,14 @@ void MainWindow::newRound(int roundWinnerId)
 
     // Reset board only after the dropEvent has been processed completely
     QTimer::singleShot(0, this, [this] () {
-        // Qt's Object Tree makes sure all items and GameInfoBox are destroyed
-        // as scene is parent for them all.
+        // Qt's Object Tree makes sure all items are destroyed as scene is
+        // parent to them all.
         delete _scene;
+        delete _gameInfoBox;
 
         _hexItems.clear();
         _pawnItems.clear();
-        delete _gameInfoBox;
+
         initBoard(_playersAmount, true);
     });
 }
@@ -664,8 +666,38 @@ void MainWindow::finishGame(std::shared_ptr<Player> winner)
     if(topTen){
         updateRanking(winner,ranking);
     }
-     qApp->quit();
+    qApp->quit();
 }
+
+void MainWindow::sortAndValidateRanking(
+        std::vector<std::vector<std::string>> &ranking)
+{
+    // Using a lambda to sort the vector
+    std::sort(ranking.begin(),ranking.end(),
+              [] (const std::vector<std::string> lhs,
+                  const std::vector<std::string> rhs)
+    {
+        return std::stoi(lhs.at(1)) < std::stoi(rhs.at(1));
+
+    });
+    //make sure its a top 10
+    while (ranking.size() > 10) {
+        ranking.pop_back();
+    }
+}
+
+void MainWindow::openNewRanking()
+{
+    std::ofstream newRankingFile(PathConstants::RANKING_FILE);
+    for(int lineCount = 0; lineCount < 10; lineCount++){
+        newRankingFile << "-;999 \n";
+    }
+    newRankingFile.close();
+    QMessageBox newRankingFileBox;
+    newRankingFileBox.setText("A new ranking file was created");
+    newRankingFileBox.exec();
+}
+
 
 std::vector<std::vector<std::string>> MainWindow::getRanking()
 {
@@ -676,22 +708,14 @@ std::vector<std::vector<std::string>> MainWindow::getRanking()
     std::vector<std::vector<std::string>> ranking = {};
     std::string line;
     try{
-        if(rankingfile.is_open()){
-            while(std::getline(rankingfile,line)){
-                ranking.push_back(Helpers::split(line, OtherConstants::DELIMITER));
-            }
-            // Using a lambda to sort the vector
-            std::sort(ranking.begin(),ranking.end(),
-                      [] (const std::vector<std::string> lhs,
-                          const std::vector<std::string> rhs)
+        if (rankingfile.is_open())
+        {
+            while (std::getline(rankingfile,line))
             {
-                return std::stoi(lhs.at(1)) < std::stoi(rhs.at(1));
-
-            });
-            //make sure its a top 10
-            while(ranking.size() > 10){
-                ranking.pop_back();
+                ranking.push_back(
+                            Helpers::split(line, OtherConstants::DELIMITER));
             }
+            sortAndValidateRanking(ranking);
             rankingfile.close();
         }
         //creating new file
@@ -705,15 +729,8 @@ std::vector<std::vector<std::string>> MainWindow::getRanking()
         rankingError.exec();
         newfile = true;
     }
-    if(newfile){
-        std::ofstream newRankingFile(PathConstants::RANKING_FILE);
-        for(int lineCount = 0; lineCount < 10; lineCount++){
-            newRankingFile << "Undefined;999 \n";
-        }
-        newRankingFile.close();
-        QMessageBox newRankingFileBox;
-        newRankingFileBox.setText("A new ranking file was created");
-        newRankingFileBox.exec();
+    if (newfile) {
+        openNewRanking();
         ranking = getRanking();
     }
     return ranking;

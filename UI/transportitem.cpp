@@ -51,7 +51,7 @@ void TransportItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
     mime->setParent(parent());
     mime->setText("transport;" + QString::number(_transport->getId()));
 
-    drag->setPixmap(_transportImage);
+    drag->setPixmap(Helpers::scaleActorImage(_transportImage));
     drag->exec();
     setCursor(Qt::OpenHandCursor);
 }
