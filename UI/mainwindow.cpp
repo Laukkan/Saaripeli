@@ -75,7 +75,8 @@ void MainWindow::initPlayers()
 
 void MainWindow::setupGameInfoBox()
 {
-    _gameInfoBox = new GameInfoBox(_gameState, _gameRunner, _playerMap, getRanking());
+    _gameInfoBox = new GameInfoBox(_gameState, _gameRunner,
+                                   _playerMap, getRanking());
 
     // Connect all the buttons of the GameInfoBox
     connect(_gameInfoBox, &GameInfoBox::spinButtonPressed,
@@ -193,7 +194,8 @@ void MainWindow::movePawn(Common::CubeCoordinate origin,
 {
     if (_gameState->currentGamePhase() != Common::GamePhase::MOVEMENT
             or (!_gameBoard->getHex(target)->getActors().empty()
-            and _gameBoard->getHex(target)->getActors().at(0)->getActorType() != "kraken")) {
+            and _gameBoard->getHex(target)->
+                getActors().at(0)->getActorType() != "kraken")) {
         return;
     }
     int movesLeft;
@@ -324,7 +326,8 @@ void MainWindow::flipHex(const Common::CubeCoordinate &tileCoord)
     else if (actorImages.find(actorType) != actorImages.end())
     {
         addActorItem(_gameBoard->returnHexes().at(tileCoord));
-        doActorAction(tileCoord,_gameBoard->getHex(tileCoord)->getActors().at(0)->getId());
+        doActorAction(tileCoord,_gameBoard->
+                      getHex(tileCoord)->getActors().at(0)->getId());
     }
     else if (transportImages.find(actorType) != transportImages.end())
     {
@@ -538,8 +541,10 @@ void MainWindow::newRound(int roundWinnerId)
 void MainWindow::finishGame(std::shared_ptr<Player> winner)
 {
     QMessageBox gameWon;
-    gameWon.setText("Player " + QString::number(winner->getPlayerId()) + " has won the game!\n" +
-                    "They used " + QString::number(winner->getTotalTurns()) + " turns!");
+    gameWon.setText("Player " + QString::number(winner->getPlayerId()) +
+                    " has won the game!\n" +
+                    "They used " + QString::number(winner->getTotalTurns())
+                    + " turns!");
     gameWon.exec();
     std::vector<std::vector<std::string>> ranking = getRanking();
     bool topTen = checkRanking(winner, ranking);
@@ -559,14 +564,14 @@ std::vector<std::vector<std::string>> MainWindow::getRanking()
         while(std::getline(rankingfile,line)){
             ranking.push_back(Helpers::split(line, OtherConstants::delimiter));
         }
-        //Quick function to sort the vector.
-        struct {
-               bool operator()(std::vector<std::string> a, std::vector<std::string> b) const
-               {
-                   return std::stoi(a.at(1)) < std::stoi(b.at(1));
-               }
-           } customLess;
-        std::sort(ranking.begin(),ranking.end(), customLess);
+        // Using a lambda to sort the vector
+        std::sort(ranking.begin(),ranking.end(),
+                  [] (const std::vector<std::string> lhs,
+                      const std::vector<std::string> rhs)
+        {
+            return std::stoi(lhs.at(1)) < std::stoi(rhs.at(1));
+
+        });
         rankingfile.close();
     }
     else {
@@ -574,10 +579,11 @@ std::vector<std::vector<std::string>> MainWindow::getRanking()
         errorReadingFile.setText("Error reading ranking file");
         errorReadingFile.exec();
     }
-    return  ranking;
+    return ranking;
 }
 
-bool MainWindow::checkRanking(std::shared_ptr<Player> winner, std::vector<std::vector<std::string>> ranking)
+bool MainWindow::checkRanking(std::shared_ptr<Player> winner,
+                              std::vector<std::vector<std::string>> ranking)
 {
     unsigned int winnerTurns = winner->getTotalTurns();
     bool topTen = false;
@@ -590,14 +596,21 @@ bool MainWindow::checkRanking(std::shared_ptr<Player> winner, std::vector<std::v
     return topTen;
 }
 
-void MainWindow::updateRanking(std::shared_ptr<Player> winner, std::vector<std::vector<std::string>> ranking)
+void MainWindow::updateRanking(std::shared_ptr<Player> winner,
+                               std::vector<std::vector<std::string>> ranking)
 {
     QInputDialog top10;
-    top10.setLabelText("Wow, you got to the to 10! Please enter a name to save to the rankings!");
+    top10.setLabelText("Wow, you got to the to 10! \
+                       Please enter a name to save to the rankings!");
     bool ok;
-    QString playerName = QInputDialog::getText(this, "Top 10!",
-                                       "Wow, player" +QString::number(winner->getPlayerId())+
-                                         " made it the to 10! Please enter a name to save to the rankings!", QLineEdit::Normal, "", &ok);
+    QString playerName =
+            QInputDialog::getText(
+                this, "Top 10!", "Wow, player" +
+                QString::number(winner->getPlayerId()) +
+                " made it the to 10! \
+                Please enter a name to save to the rankings!",
+                QLineEdit::Normal, "", &ok
+    );
     if (!ok or playerName.isEmpty()) {
       playerName = "Anonymous";
     }
