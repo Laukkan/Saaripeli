@@ -13,8 +13,7 @@ namespace Student {
 
 TransportItem::TransportItem(std::shared_ptr<Common::Transport> transport,
                              HexItem* parent) :
-    _transportType(transport->getTransportType()), _hParent(parent),
-    _transport(transport)
+    _transportType(transport->getTransportType()), _transport(transport)
 {
     _transportImage.load(PathConstants::TRANSPORT_IMAGES.at(
                              _transport->getTransportType()));
@@ -62,16 +61,17 @@ void TransportItem::addToTransport(PawnItem* newPawnItem)
     const std::map<std::string, QString> transportImages =
             PathConstants::TRANSPORT_IMAGES;
 
+
     if (_transportType == "dolphin")
     {
         _transportImage.load(
                     transportImages.at(_transportType +
                                        newPawnItem->getColor().toStdString()));
-        // Old rider is kicked out
-        PawnItem* oldPawnItem = _pawnItemsOnBoard.at(0);
-        oldPawnItem->setPos(_hParent->getPawnPosition(oldPawnItem->getId()));
-        oldPawnItem->show();
-        _pawnItemsOnBoard.clear();
+        if (!(_pawnItemsOnBoard.empty()))
+        {
+            // Old rider is kicked out
+            releasePawns();
+        }
     }
     // It's a boat
     else {
@@ -107,6 +107,8 @@ void TransportItem::addToTransport(PawnItem* newPawnItem)
 
         }
     }
+    HexItem* hParent = qobject_cast<HexItem*>(parent());
+    newPawnItem->setParent(hParent);
     setPixmap(Helpers::scaleActorImage(_transportImage));
     _pawnItemsOnBoard.push_back(newPawnItem);
 }
@@ -116,7 +118,6 @@ void TransportItem::releasePawns()
     //removing the item from the children of the hex is needed for
     //repositioning hexitems
     HexItem* parentHex = qobject_cast<HexItem*>(parent());
-    setParent(nullptr);
 
     for(PawnItem* pawnItem : _pawnItemsOnBoard){
         pawnItem->setOffset(parentHex->getPawnPosition(pawnItem->getId()));
