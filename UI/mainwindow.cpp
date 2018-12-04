@@ -415,13 +415,13 @@ void MainWindow::addTransportItem(std::shared_ptr<Common::Hex> hex)
 void MainWindow::doTheVortex(const Common::CubeCoordinate &coord)
 {
     QPixmap vortexIcon(PathConstants::ACTOR_IMAGES.at("vortex"));
+    vortexIcon = Helpers::scaleActorImage(vortexIcon, 3);
     QGraphicsPixmapItem* vortexItem =
-            new QGraphicsPixmapItem(
-                Helpers::scaleActorImage(vortexIcon, 3));
+            new QGraphicsPixmapItem(vortexIcon);
+    QPointF coordinates = Helpers::cubeToPixel(coord);
+    vortexItem->setPos(coordinates.x()-vortexIcon.width()/2,
+                       coordinates.y()-vortexIcon.height()/2);
 
-    QPointF coordinates = _hexItems.at(coord)->getActorPosition();
-
-    vortexItem->setPos(coordinates);
     _scene->addItem(vortexItem);
     std::vector<Common::CubeCoordinate> coordinatesToRemoveFrom =
             _gameBoard->getHex(coord)->getNeighbourVector();
