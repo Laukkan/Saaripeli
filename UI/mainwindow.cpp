@@ -99,37 +99,31 @@ void MainWindow::spinWheel()
     if (_gameState->currentGamePhase() != Common::GamePhase::SPINNING) {
         return;
     }
-    try {
-        std::pair<std::string,std::string> spinResult =
-                _gameRunner->spinWheel();
-        const std::map<std::string, QString> actorImages =
-                PathConstants::ACTOR_IMAGES;
-        const std::map<std::string, QString> transportImages =
-                PathConstants::TRANSPORT_IMAGES;
+    std::pair<std::string,std::string> spinResult =
+            _gameRunner->spinWheel();
+    const std::map<std::string, QString> actorImages =
+            PathConstants::ACTOR_IMAGES;
+    const std::map<std::string, QString> transportImages =
+            PathConstants::TRANSPORT_IMAGES;
 
-        bool actorExists =
-                _gameBoard->checkIfActorOrTransportExists(spinResult.first);
+    bool actorExists =
+            _gameBoard->checkIfActorOrTransportExists(spinResult.first);
 
-        if(spinResult.first == "dolphin"){
-            _gameInfoBox->updateActor(
-                        QPixmap(transportImages.at(spinResult.first)),
-                        spinResult.second,
-                        actorExists);
-        }
-        else {
-            _gameInfoBox->updateActor(
-                        QPixmap(actorImages.at(spinResult.first)),
-                        spinResult.second,
-                        actorExists);
-        }
-        _animalTypeFromSpinner = spinResult.first;
-        _movesFromSpinner = spinResult.second;
-        _spinned = true;
-
+    if(spinResult.first == "dolphin"){
+        _gameInfoBox->updateActor(
+                    QPixmap(transportImages.at(spinResult.first)),
+                    spinResult.second,
+                    actorExists);
     }
-    catch (Common::IllegalMoveException) {
-        return;
+    else {
+        _gameInfoBox->updateActor(
+                    QPixmap(actorImages.at(spinResult.first)),
+                    spinResult.second,
+                    actorExists);
     }
+    _animalTypeFromSpinner = spinResult.first;
+    _movesFromSpinner = spinResult.second;
+    _spinned = true;
 }
 
 
@@ -150,6 +144,7 @@ void MainWindow::continueFromSpinning()
     _gameState->changePlayerTurn(getNextPlayerId());
     _gameInfoBox->updateGameState();
 }
+
 
 void MainWindow::eraseTransportItem(const int transportId)
 {
@@ -194,9 +189,33 @@ void MainWindow::resetPlayerMoves(int playerId)
     }
 }
 
-void MainWindow::movePawn(Common::CubeCoordinate origin,
-                          Common::CubeCoordinate target,
-                          int pawnId)
+void MainWindow::movePawnWithTransport(const Common::CubeCoordinate &target,
+                                       const int pawnId)
+{
+    std::shared_ptr<Common::Transport> transport =
+            _gameBoard->getHex(target)->getTransports().at(0);
+    TransportItem* tItem = _transportItems.at(transport->getId());
+    PawnItem* newPItem = _pawnItems.at(pawnId);
+
+
+    // Switch rider
+    if (transport->getTransportType() == "dolphin"
+            and transport->getCapacity() == 0)
+    {
+        std::shared_ptr<Common::Pawn> oldPawn =
+                transport->getPawnsInTransport().at(0);
+        transport->removePawn(oldPawn);
+    }
+    // In all other events the new pawn is added
+    transport->addPawn(_gameBoard->getPawn(pawnId));
+    tItem->addToTransport(newPItem);
+    newPItem->hide();
+}
+
+
+void MainWindow::movePawn(const Common::CubeCoordinate origin,
+                          const Common::CubeCoordinate target,
+                          const int &pawnId)
 {
     if (_gameState->currentGamePhase() != Common::GamePhase::MOVEMENT
             or (!_gameBoard->getHex(target)->getActors().empty()
@@ -222,26 +241,8 @@ void MainWindow::movePawn(Common::CubeCoordinate origin,
         pawnItem->setOffset(newParent->getPawnPosition(pawnId));
         pawnItem->setParent(newParent);
     }
-    else
-    {
-        std::shared_ptr<Common::Transport> transport =
-                _gameBoard->getHex(target)->getTransports().at(0);
-        TransportItem* tItem = _transportItems.at(transport->getId());
-        PawnItem* newPItem = _pawnItems.at(pawnId);
-
-
-        // Switch rider
-        if (transport->getTransportType() == "dolphin"
-                and transport->getCapacity() == 0)
-        {
-            std::shared_ptr<Common::Pawn> oldPawn =
-                    transport->getPawnsInTransport().at(0);
-            transport->removePawn(oldPawn);
-        }
-        // In all other events the new pawn is added
-        transport->addPawn(_gameBoard->getPawn(pawnId));
-        tItem->addToTransport(newPItem);
-        newPItem->hide();
+    else {
+        movePawnWithTransport(target, pawnId);
     }
 
     if (movesLeft == 0) {
@@ -251,17 +252,17 @@ void MainWindow::movePawn(Common::CubeCoordinate origin,
     _gameInfoBox->updateGameState();
 }
 
-void MainWindow::moveActor(Common::CubeCoordinate origin,
-                           Common::CubeCoordinate target,
-                           int actorId)
+void MainWindow::moveActor(const Common::CubeCoordinate &origin,
+                           const Common::CubeCoordinate &target,
+                           const int actorId)
 {
     //Aborted if: Gamephase is wrong, the player hasn't spun the wheel, the player
     //is trying to move the wrong type of animal, or the target hex already has an
     //actor.
     if ( (_gameState->currentGamePhase() != Common::GamePhase::SPINNING)
          || (!( _gameBoard->getHex(target)->getActors().empty()))
-         or _gameBoard->getActor(actorId)->getActorType() != _animalTypeFromSpinner
-         or !_spinned)
+         || _gameBoard->getActor(actorId)->getActorType() != _animalTypeFromSpinner
+         || !_spinned)
     {
         return;
     }
@@ -283,23 +284,42 @@ void MainWindow::moveActor(Common::CubeCoordinate origin,
     continueFromSpinning();
 }
 
-
-
-void MainWindow::moveTransport(Common::CubeCoordinate origin,
-                               Common::CubeCoordinate target,
-                               int transportId)
+bool MainWindow::validTransportMove(const bool spinning,
+                                    const Common::CubeCoordinate &target,
+                                    const int transportId)
 {
-    bool spinning =
-                 _gameState->currentGamePhase() == Common::GamePhase::SPINNING;
-    //Aborted if: Gamephase is wrong, the player hasn't spun the wheel, the player
-    //is trying to move the wrong type of animal, or the target hex already has a
-    //transport.
+    // Not valid if:
+    //  (1) Gamephase is wrong,
+    //  (2) the player hasn't spun the wheel,
+    //  (3) the player is trying to move the wrong type of animal,
+    //  (4) or the target hex already has a transport.
+
     if (_gameState->currentGamePhase() == Common::GamePhase::SINKING
-            or (spinning and !_spinned) or
-            (spinning and _gameBoard->getTransport(transportId)->getTransportType()
-             != _animalTypeFromSpinner) or !_gameBoard->getHex(target)->getTransports().empty()) {
+        || (spinning && !_spinned)
+        || (
+                spinning &&
+                _gameBoard->getTransport(transportId)->getTransportType()
+                != _animalTypeFromSpinner
+           )
+        || !(_gameBoard->getHex(target)->getTransports().empty()))
+    {
+        return false;
+    }
+    return true;
+}
+
+
+void MainWindow::moveTransport(const Common::CubeCoordinate &origin,
+                               const Common::CubeCoordinate &target,
+                               const int transportId)
+{
+    const bool spinning =
+            _gameState->currentGamePhase() == Common::GamePhase::SPINNING;
+
+    if (!validTransportMove(spinning, target, transportId)) {
         return;
     }
+
     int movesLeft;
     TransportItem* transportItem = _transportItems.at(transportId);
     HexItem* newParent = _hexItems.at(target);
@@ -334,6 +354,7 @@ void MainWindow::flipHex(const Common::CubeCoordinate &tileCoord)
     if (_gameState->currentGamePhase() != Common::GamePhase::SINKING) {
         return;
     }
+
     std::string actorType;
     try {
         actorType = _gameRunner->flipTile(tileCoord);
@@ -341,8 +362,19 @@ void MainWindow::flipHex(const Common::CubeCoordinate &tileCoord)
     catch (Common::IllegalMoveException) {
         return;
     }
+
     _hexItems.at(tileCoord)->flip();
 
+    flipHexFollowUp(tileCoord, actorType);
+
+    _gameState->changeGamePhase(Common::GamePhase::SPINNING);
+    _gameInfoBox->updateGameState();
+    checkGameStatus();
+}
+
+void MainWindow::flipHexFollowUp(const Common::CubeCoordinate &tileCoord,
+                                 const std::string actorType)
+{
     const std::map<std::string, QString> actorImages =
             PathConstants::ACTOR_IMAGES;
     const std::map<std::string, QString> transportImages =
@@ -361,12 +393,8 @@ void MainWindow::flipHex(const Common::CubeCoordinate &tileCoord)
     {
         addTransportItem(_gameBoard->returnHexes().at(tileCoord));
     }
-
-    _gameState->changeGamePhase(Common::GamePhase::SPINNING);
-    _gameInfoBox->updateGameState();
-    checkGameStatus();
-
 }
+
 
 void MainWindow::drawGameBoard()
 {
@@ -431,13 +459,22 @@ void MainWindow::doTheVortex(const Common::CubeCoordinate &coord)
     vortexIcon = Helpers::scaleActorImage(vortexIcon, 3);
     QGraphicsPixmapItem* vortexItem =
             new QGraphicsPixmapItem(vortexIcon);
+
     QPointF coordinates = Helpers::cubeToPixel(coord);
     vortexItem->setPos(coordinates.x()-vortexIcon.width()/2,
                        coordinates.y()-vortexIcon.height()/2);
 
-    vortexItem->setPos(Helpers::cubeToPixel(coord));
-
+    vortexAction(coord);
     _scene->addItem(vortexItem);
+
+    QMessageBox vortex;
+    vortex.setText("The vortex destroyed everything around it!");
+    vortex.exec();
+    delete vortexItem;
+}
+
+void MainWindow::vortexAction(const Common::CubeCoordinate &coord)
+{
     std::vector<Common::CubeCoordinate> coordinatesToRemoveFrom =
             _gameBoard->getHex(coord)->getNeighbourVector();
     coordinatesToRemoveFrom.push_back(coord);
@@ -465,10 +502,6 @@ void MainWindow::doTheVortex(const Common::CubeCoordinate &coord)
             _actorItems.erase(actorId);
         }
     }
-    QMessageBox vortex;
-    vortex.setText("The vortex destroyed everything around it!");
-    vortex.exec();
-    delete vortexItem;
 }
 
 void MainWindow::doActorAction(const Common::CubeCoordinate &coord,

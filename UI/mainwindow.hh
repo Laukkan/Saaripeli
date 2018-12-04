@@ -68,15 +68,16 @@ public slots:
      * @param target - target coordinate
      * @param pawn-/actor-/transportId - tells what is getting moved
      */
-    void movePawn(Common::CubeCoordinate origin,
-                  Common::CubeCoordinate target,
-                  int pawnId);
-    void moveActor(Common::CubeCoordinate origin,
-                  Common::CubeCoordinate target,
-                  int actorId);
-    void moveTransport(Common::CubeCoordinate origin,
-                  Common::CubeCoordinate target,
-                  int transportId);
+    void movePawn(const Common::CubeCoordinate origin,
+                  const Common::CubeCoordinate target,
+                  const int &pawnId);
+    void moveActor(const Common::CubeCoordinate &origin,
+                   const Common::CubeCoordinate &target,
+                   const int actorId);
+
+    void moveTransport(const Common::CubeCoordinate &origin,
+                       const Common::CubeCoordinate &target,
+                       const int transportId);
 
     /**
      * @brief flipHex - Flip a given HexItem
@@ -109,6 +110,39 @@ public slots:
     void continueFromSpinning();
 
 private:
+    /**
+     * @brief movePawnWithTransport - is called when the target HexItem has a
+     * a transport of some sort
+     * @param target - coordinate of the target HexItem
+     */
+    void movePawnWithTransport(const Common::CubeCoordinate &target,
+                               const int pawnId);
+
+    /**
+     * @brief validTransportMove - checks if the called transportMove is
+     * valid
+     * @param spinning - if the gamephase is spinning or not
+     * @param transportId - the id of the transport
+     * @return
+     */
+    bool validTransportMove(const bool spinning,
+                            const Common::CubeCoordinate &target,
+                            const int transportId);
+
+    /**
+     * @brief flipHexFollowUp - follow up actions from flipHex like
+     * actor/transport adding, actorActions
+     * @param coord - coordinate of the flipped hex
+     */
+    void flipHexFollowUp(const Common::CubeCoordinate &tileCoord,
+                         const std::string actorType);
+
+    /**
+     * @brief vortexAction - removes everything from near the vortex
+     * @param coord - coordinate of the vortex
+     */
+    void vortexAction(const Common::CubeCoordinate &coord);
+
     /**
      * @brief initPlayers - initialises the _playerMap with Player's for the
      * game
@@ -188,14 +222,16 @@ private:
      * @param ranking - the ranking.
      * @return true if the winner made it to the ranking, false if not.
      */
-    bool checkRanking(std::shared_ptr<Player> winner, std::vector<std::vector<std::string>> ranking);
+    bool checkRanking(std::shared_ptr<Player> winner,
+                      std::vector<std::vector<std::string>> ranking);
 
     /**
      * @brief updateRanking updates the rankings.
      * @param winner The winning player to add to rhe rankings.
      * @param ranking the ranking.
      */
-    void updateRanking(std::shared_ptr<Player> winner, std::vector<std::vector<std::string>> ranking);
+    void updateRanking(std::shared_ptr<Player> winner,
+                       std::vector<std::vector<std::string>> ranking);
 
     /**
      * @brief writeRanking - writes to the ranking.
