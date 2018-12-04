@@ -198,10 +198,14 @@ void MainWindow::movePawn(Common::CubeCoordinate origin,
                           Common::CubeCoordinate target,
                           int pawnId)
 {
+    std::shared_ptr<Common::Hex> targetHex = _gameBoard->getHex(target);
+    //Aborted if : GamePhase is not right or there is an actor that would
+    //eat the pawn and no transporter with room for the pawn in the hex.
     if (_gameState->currentGamePhase() != Common::GamePhase::MOVEMENT
-            or (!_gameBoard->getHex(target)->getActors().empty()
-            and _gameBoard->getHex(target)->
-                getActors().at(0)->getActorType() != "kraken")) {
+            or ((!targetHex->getActors().empty()
+            and targetHex->getActors().at(0)->getActorType() != "kraken")
+                and (!targetHex->getTransports().empty() and
+                     !targetHex->getTransports().at(0)->getCapacity()))) {
         return;
     }
 
@@ -436,8 +440,6 @@ void MainWindow::doTheVortex(const Common::CubeCoordinate &coord)
     QPointF coordinates = Helpers::cubeToPixel(coord);
     vortexItem->setPos(coordinates.x()-vortexIcon.width()/2,
                        coordinates.y()-vortexIcon.height()/2);
-
-    vortexItem->setPos(Helpers::cubeToPixel(coord));
 
     _scene->addItem(vortexItem);
     std::vector<Common::CubeCoordinate> coordinatesToRemoveFrom =
