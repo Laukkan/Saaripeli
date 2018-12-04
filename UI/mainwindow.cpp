@@ -12,12 +12,8 @@
 #include <QGridLayout>
 #include <QApplication>
 #include <QMessageBox>
-<<<<<<< HEAD
 #include <QTimer>
-
-=======
 #include <QGridLayout>
->>>>>>> 213e02fe84fdd044c47b53a0ab8451e2b4ee3e97
 
 namespace Student {
 
