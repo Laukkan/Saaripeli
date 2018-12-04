@@ -47,7 +47,7 @@ QVector<QPointF> HexItem::getHexCorners()
         // Calculate the pawn and actor/transport positions
         if (side == 5) {
             _actorPosition = QPointF(corner.x() - aPixSize.width()/2,
-                                     corner.y() + aPixSize.height()/4);
+                                     corner.y() + aPixSize.height()/14);
         }
         if (side == 1) {
             _pawnPositionMap[2] = QPointF(corner.x() - pPixSize.width(),
@@ -57,8 +57,8 @@ QVector<QPointF> HexItem::getHexCorners()
         {
             _pawnPositionMap[1] = QPointF(corner.x() - pPixSize.width()/2,
                                           corner.y() - pPixSize.height());
-            _transportPosition =  QPointF(corner.x() - aPixSize.width()/2,
-                                          corner.y() - aPixSize.height());
+            _transportPosition =  QPointF(corner.x() - aPixSize.width()/1.5,
+                                          corner.y() - aPixSize.height()*1.25);
         }
         else if (side == 3) {
             _pawnPositionMap[3] = QPointF(corner.x(),

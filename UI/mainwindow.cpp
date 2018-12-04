@@ -20,7 +20,7 @@
 #include <iostream>
 #include <fstream>
 #include <cstring>
-#include <stdio.h>
+#include <cstdio>
 
 namespace Student {
 
