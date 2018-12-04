@@ -39,6 +39,7 @@ void MainWindow::initBoard(int playersAmount, const bool reset)
 
     _gameBoard = std::shared_ptr<Student::GameBoard>(new Student::GameBoard());
     _gameState = std::shared_ptr<GameState>(new GameState(_playersAmount));
+    _spinned = false;
 
     if (!reset) {
         initPlayers();
@@ -121,7 +122,9 @@ void MainWindow::spinWheel()
                         spinResult.second,
                         actorExists);
         }
+        _animalTypeFromSpinner = spinResult.first;
         _movesFromSpinner = spinResult.second;
+        _spinned = true;
 
     }
     catch (Common::IllegalMoveException) {
@@ -141,6 +144,7 @@ void MainWindow::moveToSinking()
 void MainWindow::continueFromSpinning()
 {
     checkGameStatus();
+    _spinned = false;
     _gameState->changeGamePhase(Common::GamePhase::MOVEMENT);
     _playerMap.at(_gameState->currentPlayer())->addTurn();
     _gameState->changePlayerTurn(getNextPlayerId());
@@ -240,7 +244,9 @@ void MainWindow::moveActor(Common::CubeCoordinate origin,
 {
     // Wrong gamePhase or targetHex already has an actor
     if ( (_gameState->currentGamePhase() != Common::GamePhase::SPINNING)
-         || (!( _gameBoard->getHex(target)->getActors().empty())))
+         || (!( _gameBoard->getHex(target)->getActors().empty()))
+         or _gameBoard->getActor(actorId)->getActorType() != _animalTypeFromSpinner
+         or !_spinned)
     {
         return;
     }
@@ -268,11 +274,13 @@ void MainWindow::moveTransport(Common::CubeCoordinate origin,
                                Common::CubeCoordinate target,
                                int transportId)
 {
-    if (_gameState->currentGamePhase() == Common::GamePhase::SINKING) {
+    bool spinning =
+                 _gameState->currentGamePhase() == Common::GamePhase::SPINNING;
+    if (_gameState->currentGamePhase() == Common::GamePhase::SINKING
+            or (spinning and !_spinned) or
+            (spinning and _gameBoard->getTransport(transportId)->getTransportType() != _animalTypeFromSpinner)) {
         return;
     }
-    bool spinning =
-            _gameState->currentGamePhase() == Common::GamePhase::SPINNING;
     int movesLeft;
     TransportItem* transportItem = _transportItems.at(transportId);
     HexItem* newParent = _hexItems.at(target);
@@ -564,6 +572,8 @@ void MainWindow::finishGame(std::shared_ptr<Player> winner)
 std::vector<std::vector<std::string>> MainWindow::getRanking()
 {
     std::ifstream rankingfile;
+    //used to determine if a new file should be made.
+    bool newfile = false;
     rankingfile.open(PathConstants::RANKING_FILE);
     std::vector<std::vector<std::string>> ranking = {};
     std::string line;
@@ -580,26 +590,33 @@ std::vector<std::vector<std::string>> MainWindow::getRanking()
                 return std::stoi(lhs.at(1)) < std::stoi(rhs.at(1));
 
             });
+            //make sure its a top 10
+            while(ranking.size() > 10){
+                ranking.pop_back();
+            }
             rankingfile.close();
         }
         //creating new file
         else {
-            std::ofstream newRankingFile(PathConstants::RANKING_FILE);
-            for(int lineCount = 0; lineCount < 10; lineCount++){
-                newRankingFile << "Undefined;999 \n";
-            }
-            newRankingFile.close();
-            QMessageBox newRankingFileBox;
-            newRankingFileBox.setText("A new ranking file was created");
-            newRankingFileBox.exec();
-            ranking = getRanking();
+            newfile = true;
         }
     }
     catch(...){
         QMessageBox rankingError;
         rankingError.setText("Error reading the ranking file");
         rankingError.exec();
-        ranking = {};
+        newfile = true;
+    }
+    if(newfile){
+        std::ofstream newRankingFile(PathConstants::RANKING_FILE);
+        for(int lineCount = 0; lineCount < 10; lineCount++){
+            newRankingFile << "Undefined;999 \n";
+        }
+        newRankingFile.close();
+        QMessageBox newRankingFileBox;
+        newRankingFileBox.setText("A new ranking file was created");
+        newRankingFileBox.exec();
+        ranking = getRanking();
     }
     return ranking;
 }

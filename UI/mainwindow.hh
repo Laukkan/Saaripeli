@@ -210,6 +210,16 @@ private:
     std::string _movesFromSpinner;
 
     /**
+     * @brief _animalTypeFromSpinner - stores the animal that was spinned.
+     */
+    std::string _animalTypeFromSpinner;
+
+    /**
+     * @brief _spinned - tells if the player has spinned the disc this round.
+     */
+    bool _spinned;
+
+    /**
      * @brief _playersAmount - amount of players playing the game (2-3)
      */
     int _playersAmount;

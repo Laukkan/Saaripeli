@@ -160,6 +160,11 @@ std::shared_ptr<Common::Actor> GameBoard::getActor(int actorID)
     return _actors.at(actorID);
 }
 
+std::shared_ptr<Common::Transport> GameBoard::getTransport(int transportID)
+{
+    return _transports.at(transportID);
+}
+
 std::unordered_map<int, std::shared_ptr<Common::Pawn>> GameBoard::getPawns()
 {
     return _pawns;

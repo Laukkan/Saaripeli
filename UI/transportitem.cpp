@@ -114,8 +114,12 @@ bool TransportItem::isABoat() const
 
 void TransportItem::releasePawns()
 {
+    //removing the item from the children of the hex is needed for
+    //repositioning hexitems
+    HexItem* parentHex = qobject_cast<HexItem*>(parent());
+    setParent(nullptr);
+
     for(PawnItem* pawnItem : _pawnItemsOnBoard){
-        HexItem* parentHex = qobject_cast<HexItem*>(parent());
         pawnItem->setOffset(parentHex->getPawnPosition(pawnItem->getId()));
         pawnItem->setParent(parentHex);
         pawnItem->show();

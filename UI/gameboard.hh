@@ -168,6 +168,15 @@ public:
     std::shared_ptr<Common::Actor> getActor(int actorID);
 
     /**
+     * @brief getActor returns an transport.
+     * @param actorID The id of the transport that is to be returned.
+     * @pre transport exists
+     * @return std::shared_ptr<Common::Transport>, pointer to
+     * the transport indicated by the paramer transportID.
+     */
+    std::shared_ptr<Common::Transport> getTransport(int transportID);
+
+    /**
      * @brief getPawnsLeft returns the pawn map.
      * @return map of the pawns with their Id's as keys,
      */
