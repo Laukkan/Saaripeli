@@ -291,13 +291,15 @@ void MainWindow::moveTransport(Common::CubeCoordinate origin,
 {
     bool spinning =
                  _gameState->currentGamePhase() == Common::GamePhase::SPINNING;
+    std::shared_ptr<Common::Hex> targetHex = _gameBoard->getHex(target);
     //Aborted if: Gamephase is wrong, the player hasn't spun the wheel, the player
     //is trying to move the wrong type of animal, or the target hex already has a
     //transport.
     if (_gameState->currentGamePhase() == Common::GamePhase::SINKING
             or (spinning and !_spinned) or
             (spinning and _gameBoard->getTransport(transportId)->getTransportType()
-             != _animalTypeFromSpinner) or !_gameBoard->getHex(target)->getTransports().empty()) {
+             != _animalTypeFromSpinner) or !targetHex->getTransports().empty()
+            or (!targetHex->getActors().empty() and targetHex->getActors().at(0)->getActorType() != "shark")) {
         return;
     }
     int movesLeft;
