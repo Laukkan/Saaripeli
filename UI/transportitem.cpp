@@ -56,6 +56,7 @@ void TransportItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
     setCursor(Qt::OpenHandCursor);
 }
 
+
 void TransportItem::addToTransport(PawnItem* newPawnItem)
 {
     const std::map<std::string, QString> transportImages =
@@ -124,7 +125,7 @@ void TransportItem::releasePawns()
         pawnItem->setParent(parentHex);
         pawnItem->show();
     }
-     _pawnItemsOnBoard.clear();
+    _pawnItemsOnBoard.clear();
 }
 
 }

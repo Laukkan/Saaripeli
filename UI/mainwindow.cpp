@@ -220,18 +220,6 @@ bool MainWindow::validPawnMove(const Common::CubeCoordinate &target)
     if (
             _gameState->currentGamePhase() != Common::GamePhase::MOVEMENT
          || (
-<<<<<<< HEAD
-                (
-                (!targetHex->getActors().empty()) &&
-                (targetHex->getActors().at(0)->getActorType() != "kraken")
-                )
-             && (
-                !targetHex->getTransports().empty() &&
-                !targetHex->getTransports().at(0)->getCapacity()
-                )
-            )
-    )
-=======
                 (!targetHex->getActors().empty() &&
                    (targetHex->getActors().at(0)->getActorType() != "kraken"))
 
@@ -240,8 +228,6 @@ bool MainWindow::validPawnMove(const Common::CubeCoordinate &target)
                 !targetHex->getTransports().at(0)->getCapacity())
             )
         )
-
->>>>>>> 803fd8f7f45c14b6d9be8222e7fff10b1f27563e
     {
         return false;
     }
@@ -340,7 +326,7 @@ bool MainWindow::validTransportMove(const bool spinning,
     //  (1) Gamephase is wrong,
     //  (2) or the player hasn't spun the wheel,
     //  (3) or the player is trying to move the wrong type of animal,
-    //  (4) or the target hex has a transport.
+    //  (4) or the target hex has a transport
     //  (5) or the target hex has a non-shark actor (transports are
     //      immune to sharks)
     std::shared_ptr<Common::Hex> targetHex = _gameBoard->getHex(target);
@@ -353,7 +339,7 @@ bool MainWindow::validTransportMove(const bool spinning,
                 _gameBoard->getTransport(transportId)->getTransportType()
                 != _animalTypeFromSpinner
            )
-        || !(targetHex->getTransports().empty())
+        || (!(targetHex->getTransports().empty()))
         || (
                 !(targetHex->getActors().empty()) &&
                 targetHex->getActors().at(0)->getActorType() != "shark"
@@ -375,6 +361,7 @@ void MainWindow::moveTransportAction(const Common::CubeCoordinate &target,
 
     transportItem->setPos(newParent->getTransportPosition());
     transportItem->setParent(newParent);
+
 
     _gameInfoBox->updateGameState();
 
