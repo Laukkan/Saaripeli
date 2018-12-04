@@ -46,27 +46,24 @@ QVector<QPointF> HexItem::getHexCorners()
 
         // Calculate the pawn and actor/transport positions
         if (side == 5) {
-            _aTPosition = QPointF(corner.x() - aPixSize.width()/2,
+            _actorPosition = QPointF(corner.x() - aPixSize.width()/2,
                                   corner.y() + aPixSize.height()/2);
         }
         if (side == 1) {
             _pawnPositionMap[2] = QPointF(corner.x() - pPixSize.width(),
-                                            corner.y() - pPixSize.height());
-            _filledDolphinPosition[1] = QPointF(corner.x() - aPixSize.width(),
-                                                corner.y() - aPixSize.height());
+                                          corner.y() - pPixSize.height());
         }
         else if (side == 2)
         {
             _pawnPositionMap[1] = QPointF(corner.x() - pPixSize.width()/2,
-                                            corner.y() - pPixSize.height());
-            _filledDolphinPosition[0] = QPointF(corner.x() - aPixSize.width()/2,
-                                                corner.y() - aPixSize.height());
+                                          corner.y() - pPixSize.height());
+            _transportPosition =  QPointF(corner.x() - aPixSize.width()/2,
+                                          corner.y() - aPixSize.height());
         }
         else if (side == 3) {
             _pawnPositionMap[3] = QPointF(corner.x(),
-                                            corner.y() - pPixSize.height());
-            _filledDolphinPosition[2] = QPointF(corner.x(),
-                                                corner.y() - aPixSize.height());
+                                          corner.y() - pPixSize.height());
+
         }
 
 
@@ -81,20 +78,14 @@ QPointF HexItem::getPawnPosition(int pawnId) const
     return _pawnPositionMap.at(pawnId);
 }
 
-QPointF HexItem::getEmptyATPosition() const
+QPointF HexItem::getActorPosition() const
 {
-    return _aTPosition;
+    return _actorPosition;
 }
 
-QPointF HexItem::getFilledDolphinPosition() const
+QPointF HexItem::getTransportPosition() const
 {
-    return _filledDolphinPosition[_hex->getPawnAmount()];
-}
-
-QPointF HexItem::getFilledBoatPosition() const
-{
-    // same as Center filledDolphin spot
-    return _filledDolphinPosition[0];
+    return _transportPosition;
 }
 
 

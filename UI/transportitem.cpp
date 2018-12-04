@@ -13,14 +13,15 @@ namespace Student {
 
 TransportItem::TransportItem(std::shared_ptr<Common::Transport> transport,
                              HexItem* parent) :
-    _transportType(transport->getTransportType()), _transport(transport)
+    _transportType(transport->getTransportType()), _hParent(parent),
+    _transport(transport)
 {
     _transportImage.load(PathConstants::TRANSPORT_IMAGES.at(
                              _transport->getTransportType()));
 
     setPixmap(Helpers::scaleActorImage(_transportImage));
-    QPointF coordinates = parent->getEmptyATPosition();
-    setPos(coordinates);
+
+    setPos(parent->getTransportPosition());
 
     setFlag(QGraphicsItem::ItemIsMovable);
     setAcceptHoverEvents(true);
@@ -66,8 +67,6 @@ void TransportItem::switchTransportIcon(PawnItem* pawnItem)
         _transportImage.load(
                     transportImages.at(_transportType +
                                        pawnItem->getColor().toStdString()));
-        setPos(qobject_cast<HexItem*>(parent())->getFilledDolphinPosition());
-
     }
     // It's a boat
     else {
@@ -100,16 +99,10 @@ void TransportItem::switchTransportIcon(PawnItem* pawnItem)
                             transportImages.at(_transportType+"WhiteRed"));
             }
         }
-        setPos(qobject_cast<HexItem*>(parent())->getFilledBoatPosition());
     }
     setPixmap(Helpers::scaleActorImage(_transportImage));
 
     _pawnItemsOnBoard.push_back(pawnItem);
-}
-
-bool TransportItem::isABoat() const
-{
-    return _transportType == "boat";
 }
 
 void TransportItem::releasePawns()

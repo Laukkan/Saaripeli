@@ -43,10 +43,9 @@ public:
     void releasePawns();
 
     /**
-     * @brief isABoat - Returns true if the transportItem is a boat
-     * @return true or false
+     * @brief placeTransport - places the transport according to it's type
      */
-    bool isABoat() const;
+    void placeTransport();
 
 protected:
     /**
@@ -63,6 +62,12 @@ private:
      */
     QPixmap _transportImage;
     std::string _transportType;
+
+    /**
+     * @brief parent - HexItem typed parent ptr
+     */
+    HexItem* _hParent;
+
     /**
      * @brief _transport - the corresponding GameEngine's logical transport
      */

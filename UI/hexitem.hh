@@ -36,11 +36,8 @@ public:
      * on the HexItem's location.
      * @return QPointF pixel coordinate representation of the position.
      */
-    QPointF getEmptyATPosition() const;
-
-
-    QPointF getFilledDolphinPosition() const;
-    QPointF getFilledBoatPosition() const;
+    QPointF getActorPosition() const;
+    QPointF getTransportPosition() const;
 
     /**
      * @brief flip - flips the HexItem upside down sinking it.
@@ -104,12 +101,12 @@ private:
     /**
      * @brief _aTPosition - position for empty transport and actor
      */
-    QPointF _aTPosition;
+    QPointF _actorPosition;
 
     /**
      * @brief Positions for filled transports
      */
-    QPointF _filledDolphinPosition[3];
+    QPointF _transportPosition;
 
     /**
      * @brief _pawnPositionMap - contains the positions for each of the

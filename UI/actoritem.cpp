@@ -16,7 +16,7 @@ ActorItem::ActorItem(std::shared_ptr<Common::Actor> actor, HexItem* parent) :
 {
     _actorImage.load(PathConstants::ACTOR_IMAGES.at(_actor->getActorType()));
     setPixmap(Helpers::scaleActorImage(_actorImage));
-    QPointF coordinates = parent->getEmptyATPosition();
+    QPointF coordinates = parent->getActorPosition();
     setPos(coordinates);
 
     setFlag(QGraphicsItem::ItemIsMovable);

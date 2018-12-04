@@ -262,7 +262,7 @@ void MainWindow::moveActor(Common::CubeCoordinate origin,
     ActorItem* actorItem = _actorItems.at(actorId);
     HexItem* newParent = _hexItems.at(target);
 
-    actorItem->setPos(newParent->getEmptyATPosition());
+    actorItem->setPos(newParent->getActorPosition());
     actorItem->setParent(newParent);
 
     continueFromSpinning();
@@ -290,20 +290,14 @@ void MainWindow::moveTransport(Common::CubeCoordinate origin,
             movesLeft = _gameRunner->
                     moveTransportWithSpinner(origin, target, transportId,
                                              _movesFromSpinner);
-            transportItem->setPos(newParent->getEmptyATPosition());
         }
         else {
             movesLeft = _gameRunner->moveTransport(origin, target, transportId);
-            if (_transportItems.at(transportId)->isABoat()) {
-                transportItem->setPos(newParent->getFilledBoatPosition());
-            }
-            else {
-                transportItem->setPos(newParent->getFilledDolphinPosition());
-            }
         }
     } catch (Common::IllegalMoveException) {
         return;
     }
+    transportItem->setPos(newParent->getTransportPosition());
     transportItem->setParent(newParent);
 
     _gameInfoBox->updateGameState();
@@ -419,7 +413,7 @@ void MainWindow::doTheVortex(const Common::CubeCoordinate &coord)
             new QGraphicsPixmapItem(
                 Helpers::scaleActorImage(vortexIcon, 3));
 
-    QPointF coordinates = _hexItems.at(coord)->getEmptyATPosition();
+    QPointF coordinates = _hexItems.at(coord)->getActorPosition();
 
     vortexItem->setPos(coordinates);
     _scene->addItem(vortexItem);
