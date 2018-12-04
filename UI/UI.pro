@@ -78,4 +78,6 @@ QMAKE_EXTRA_TARGETS += copyfiles
 POST_TARGETDEPS += copyfiles
 
 RESOURCES += \
-    Assets/images.qrc
+    Assets/resources.qrc
+
+DISTFILES +=

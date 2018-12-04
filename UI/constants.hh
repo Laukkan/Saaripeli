@@ -19,8 +19,12 @@ const static unsigned ANIM_TIME = 1000;
 
 const static int HEX_SIDES = 6;
 
+// zoom limits for ZoomGraphicsView
 const static double zoomMin = 0.5;
 const static double zoomMax = 6;
+
+// The delimiter used in the ranking file.
+const static char delimiter = ';';
 
 }
 
@@ -29,7 +33,7 @@ namespace GameConstants {
 const static int MIN_PLAYERS = 2;
 const static int MAX_PLAYERS = 3;
 
-const static int POINTS_FOR_WIN = 5;
+const static int POINTS_FOR_WIN = 3;
 
 
 // Used to determine the next GamePhase from a GamePhase
@@ -99,6 +103,8 @@ const static std::map<std::string, QString> TRANSPORT_IMAGES {
 
 };
 
+//const static std::string RANKING_FILE = "C:/Users/Eeru/opisto_ohjelmointi/OTEK/kansakas/UI/ranking.csv";
+const static std::string RANKING_FILE = "ranking.csv";
 }
 
 namespace ColorConstants {

@@ -46,6 +46,7 @@ const QPixmap scaleActorImage(const QPixmap &pixmap, const int factor);
  */
 int randomNumber(const int min, const int max);
 
+std::vector<std::string> split(const std::string& s, char delimiter);
 
 }
 #endif // HELPERS_HH

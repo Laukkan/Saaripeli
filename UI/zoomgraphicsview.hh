@@ -17,6 +17,10 @@ public slots:
 private:
     //int _scheduledScalings;
     //double _currentZoom;
+    /**
+     * @brief wheelEvent
+     * @param event
+     */
     virtual void wheelEvent(QWheelEvent* event) override;
 };
 

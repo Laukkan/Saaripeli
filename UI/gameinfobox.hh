@@ -26,7 +26,8 @@ public:
      */
     explicit GameInfoBox(std::shared_ptr<GameState> gameState,
                          std::shared_ptr<Common::IGameRunner> gameRunner,
-                         std::map<int, std::shared_ptr<Player>> playerMap);
+                         std::map<int, std::shared_ptr<Player>> playerMap,
+                         std::vector<std::vector<std::string>> ranking);
 
     /**
       * @brief Default virtual destructor. Qt's parent-mechanism takes care of
@@ -99,6 +100,11 @@ private:
    std::map<int, std::shared_ptr<Player>> _playerMap;
 
    /**
+    * @brief _ranking each top 10 player and their points.
+    */
+   std::vector<std::vector<std::string>> _ranking;
+
+   /**
     * @brief _actorImages - Stores all of the images of the actors. Is used
     * with the shuffle animation.
     */
@@ -112,6 +118,8 @@ private:
     QLabel* _playerMovesLabel;
     QLabel* _scoreBoardLabel;
     std::map<int, QLabel*> _playerScoreLabels;
+    QLabel* _rankingLabel;
+    std::vector<QLabel*> _playerRankingLabels;
 
     /**
      * @brief Show the result of the spin.

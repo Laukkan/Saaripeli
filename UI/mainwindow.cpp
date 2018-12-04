@@ -15,6 +15,13 @@
 #include <QTimer>
 #include <QGridLayout>
 
+#include <QInputDialog>
+#include <QGridLayout>
+#include <iostream>
+#include <fstream>
+#include <cstring>
+#include <stdio.h>
+
 namespace Student {
 
 
@@ -68,7 +75,7 @@ void MainWindow::initPlayers()
 
 void MainWindow::setupGameInfoBox()
 {
-    _gameInfoBox = new GameInfoBox(_gameState, _gameRunner, _playerMap);
+    _gameInfoBox = new GameInfoBox(_gameState, _gameRunner, _playerMap, getRanking());
 
     // Connect all the buttons of the GameInfoBox
     connect(_gameInfoBox, &GameInfoBox::spinButtonPressed,
@@ -132,8 +139,8 @@ void MainWindow::continueFromSpinning()
 {
     checkGameStatus();
     _gameState->changeGamePhase(Common::GamePhase::MOVEMENT);
+    _playerMap.at(_gameState->currentPlayer())->addTurn();
     _gameState->changePlayerTurn(getNextPlayerId());
-    checkGameStatus();
     _gameInfoBox->updateGameState();
 }
 
@@ -184,7 +191,9 @@ void MainWindow::movePawn(Common::CubeCoordinate origin,
                           Common::CubeCoordinate target,
                           int pawnId)
 {
-    if (_gameState->currentGamePhase() != Common::GamePhase::MOVEMENT) {
+    if (_gameState->currentGamePhase() != Common::GamePhase::MOVEMENT
+            or (!_gameBoard->getHex(target)->getActors().empty()
+            and _gameBoard->getHex(target)->getActors().at(0)->getActorType() != "kraken")) {
         return;
     }
     int movesLeft;
@@ -208,6 +217,7 @@ void MainWindow::movePawn(Common::CubeCoordinate origin,
     {
         std::shared_ptr<Common::Transport> transport =
                 _gameBoard->getHex(target)->getTransports().at(0);
+        transport->addPawn(_gameBoard->getPawns().at(pawnId));
         _transportItems.at(transport->getId())->
                 switchTransportIcon(_pawnItems.at(pawnId));
         _pawnItems.at(pawnId)->hide();
@@ -314,6 +324,7 @@ void MainWindow::flipHex(const Common::CubeCoordinate &tileCoord)
     else if (actorImages.find(actorType) != actorImages.end())
     {
         addActorItem(_gameBoard->returnHexes().at(tileCoord));
+        doActorAction(tileCoord,_gameBoard->getHex(tileCoord)->getActors().at(0)->getId());
     }
     else if (transportImages.find(actorType) != transportImages.end())
     {
@@ -445,6 +456,14 @@ void MainWindow::doActorAction(const Common::CubeCoordinate &coord,
 
     std::vector<std::shared_ptr<Common::Pawn>> pawnsAfter = hex->getPawns();
 
+    if (transport && hex->getTransports().empty())
+    {
+        int transportId = transportBefore->getId();
+        TransportItem* transportItem = _transportItems.at(transportId);
+        transportItem->releasePawns();
+        eraseTransportItem(transportId);
+    }
+
     for(auto pawn : pawnsBefore)
     {
         if (std::find(pawnsAfter.begin(), pawnsAfter.end(), pawn) ==
@@ -454,16 +473,8 @@ void MainWindow::doActorAction(const Common::CubeCoordinate &coord,
         }
     }
 
-    if (transport && hex->getTransports().empty())
-    {
-        int transportId = transportBefore->getId();
-        TransportItem* transportItem = _transportItems.at(transportId);
-        transportItem->releasePawns();
-        eraseTransportItem(transportId);
-    }
 }
 
-//MAYBE MOVE THIS METHOD?
 void MainWindow::checkGameStatus()
 {
     std::unordered_map<int, std::shared_ptr<Common::Pawn>> pawns =
@@ -519,6 +530,7 @@ void MainWindow::newRound(int roundWinnerId)
 
         _hexItems.clear();
         _pawnItems.clear();
+        delete _gameInfoBox;
         initBoard(_playersAmount, true);
     });
 }
@@ -526,10 +538,86 @@ void MainWindow::newRound(int roundWinnerId)
 void MainWindow::finishGame(std::shared_ptr<Player> winner)
 {
     QMessageBox gameWon;
-    gameWon.setText("Player " + QString::number(winner->getPlayerId()) +
-                    " has won the game!");
+    gameWon.setText("Player " + QString::number(winner->getPlayerId()) + " has won the game!\n" +
+                    "They used " + QString::number(winner->getTotalTurns()) + " turns!");
     gameWon.exec();
-    qApp->quit();
+    std::vector<std::vector<std::string>> ranking = getRanking();
+    bool topTen = checkRanking(winner, ranking);
+    if(topTen){
+        updateRanking(winner,ranking);
+    }
+     qApp->quit();
+}
+
+std::vector<std::vector<std::string>> MainWindow::getRanking()
+{
+    std::ifstream rankingfile;
+    rankingfile.open(PathConstants::RANKING_FILE);
+    std::vector<std::vector<std::string>> ranking;
+    std::string line;
+    if(rankingfile.is_open()){
+        while(std::getline(rankingfile,line)){
+            ranking.push_back(Helpers::split(line, OtherConstants::delimiter));
+        }
+        //Quick function to sort the vector.
+        struct {
+               bool operator()(std::vector<std::string> a, std::vector<std::string> b) const
+               {
+                   return std::stoi(a.at(1)) < std::stoi(b.at(1));
+               }
+           } customLess;
+        std::sort(ranking.begin(),ranking.end(), customLess);
+        rankingfile.close();
+    }
+    else {
+        QMessageBox errorReadingFile;
+        errorReadingFile.setText("Error reading ranking file");
+        errorReadingFile.exec();
+    }
+    return  ranking;
+}
+
+bool MainWindow::checkRanking(std::shared_ptr<Player> winner, std::vector<std::vector<std::string>> ranking)
+{
+    unsigned int winnerTurns = winner->getTotalTurns();
+    bool topTen = false;
+    for(auto player: ranking){
+        if(std::stoul(player.at(1)) <= winnerTurns){
+            topTen = true;
+            break;
+        }
+    }
+    return topTen;
+}
+
+void MainWindow::updateRanking(std::shared_ptr<Player> winner, std::vector<std::vector<std::string>> ranking)
+{
+    QInputDialog top10;
+    top10.setLabelText("Wow, you got to the to 10! Please enter a name to save to the rankings!");
+    bool ok;
+    QString playerName = QInputDialog::getText(this, "Top 10!",
+                                       "Wow, player" +QString::number(winner->getPlayerId())+
+                                         " made it the to 10! Please enter a name to save to the rankings!", QLineEdit::Normal, "", &ok);
+    if (!ok or playerName.isEmpty()) {
+      playerName = "Anonymous";
+    }
+    ranking.pop_back();
+    std::vector<std::string> vectorToAdd;
+    vectorToAdd.push_back(playerName.toStdString());
+    vectorToAdd.push_back(std::to_string(winner->getTotalTurns()));
+    ranking.push_back(vectorToAdd);
+    writeRanking(ranking);
+
+}
+
+void MainWindow::writeRanking(std::vector<std::vector<std::string> > ranking)
+{
+    remove(PathConstants::RANKING_FILE.c_str());
+    std::ofstream newRankingFile(PathConstants::RANKING_FILE);
+    for(auto line : ranking){
+        newRankingFile << line.at(0) + ";" + line.at(1) + "\n";
+    }
+    newRankingFile.close();
 }
 
 }

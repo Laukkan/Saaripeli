@@ -20,6 +20,7 @@ public:
         _id(id),
         _moveActionsleft(3),
         _points(0),
+        _totalTurns(0),
         _eliminated(false),
         _pawnColor(ColorConstants::PAWN_COLORS.at(_id)) {}
 
@@ -61,10 +62,21 @@ public:
     void givePoint();
 
     /**
+     * @brief addTurn add a turn to the players total turn count.
+     */
+    void addTurn();
+
+    /**
      * @brief getPoints returns the players points.
      * @return unsigned int, the players points.
      */
     unsigned int getPoints();
+
+    /**
+     * @brief getTotalTurns returns the total turns the player has had this far.
+     * @return unsigned int, number of turns the player has had.
+     */
+    unsigned int getTotalTurns();
 
     /**
      * @brief setPlayerElimination - Sets the players elimination status to true
@@ -92,6 +104,12 @@ private:
      * @brief points How many points (round winds) the player has.
      */
     unsigned int _points;
+
+    /**
+     * @brief _totalTurns Total turns the player has taken this game. Used
+     * for ranking.
+     */
+    unsigned int _totalTurns;
 
     /**
      * @brief eliminated - Whether the player has been eliminated from the round.

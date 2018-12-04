@@ -1,5 +1,6 @@
 #include "helpers.hh"
 #include "constants.hh"
+#include <sstream>
 
 
 namespace Helpers {
@@ -43,6 +44,19 @@ int randomNumber(const int min, const int max)
     std::uniform_int_distribution<int> distribution(min, max);
 
     return distribution(gen);
+}
+
+
+std::vector<std::string> split(const std::string& s, char delimiter)
+{
+   std::vector<std::string> tokens;
+   std::string token;
+   std::istringstream tokenStream(s);
+   while (std::getline(tokenStream, token, delimiter))
+   {
+      tokens.push_back(token);
+   }
+   return tokens;
 }
 
 
