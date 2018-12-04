@@ -17,7 +17,9 @@ PawnItem::PawnItem(QString color,
     _pawn(pawn), _color(color)
 {
     _pawnImage.load(PathConstants::PAWN_IMAGES.at(_color));
-    setPixmap(_pawnImage.scaled(SizeConstants::P_PIX_SIZE));
+    setPixmap(_pawnImage.scaled(SizeConstants::P_PIX_SIZE,
+                                Qt::KeepAspectRatio,
+                                Qt::SmoothTransformation));
     setOffset(parent->getPawnPosition());
 
     setFlag(QGraphicsItem::ItemIsMovable);

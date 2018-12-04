@@ -18,7 +18,7 @@ TransportItem::TransportItem(std::shared_ptr<Common::Transport> transport,
     _transportImage.load(PathConstants::TRANSPORT_IMAGES.at(
                              _transport->getTransportType()));
 
-    setPixmap(_transportImage.scaled(SizeConstants::A_PIX_SIZE));
+    setPixmap(Helpers::scaleActorImage(_transportImage, 2));
     QPointF coordinates = parent->getTransportPosition();
     setPos(coordinates);
 

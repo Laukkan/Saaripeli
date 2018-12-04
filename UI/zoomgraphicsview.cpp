@@ -1,6 +1,5 @@
 #include "zoomgraphicsview.hh"
 #include <QTimeLine>
-#include <iostream>
 #include "constants.hh"
 
 ZoomGraphicsView::ZoomGraphicsView()
@@ -13,9 +12,7 @@ void ZoomGraphicsView::wheelEvent(QWheelEvent *event)
     // How much zooming with one mouse wheel tick
     static const double zoomFactor = 1.15;
 
-    // Current zoom for checking boundaries
     static double currentZoom = 1.0;
-    std::cout << currentZoom << std::endl;
 
     QPointF oldPos = mapToScene(event->pos());
 

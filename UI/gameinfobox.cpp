@@ -51,7 +51,7 @@ void GameInfoBox::initLabelsButtons()
                 "Moves left: " + QString::number(_gameRunner->
                                 getCurrentPlayer()->getActionsLeft()));
 
-    _scoreBoardLabel = new QLabel("Score Board");
+    _scoreBoardLabel = new QLabel("Scoreboard");
     for(auto player : _playerMap){
         QLabel* scoreLabel = new QLabel();
         _playerScoreLabels[player.second->getPlayerId()] = scoreLabel;
@@ -81,13 +81,20 @@ void GameInfoBox::initLabelsButtons()
     _actorImageLabel = new QLabel();
     _actorMovesLabel = new QLabel();
 
-    // The layout of the Groupbox is retained even when actorImage
-    // is hidden
-    QSizePolicy spRetain = _actorImageLabel->sizePolicy();
-    spRetain.setRetainSizeWhenHidden(true);
-    spRetain.setHorizontalPolicy(QSizePolicy::Policy::Fixed);
-    _actorImageLabel->setSizePolicy(spRetain);
+    // Set it so that the layout of the Groupbox is retained even when
+    // certain labels are hidden
+    retainSizeHidden(_actorImageLabel);
+    retainSizeHidden(_playerMovesLabel);
+    retainSizeHidden(_actorNonExistant);
 }
+
+void GameInfoBox::retainSizeHidden(QLabel *label)
+{
+    QSizePolicy spRetain = label->sizePolicy();
+    spRetain.setRetainSizeWhenHidden(true);
+    label->setSizePolicy(spRetain);
+}
+
 
 void GameInfoBox::setPlayerPoints()
 {
