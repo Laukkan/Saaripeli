@@ -33,7 +33,7 @@ QString gamePhaseToQString(const Common::GamePhase &gamePhase)
 const QPixmap scaleActorImage(const QPixmap &pixmap, const int factor)
 {
     return pixmap.scaled(SizeConstants::A_PIX_SIZE * factor,
-                         Qt::KeepAspectRatio,
+                         Qt::IgnoreAspectRatio,
                          Qt::SmoothTransformation);
 }
 

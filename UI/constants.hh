@@ -20,11 +20,11 @@ const static unsigned ANIM_TIME = 1000;
 const static int HEX_SIDES = 6;
 
 // zoom limits for ZoomGraphicsView
-const static double zoomMin = 0.5;
-const static double zoomMax = 6;
+const static double ZOOM_MIN = 0.5;
+const static double ZOOM_MAX = 6;
 
 // The delimiter used in the ranking file.
-const static char delimiter = ';';
+const static char DELIMITER = ';';
 
 }
 
@@ -61,6 +61,8 @@ const static QSize INFO_BOX_SIZE = QSize(100, 200);
 
 // Distance from each hexes corner to their middle.
 const static unsigned int HEXSIZE = 50;
+
+
 
 }
 
