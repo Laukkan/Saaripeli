@@ -145,7 +145,6 @@ void MainWindow::continueFromSpinning()
     _gameInfoBox->updateGameState();
 }
 
-
 void MainWindow::eraseTransportItem(const int transportId)
 {
     _gameBoard->removeTransport(transportId);
@@ -212,19 +211,35 @@ void MainWindow::movePawnWithTransport(const Common::CubeCoordinate &target,
     newPItem->hide();
 }
 
+bool MainWindow::validPawnMove(const Common::CubeCoordinate &target)
+{
+    // Not valid if :
+    //   (1) GamePhase is not right
+    //   (2) or there is an actor that would eat the pawn
+    //   (3) and no transporter with room for the pawn in the hex.
+    std::shared_ptr<Common::Hex> targetHex = _gameBoard->getHex(target);
+
+    if (
+            _gameState->currentGamePhase() != Common::GamePhase::MOVEMENT
+         || (
+                (!targetHex->getActors().empty()) &&
+                (targetHex->getActors().at(0)->getActorType() != "kraken")
+            )
+         || (
+                !targetHex->getTransports().empty() &&
+                !targetHex->getTransports().at(0)->getCapacity())
+    )
+    {
+        return false;
+    }
+    return true;
+}
 
 void MainWindow::movePawn(const Common::CubeCoordinate origin,
                           const Common::CubeCoordinate target,
                           const int &pawnId)
 {
-    std::shared_ptr<Common::Hex> targetHex = _gameBoard->getHex(target);
-    //Aborted if : GamePhase is not right or there is an actor that would
-    //eat the pawn and no transporter with room for the pawn in the hex.
-    if (_gameState->currentGamePhase() != Common::GamePhase::MOVEMENT
-            or ((!targetHex->getActors().empty()
-            and targetHex->getActors().at(0)->getActorType() != "kraken")
-                and (!targetHex->getTransports().empty() and
-                     !targetHex->getTransports().at(0)->getCapacity()))) {
+    if (!validPawnMove(target)) {
         return;
     }
 
@@ -256,18 +271,34 @@ void MainWindow::movePawn(const Common::CubeCoordinate origin,
     _gameInfoBox->updateGameState();
 }
 
+bool MainWindow::validActorMove(const Common::CubeCoordinate &target,
+                                const int actorId)
+{
+    // Not valid if:
+    //   (1) Gamephase is wrong
+    //   (2) the player hasn't spun the wheel,
+    //   (3) the player is trying to move the wrong type of actor,
+    //   (4) or the target hex already has an actor.
+
+    if (
+            (_gameState->currentGamePhase() != Common::GamePhase::SPINNING)
+         || !_spinned
+         || (_gameBoard->getActor(actorId)->getActorType()
+             != _animalTypeFromSpinner
+           )
+         || (!( _gameBoard->getHex(target)->getActors().empty()))
+    )
+    {
+        return false;
+    }
+    return true;
+}
+
 void MainWindow::moveActor(const Common::CubeCoordinate &origin,
                            const Common::CubeCoordinate &target,
                            const int actorId)
 {
-    //Aborted if: Gamephase is wrong, the player hasn't spun the wheel, the player
-    //is trying to move the wrong type of animal, or the target hex already has an
-    //actor.
-    if ( (_gameState->currentGamePhase() != Common::GamePhase::SPINNING)
-         || (!( _gameBoard->getHex(target)->getActors().empty()))
-         || _gameBoard->getActor(actorId)->getActorType() != _animalTypeFromSpinner
-         || !_spinned)
-    {
+    if (!validActorMove(target, actorId)) {
         return;
     }
 
@@ -294,54 +325,67 @@ bool MainWindow::validTransportMove(const bool spinning,
 {
     // Not valid if:
     //  (1) Gamephase is wrong,
-    //  (2) the player hasn't spun the wheel,
-    //  (3) the player is trying to move the wrong type of animal,
-    //  (4) or the target hex already has a transport.
+    //  (2) or the player hasn't spun the wheel,
+    //  (3) or the player is trying to move the wrong type of animal,
+    //  (4) or the target hex has a transport.
+    //  (5) or the target hex has a non-shark actor (transports are
+    //      immune to sharks)
+    std::shared_ptr<Common::Hex> targetHex = _gameBoard->getHex(target);
 
-    if (_gameState->currentGamePhase() == Common::GamePhase::SINKING
+    if (
+            _gameState->currentGamePhase() == Common::GamePhase::SINKING
         || (spinning && !_spinned)
         || (
                 spinning &&
                 _gameBoard->getTransport(transportId)->getTransportType()
                 != _animalTypeFromSpinner
            )
-        || !(_gameBoard->getHex(target)->getTransports().empty()))
+        || !(targetHex->getTransports().empty())
+        || (
+                !(targetHex->getActors().empty()) &&
+                targetHex->getActors().at(0)->getActorType() != "shark"
+           )
+    )
     {
         return false;
     }
     return true;
 }
 
+void MainWindow::moveTransportAction(const Common::CubeCoordinate &target,
+                                     const int transportId,
+                                     const int movesLeft,
+                                     const bool spinning)
+{
+    TransportItem* transportItem = _transportItems.at(transportId);
+    HexItem* newParent = _hexItems.at(target);
+
+    transportItem->setPos(newParent->getTransportPosition());
+    transportItem->setParent(newParent);
+
+    _gameInfoBox->updateGameState();
+
+    if ( (movesLeft == 0) && spinning) {
+        continueFromSpinning();
+    }
+    else if (movesLeft == 0) {
+        moveToSinking();
+    }
+}
 
 void MainWindow::moveTransport(const Common::CubeCoordinate &origin,
                                const Common::CubeCoordinate &target,
                                const int transportId)
 {
-<<<<<<< HEAD
+
     const bool spinning =
             _gameState->currentGamePhase() == Common::GamePhase::SPINNING;
 
     if (!validTransportMove(spinning, target, transportId)) {
-=======
-    bool spinning =
-                 _gameState->currentGamePhase() == Common::GamePhase::SPINNING;
-    std::shared_ptr<Common::Hex> targetHex = _gameBoard->getHex(target);
-    //Aborted if: Gamephase is wrong, the player hasn't spun the wheel, the player
-    //is trying to move the wrong type of animal, or the target hex already has a
-    //transport.
-    if (_gameState->currentGamePhase() == Common::GamePhase::SINKING
-            or (spinning and !_spinned) or
-            (spinning and _gameBoard->getTransport(transportId)->getTransportType()
-             != _animalTypeFromSpinner) or !targetHex->getTransports().empty()
-            or (!targetHex->getActors().empty() and targetHex->getActors().at(0)->getActorType() != "shark")) {
->>>>>>> 1e9174778acc5b3b9b7300cdd544e78c6c158f83
         return;
     }
 
     int movesLeft;
-    TransportItem* transportItem = _transportItems.at(transportId);
-    HexItem* newParent = _hexItems.at(target);
-
     try {
         if (spinning) {
             movesLeft = _gameRunner->
@@ -354,17 +398,7 @@ void MainWindow::moveTransport(const Common::CubeCoordinate &origin,
     } catch (Common::IllegalMoveException) {
         return;
     }
-    transportItem->setPos(newParent->getTransportPosition());
-    transportItem->setParent(newParent);
-
-    _gameInfoBox->updateGameState();
-
-    if ( (movesLeft == 0) && spinning) {
-        continueFromSpinning();
-    }
-    else if (movesLeft == 0) {
-        moveToSinking();
-    }
+    moveTransportAction(target, transportId, movesLeft, spinning);
 }
 
 void MainWindow::flipHex(const Common::CubeCoordinate &tileCoord)
@@ -482,10 +516,7 @@ void MainWindow::doTheVortex(const Common::CubeCoordinate &coord)
     vortexItem->setPos(coordinates.x()-vortexIcon.width()/2,
                        coordinates.y()-vortexIcon.height()/2);
 
-<<<<<<< HEAD
     vortexAction(coord);
-=======
->>>>>>> 1e9174778acc5b3b9b7300cdd544e78c6c158f83
     _scene->addItem(vortexItem);
 
     QMessageBox vortex;

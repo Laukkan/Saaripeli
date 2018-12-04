@@ -109,7 +109,7 @@ public slots:
      */
     void continueFromSpinning();
 
-private:
+private:  
     /**
      * @brief movePawnWithTransport - is called when the target HexItem has a
      * a transport of some sort
@@ -119,11 +119,37 @@ private:
                                const int pawnId);
 
     /**
+     * @brief moveTransportAction - takes care of the actual moving of
+     * the TransportItem and the moving to the next GamePhase
+     * @param target - target coordinate for the TransportItem
+     * @param transportId - TransportItem's id
+     */
+    void moveTransportAction(const Common::CubeCoordinate &target,
+                             const int transportId,
+                             const int movesLeft,
+                             const bool spinning);
+
+    /**
+     * @brief validActorMove - checks if the Actor move is valid
+     * @param target - target coordinate for the Actor
+     * @return valid (true-false)
+     */
+    bool validActorMove(const Common::CubeCoordinate &target,
+                        const int actorId);
+
+    /**
+     * @brief validPawnMove - checks if the movePawn is valid
+     * @param target - the target coordinate for the PawnItem
+     * @return valid (true-false)
+     */
+    bool validPawnMove(const Common::CubeCoordinate &target);
+
+    /**
      * @brief validTransportMove - checks if the called transportMove is
      * valid
      * @param spinning - if the gamephase is spinning or not
      * @param transportId - the id of the transport
-     * @return
+     * @return valid (true-false)
      */
     bool validTransportMove(const bool spinning,
                             const Common::CubeCoordinate &target,
