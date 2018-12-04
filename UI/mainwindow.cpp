@@ -217,10 +217,14 @@ void MainWindow::movePawn(const Common::CubeCoordinate origin,
                           const Common::CubeCoordinate target,
                           const int &pawnId)
 {
+    std::shared_ptr<Common::Hex> targetHex = _gameBoard->getHex(target);
+    //Aborted if : GamePhase is not right or there is an actor that would
+    //eat the pawn and no transporter with room for the pawn in the hex.
     if (_gameState->currentGamePhase() != Common::GamePhase::MOVEMENT
-            or (!_gameBoard->getHex(target)->getActors().empty()
-            and _gameBoard->getHex(target)->
-                getActors().at(0)->getActorType() != "kraken")) {
+            or ((!targetHex->getActors().empty()
+            and targetHex->getActors().at(0)->getActorType() != "kraken")
+                and (!targetHex->getTransports().empty() and
+                     !targetHex->getTransports().at(0)->getCapacity()))) {
         return;
     }
 
@@ -313,10 +317,24 @@ void MainWindow::moveTransport(const Common::CubeCoordinate &origin,
                                const Common::CubeCoordinate &target,
                                const int transportId)
 {
+<<<<<<< HEAD
     const bool spinning =
             _gameState->currentGamePhase() == Common::GamePhase::SPINNING;
 
     if (!validTransportMove(spinning, target, transportId)) {
+=======
+    bool spinning =
+                 _gameState->currentGamePhase() == Common::GamePhase::SPINNING;
+    std::shared_ptr<Common::Hex> targetHex = _gameBoard->getHex(target);
+    //Aborted if: Gamephase is wrong, the player hasn't spun the wheel, the player
+    //is trying to move the wrong type of animal, or the target hex already has a
+    //transport.
+    if (_gameState->currentGamePhase() == Common::GamePhase::SINKING
+            or (spinning and !_spinned) or
+            (spinning and _gameBoard->getTransport(transportId)->getTransportType()
+             != _animalTypeFromSpinner) or !targetHex->getTransports().empty()
+            or (!targetHex->getActors().empty() and targetHex->getActors().at(0)->getActorType() != "shark")) {
+>>>>>>> 1e9174778acc5b3b9b7300cdd544e78c6c158f83
         return;
     }
 
@@ -464,7 +482,10 @@ void MainWindow::doTheVortex(const Common::CubeCoordinate &coord)
     vortexItem->setPos(coordinates.x()-vortexIcon.width()/2,
                        coordinates.y()-vortexIcon.height()/2);
 
+<<<<<<< HEAD
     vortexAction(coord);
+=======
+>>>>>>> 1e9174778acc5b3b9b7300cdd544e78c6c158f83
     _scene->addItem(vortexItem);
 
     QMessageBox vortex;
