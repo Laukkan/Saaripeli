@@ -30,11 +30,11 @@ public:
     // A virtual destructor is already provided by the QObject subclass.
 
     /**
-     * @brief switchTransportIcon - switches to an according TransportIcon
-     * based on what's already on board and who's added.
-     * @param pawnItem - the new Pawnitem to be added
+     * @brief addToTransport - adds/switches the OtherPItem to the transport
+     * and switches to an according Transport Icon.
+     * @param newPawnItem - the new Pawnitem to be added
      */
-    void switchTransportIcon(PawnItem* pawnItem);
+    void addToTransport(PawnItem* newPawnItem);
 
     /**
      * @brief releasePawns - releases all of the PawnItems from the Transport

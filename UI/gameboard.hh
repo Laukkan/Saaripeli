@@ -177,10 +177,10 @@ public:
     std::shared_ptr<Common::Transport> getTransport(int transportID);
 
     /**
-     * @brief getPawnsLeft returns the pawn map.
-     * @return map of the pawns with their Id's as keys,
+     * @brief getPawnsLeft returns a pawn ptr from given pawnId
+     * @return the pawn
      */
-    std::unordered_map<int, std::shared_ptr<Common::Pawn>> getPawns();
+    std::shared_ptr<Common::Pawn> getPawn(int pawnId);
 
     /**
      * @brief getWinner returns the winning player's Id if there is only one pawn
@@ -188,6 +188,12 @@ public:
      * @return The winning player's Id if there is one, 0 otherwise.
      */
     int getWinner();
+
+    /**
+     * @brief pawnsLeft - return the amount of pawns left
+     * @return pawns left
+     */
+    unsigned int pawnsLeft();
 
 
 private:

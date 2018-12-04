@@ -204,6 +204,7 @@ void MainWindow::movePawn(Common::CubeCoordinate origin,
                 getActors().at(0)->getActorType() != "kraken")) {
         return;
     }
+
     int movesLeft;
     try {
         movesLeft = _gameRunner->movePawn(origin, target, pawnId);
@@ -225,10 +226,22 @@ void MainWindow::movePawn(Common::CubeCoordinate origin,
     {
         std::shared_ptr<Common::Transport> transport =
                 _gameBoard->getHex(target)->getTransports().at(0);
-        transport->addPawn(_gameBoard->getPawns().at(pawnId));
-        _transportItems.at(transport->getId())->
-                switchTransportIcon(_pawnItems.at(pawnId));
-        _pawnItems.at(pawnId)->hide();
+        TransportItem* tItem = _transportItems.at(transport->getId());
+        PawnItem* newPItem = _pawnItems.at(pawnId);
+
+
+        // Switch rider
+        if (transport->getTransportType() == "dolphin"
+                and transport->getCapacity() == 0)
+        {
+            std::shared_ptr<Common::Pawn> oldPawn =
+                    transport->getPawnsInTransport().at(0);
+            transport->removePawn(oldPawn);
+        }
+        // In all other events the new pawn is added
+        transport->addPawn(_gameBoard->getPawn(pawnId));
+        tItem->addToTransport(newPItem);
+        newPItem->hide();
     }
 
     if (movesLeft == 0) {
@@ -413,9 +426,8 @@ void MainWindow::doTheVortex(const Common::CubeCoordinate &coord)
             new QGraphicsPixmapItem(
                 Helpers::scaleActorImage(vortexIcon, 3));
 
-    QPointF coordinates = _hexItems.at(coord)->getActorPosition();
+    vortexItem->setPos(Helpers::cubeToPixel(coord));
 
-    vortexItem->setPos(coordinates);
     _scene->addItem(vortexItem);
     std::vector<Common::CubeCoordinate> coordinatesToRemoveFrom =
             _gameBoard->getHex(coord)->getNeighbourVector();
@@ -489,15 +501,13 @@ void MainWindow::doActorAction(const Common::CubeCoordinate &coord,
 
 void MainWindow::checkGameStatus()
 {
-    std::unordered_map<int, std::shared_ptr<Common::Pawn>> pawns =
-            _gameBoard->getPawns();
-    unsigned int pawnsLeft = pawns.size();
+    unsigned int pawnsLeft = _gameBoard->pawnsLeft();
 
     if (pawnsLeft > 1)
     {
         for(auto player : _playerMap)
         {
-            if (pawns.find(player.second->getPlayerId()) == pawns.end()) {
+            if (_gameBoard->getPawn(player.second->getPlayerId()) == nullptr) {
                 player.second->eliminatePlayer();
             }
         }

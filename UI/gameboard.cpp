@@ -165,9 +165,13 @@ std::shared_ptr<Common::Transport> GameBoard::getTransport(int transportID)
     return _transports.at(transportID);
 }
 
-std::unordered_map<int, std::shared_ptr<Common::Pawn>> GameBoard::getPawns()
+std::shared_ptr<Common::Pawn> GameBoard::getPawn(int pawnId)
 {
-    return _pawns;
+    if (_pawns.find(pawnId) == _pawns.end()) {
+        return nullptr;
+    }
+
+    return _pawns.at(pawnId);
 }
 
 
@@ -179,6 +183,11 @@ int GameBoard::getWinner()
     else {
         return 0;
     }
+}
+
+unsigned int GameBoard::pawnsLeft()
+{
+    return _pawns.size();
 }
 
 }

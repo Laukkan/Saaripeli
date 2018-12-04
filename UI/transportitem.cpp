@@ -57,7 +57,7 @@ void TransportItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
     setCursor(Qt::OpenHandCursor);
 }
 
-void TransportItem::switchTransportIcon(PawnItem* pawnItem)
+void TransportItem::addToTransport(PawnItem* newPawnItem)
 {
     const std::map<std::string, QString> transportImages =
             PathConstants::TRANSPORT_IMAGES;
@@ -66,21 +66,27 @@ void TransportItem::switchTransportIcon(PawnItem* pawnItem)
     {
         _transportImage.load(
                     transportImages.at(_transportType +
-                                       pawnItem->getColor().toStdString()));
+                                       newPawnItem->getColor().toStdString()));
+        // Old rider is kicked out
+        PawnItem* oldPawnItem = _pawnItemsOnBoard.at(0);
+        oldPawnItem->setPos(_hParent->getPawnPosition(oldPawnItem->getId()));
+        oldPawnItem->show();
+        _pawnItemsOnBoard.clear();
     }
     // It's a boat
     else {
         if (_pawnItemsOnBoard.size() == 0) {
             _transportImage.load(
                         transportImages.at(_transportType +
-                                           pawnItem->getColor().toStdString()));
+                                           newPawnItem->
+                                           getColor().toStdString()));
         }
         else if (_pawnItemsOnBoard.size() == 2) {
             _transportImage.load(
                         transportImages.at(_transportType+"BlueWhiteRed"));
         }
         else {
-            QString color1 = pawnItem->getColor();
+            QString color1 = newPawnItem->getColor();
             QString color2 = _pawnItemsOnBoard.at(0)->getColor();
             QString concat = color1 + color2;
 
@@ -98,11 +104,11 @@ void TransportItem::switchTransportIcon(PawnItem* pawnItem)
                 _transportImage.load(
                             transportImages.at(_transportType+"WhiteRed"));
             }
+
         }
     }
     setPixmap(Helpers::scaleActorImage(_transportImage));
-
-    _pawnItemsOnBoard.push_back(pawnItem);
+    _pawnItemsOnBoard.push_back(newPawnItem);
 }
 
 void TransportItem::releasePawns()
