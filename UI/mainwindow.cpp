@@ -567,6 +567,8 @@ void MainWindow::finishGame(std::shared_ptr<Player> winner)
 std::vector<std::vector<std::string>> MainWindow::getRanking()
 {
     std::ifstream rankingfile;
+    //used to determine if a new file should be made.
+    bool newfile = false;
     rankingfile.open(PathConstants::RANKING_FILE);
     std::vector<std::vector<std::string>> ranking = {};
     std::string line;
@@ -583,26 +585,33 @@ std::vector<std::vector<std::string>> MainWindow::getRanking()
                 return std::stoi(lhs.at(1)) < std::stoi(rhs.at(1));
 
             });
+            //make sure its a top 10
+            while(ranking.size() > 10){
+                ranking.pop_back();
+            }
             rankingfile.close();
         }
         //creating new file
         else {
-            std::ofstream newRankingFile(PathConstants::RANKING_FILE);
-            for(int lineCount = 0; lineCount < 10; lineCount++){
-                newRankingFile << "Undefined;999 \n";
-            }
-            newRankingFile.close();
-            QMessageBox newRankingFileBox;
-            newRankingFileBox.setText("A new ranking file was created");
-            newRankingFileBox.exec();
-            ranking = getRanking();
+            newfile = true;
         }
     }
     catch(...){
         QMessageBox rankingError;
         rankingError.setText("Error reading the ranking file");
         rankingError.exec();
-        ranking = {};
+        newfile = true;
+    }
+    if(newfile){
+        std::ofstream newRankingFile(PathConstants::RANKING_FILE);
+        for(int lineCount = 0; lineCount < 10; lineCount++){
+            newRankingFile << "Undefined;999 \n";
+        }
+        newRankingFile.close();
+        QMessageBox newRankingFileBox;
+        newRankingFileBox.setText("A new ranking file was created");
+        newRankingFileBox.exec();
+        ranking = getRanking();
     }
     return ranking;
 }
