@@ -277,7 +277,8 @@ void MainWindow::moveTransport(Common::CubeCoordinate origin,
     bool spinning =
                  _gameState->currentGamePhase() == Common::GamePhase::SPINNING;
     if (_gameState->currentGamePhase() == Common::GamePhase::SINKING
-            or (spinning and !_spinned) or (spinning and _gameBoard->getTransport(transportId)->getTransportType() != _animalTypeFromSpinner)) {
+            or (spinning and !_spinned) or
+            (spinning and _gameBoard->getTransport(transportId)->getTransportType() != _animalTypeFromSpinner)) {
         return;
     }
     int movesLeft;
