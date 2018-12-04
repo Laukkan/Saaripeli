@@ -28,7 +28,7 @@ namespace Student {
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
    setMinimumSize(SizeConstants::MW_SIZE);
-   _layout = new QGridLayout(this);
+   _layout = new QGridLayout();
    _centralWidget = new QWidget();
    _view = new ZoomGraphicsView();
 }
@@ -57,12 +57,14 @@ void MainWindow::initBoard(int playersAmount, const bool reset)
     drawGameBoard();
     drawPawns();
     setupGameInfoBox();
+
     _view->setScene(_scene);
-    _layout->addWidget(_view,0,0);
-    _layout->addWidget(_gameInfoBox,0,1);
+    _layout->addWidget(_view, 0, 0, 10, 10);
+    _layout->addWidget(_gameInfoBox, 1, 11, 2, 2);
 
     _centralWidget->setLayout(_layout);
     setCentralWidget(_centralWidget);
+
 }
 
 void MainWindow::initPlayers()
@@ -402,7 +404,7 @@ void MainWindow::doTheVortex(const Common::CubeCoordinate &coord)
     QPixmap vortexIcon(PathConstants::ACTOR_IMAGES.at("vortex"));
     QGraphicsPixmapItem* vortexItem =
             new QGraphicsPixmapItem(
-                vortexIcon.scaled(SizeConstants::A_PIX_SIZE));
+                Helpers::scaleActorImage(vortexIcon, 4));
 
     QPointF coordinates = _hexItems.at(coord)->getActorPosition();
 

@@ -63,6 +63,13 @@ signals:
 
 private:
    /**
+    * @brief retainSizeHidden - Applies a sizePolicy to a widget so that
+    * hiding the widget retains the GameInfoBox's size.
+    * @param label - a QLabel
+    */
+   void retainSizeHidden(QLabel* label);
+
+   /**
      * @brief shuffleImages - shuffles all of the actor images visibly,
      * mimicking a raffle.
      */

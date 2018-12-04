@@ -15,7 +15,7 @@ ActorItem::ActorItem(std::shared_ptr<Common::Actor> actor, HexItem* parent) :
     _actor(actor)
 {
     _actorImage.load(PathConstants::ACTOR_IMAGES.at(_actor->getActorType()));
-    setPixmap(_actorImage.scaled(SizeConstants::A_PIX_SIZE));
+    setPixmap(Helpers::scaleActorImage(_actorImage, 2));
     QPointF coordinates = parent->getActorPosition();
     setPos(coordinates);
 

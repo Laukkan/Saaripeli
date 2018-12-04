@@ -112,12 +112,12 @@ QPointF HexItem::getPawnPosition()
 
 QPointF HexItem::getActorPosition()
 {
-    return QPointF(_center.x()+5, _center.y()-23);
+    return QPointF(_center.x() - 20, _center.y() - 23);
 }
 
 QPointF HexItem::getTransportPosition()
 {
-    return QPointF(_center.x()+5, _center.y()+1);
+    return QPointF(_center.x() - 20, _center.y() - 10);
 }
 
 void HexItem::flip()
