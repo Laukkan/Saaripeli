@@ -20,6 +20,5 @@
         <file>dolphinRed.png</file>
         <file>dolphinWhite.png</file>
         <file>boatBlueRed.png</file>
-		<file>ranking.csv</file>
     </qresource>
 </RCC>

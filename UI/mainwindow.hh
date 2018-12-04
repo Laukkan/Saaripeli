@@ -152,20 +152,55 @@ private:
      */
     void doTheVortex(const Common::CubeCoordinate &coord);
 
+    /**
+     * @brief doActorAction - does the actors action.
+     * @param coord - coordinates to do the action in.
+     * @param actorId - id of the actor doing the action.
+     */
     void doActorAction(const Common::CubeCoordinate &coord, const int actorId);
 
-    //MAYBE MOVE THIS METHOD?
+    /**
+     * @brief checkGameStatus - checks if the game or round has been won.
+     */
     void checkGameStatus();
 
+    /**
+     * @brief newRound starts a new round and adds a point to the winner.
+     * @param roundWinnerId winner to add a point to.
+     */
     void newRound(int roundWinnerId);
 
+    /**
+     * @brief finishGame - finishes the game.
+     * @param winner - game winner.
+     */
     void finishGame(std::shared_ptr<Player> winner);
 
+    /**
+     * @brief getRanking reads the ranking file or creates it.
+     * @return - the rankings in a string vector.
+     */
     std::vector<std::vector<std::string>> getRanking();
 
+    /**
+     * @brief checkRanking checks if the winner made it to the ranking.
+     * @param winner - winning player.
+     * @param ranking - the ranking.
+     * @return true if the winner made it to the ranking, false if not.
+     */
     bool checkRanking(std::shared_ptr<Player> winner, std::vector<std::vector<std::string>> ranking);
 
+    /**
+     * @brief updateRanking updates the rankings.
+     * @param winner The winning player to add to rhe rankings.
+     * @param ranking the ranking.
+     */
     void updateRanking(std::shared_ptr<Player> winner, std::vector<std::vector<std::string>> ranking);
+
+    /**
+     * @brief writeRanking - writes to the ranking.
+     * @param ranking - the ranking to write to the ranking file.
+     */
     void writeRanking(std::vector<std::vector<std::string>> ranking);
 
     /**

@@ -558,26 +558,41 @@ std::vector<std::vector<std::string>> MainWindow::getRanking()
 {
     std::ifstream rankingfile;
     rankingfile.open(PathConstants::RANKING_FILE);
-    std::vector<std::vector<std::string>> ranking;
+    std::vector<std::vector<std::string>> ranking = {};
     std::string line;
-    if(rankingfile.is_open()){
-        while(std::getline(rankingfile,line)){
-            ranking.push_back(Helpers::split(line, OtherConstants::delimiter));
-        }
-        // Using a lambda to sort the vector
-        std::sort(ranking.begin(),ranking.end(),
-                  [] (const std::vector<std::string> lhs,
-                      const std::vector<std::string> rhs)
-        {
-            return std::stoi(lhs.at(1)) < std::stoi(rhs.at(1));
+    try{
+        if(rankingfile.is_open()){
+            while(std::getline(rankingfile,line)){
+                ranking.push_back(Helpers::split(line, OtherConstants::delimiter));
+            }
+            // Using a lambda to sort the vector
+            std::sort(ranking.begin(),ranking.end(),
+                      [] (const std::vector<std::string> lhs,
+                          const std::vector<std::string> rhs)
+            {
+                return std::stoi(lhs.at(1)) < std::stoi(rhs.at(1));
 
-        });
-        rankingfile.close();
+            });
+            rankingfile.close();
+        }
+        //creating new file
+        else {
+            std::ofstream newRankingFile(PathConstants::RANKING_FILE);
+            for(int lineCount = 0; lineCount < 10; lineCount++){
+                newRankingFile << "Undefined;999 \n";
+            }
+            newRankingFile.close();
+            QMessageBox newRankingFileBox;
+            newRankingFileBox.setText("A new ranking file was created");
+            newRankingFileBox.exec();
+            ranking = getRanking();
+        }
     }
-    else {
-        QMessageBox errorReadingFile;
-        errorReadingFile.setText("Error reading ranking file");
-        errorReadingFile.exec();
+    catch(...){
+        QMessageBox rankingError;
+        rankingError.setText("Error reading the ranking file");
+        rankingError.exec();
+        ranking = {};
     }
     return ranking;
 }
