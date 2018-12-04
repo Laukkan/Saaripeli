@@ -242,7 +242,9 @@ void MainWindow::moveActor(Common::CubeCoordinate origin,
                            Common::CubeCoordinate target,
                            int actorId)
 {
-    // Wrong gamePhase or targetHex already has an actor
+    //Aborted if: Gamephase is wrong, the player hasn't spun the wheel, the player
+    //is trying to move the wrong type of animal, or the target hex already has an
+    //actor.
     if ( (_gameState->currentGamePhase() != Common::GamePhase::SPINNING)
          || (!( _gameBoard->getHex(target)->getActors().empty()))
          or _gameBoard->getActor(actorId)->getActorType() != _animalTypeFromSpinner
@@ -276,9 +278,13 @@ void MainWindow::moveTransport(Common::CubeCoordinate origin,
 {
     bool spinning =
                  _gameState->currentGamePhase() == Common::GamePhase::SPINNING;
+    //Aborted if: Gamephase is wrong, the player hasn't spun the wheel, the player
+    //is trying to move the wrong type of animal, or the target hex already has a
+    //transport.
     if (_gameState->currentGamePhase() == Common::GamePhase::SINKING
             or (spinning and !_spinned) or
-            (spinning and _gameBoard->getTransport(transportId)->getTransportType() != _animalTypeFromSpinner)) {
+            (spinning and _gameBoard->getTransport(transportId)->getTransportType()
+             != _animalTypeFromSpinner) or !_gameBoard->getHex(target)->getTransports().empty()) {
         return;
     }
     int movesLeft;
