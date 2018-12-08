@@ -741,7 +741,7 @@ bool MainWindow::checkRanking(std::shared_ptr<Player> winner,
     unsigned int winnerTurns = winner->getTotalTurns();
     bool topTen = false;
     for(auto player: ranking){
-        if(std::stoul(player.at(1)) <= winnerTurns){
+        if(std::stoul(player.at(1)) >= winnerTurns){
             topTen = true;
             break;
         }
@@ -762,7 +762,7 @@ void MainWindow::updateRanking(std::shared_ptr<Player> winner,
                 QString::number(winner->getPlayerId()) +
                 " made it the to 10! \
                 Please enter a name to save to the rankings!",
-                QLineEdit::Normal, "", &ok
+                QLineEdit::Normal, "", &ok, Qt::MSWindowsFixedSizeDialogHint
     );
     if (!ok or playerName.isEmpty()) {
       playerName = "Anonymous";
