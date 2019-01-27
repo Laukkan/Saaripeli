@@ -1,0 +1,4 @@
+# ohjelmointi-3-projekti
+
+This project was created for the course ohjelmointi 3: ohjelmoinnin tekniikat, and was finished 9.12.2018. I worked with a pair,
+and together we were responsible for all of the project under "UI" and for some of the unit tests.
